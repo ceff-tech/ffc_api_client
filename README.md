@@ -22,8 +22,20 @@ instructions to enable pasting - it will tell you how after you try to paste). H
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
 code to work correctly!
 
-# Usage
-See examples.Rmd for basic usage
+# Usage Example
+```r
+api_client_code <- file.path(getwd(), "ffc_api_client.R")
+source(api_client_code)
+
+# Initialize a Run
+test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code
+TOKEN = ""  # you'll need to get your own of this - see README
+process_data(test_data, "10/1", name="r_client_example")  # send it to the FFC online to process
+
+# Retrieve Results and Plot
+drh_data <- get_drh_for_name(name="r_client_example")  # get the DRH data as a data frame with percentiles for columns and days for rows
+plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+```
 
 # Considerations
 This code was written to avoid setup headaches associated with getting the existing code set up on many machines and enable many people
