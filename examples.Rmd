@@ -1,0 +1,27 @@
+---
+title: "examples"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+api_client_code <- file.path(getwd(), "ffc_api_client.R")
+source(api_client_code)
+```
+
+# Initialize a Run
+
+```{r}
+test_data <- example_gagedata()
+TOKEN = ""  # you'll need to get your own of this - see README
+
+process_data(test_data, "10/1", name="r_client_example")
+```
+
+# Retrieve Results
+```{r}
+drh_data <- get_drh_for_name(name="r_client_example")
+plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+
+```
