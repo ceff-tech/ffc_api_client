@@ -34,7 +34,8 @@ TOKEN = ""  # you'll need to get your own of this - see README
 process_data(test_data, "10/1", name="r_client_example")  # send it to the FFC online to process
 
 # Retrieve Results and Plot
-drh_data <- get_drh_for_name(name="r_client_example")  # get the DRH data as a data frame with percentiles for columns and days for rows
+## get the DRH data as a data frame with percentiles for columns and days for rows
+drh_data <- get_drh_for_name(name="r_client_example") 
 plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
 ```
 
