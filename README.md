@@ -22,6 +22,9 @@ instructions to enable pasting - it will tell you how after you try to paste). H
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
 code to work correctly!
 
+# Usage
+See examples.Rmd for basic usage
+
 # Considerations
 This code was written to avoid setup headaches associated with getting the existing code set up on many machines and enable many people
 to use it. That said, it's not as feature-complete, and may be slower than running everything on your own computer. As currently written,
