@@ -14,14 +14,13 @@ Other processing that interfaces with the Colorado School of Mines code could be
 api_client_code <- file.path(getwd(), "ffc_api_client.R")
 source(api_client_code)
 ```
-3. In Firefox (only tested there), log into eflows.ucdavis.edu. Press F12 to bring up the Inspector, then switch to the console tab.
-4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow its
-instructions to enable pasting).
-5. Firefox will place text on the line below - this is your "token". After the `source` line, type `TOKEN = ""` and place your
-token between the quotes.
+3. Now we need to retrieve your token. In Firefox (only tested there), log into https://eflows.ucdavis.edu. Once logged in, press F12 to bring up the Inspector, then switch to the Console tab.
+4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow Firefox's
+instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
+5. Firefox will place text on the line below the command you typed - this is your "token". After the `source` line, type `TOKEN = ""` and place your token between the quotes.
 
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
-code to working
+code to work correctly!
 
 # Considerations
 This code was written to avoid setup headaches associated with getting the existing code set up on many machines and enable many people
