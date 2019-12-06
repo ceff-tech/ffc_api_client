@@ -24,6 +24,7 @@ code to work correctly!
 
 # Usage Example
 ```r
+# Load the FFC API Client code
 api_client_code <- file.path(getwd(), "ffc_api_client.R")
 source(api_client_code)
 
