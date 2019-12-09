@@ -92,8 +92,11 @@ get_ffc_results_for_df <- function(df, flow_field, date_field, start_date){
   if(missing(flow_field)){
     flow_field = "flow"  # this value is compatible with what you'd upload to the web interface
   }
-  if(missing(flow_field)){
+  if(missing(date_field)){
     date_field = "date"  # this value is compatible with what you'd upload to the web interface
+  }
+  if(missing(start_date)){
+	start_date = "10/1"  # default to the beginning of the water year
   }
 
   # we'll use a UUID for this because we want to make sure we don't collide with anything else the user already has in the FFC online
