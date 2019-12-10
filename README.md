@@ -24,11 +24,11 @@ code to work correctly!
 # Initialize a Run
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
-results <- ffcAPIClient::get_ffc_results_for_df(test_data, start_date = "10/1")  # send it to the FFC online to process
+results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
 
 # Retrieve Results and Plot
 ## get the DRH data as a data frame with percentiles for columns and days for rows
-drh_data <- ffcAPIClient::get_drh(name="r_client_example") 
+drh_data <- ffcAPIClient::get_drh(results) 
 plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
 ```
 

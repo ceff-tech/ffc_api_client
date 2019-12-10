@@ -78,7 +78,6 @@ get_results_for_name <- function(name, autodelete){
 delete_ffc_run_by_id <- function(id){
 
   json <- make_json(NULL, NULL, pkg.env$TOKEN, extra=paste(', "id":', id, sep=""))
-  print(json)
   endpoint <- paste(pkg.env$SERVER_URL,'uploadData', sep="")
   httr::DELETE(endpoint, httr::content_type("application/json"), body=json)
 }
