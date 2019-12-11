@@ -14,5 +14,5 @@
 #'
 #' @export
 get_predicted_flow_metrics <- function(com_id){
-  return(flow_metrics[flow_metrics$com_id == com_id, ])
+  return(flow_metrics[flow_metrics$COMID == com_id, ])
 }

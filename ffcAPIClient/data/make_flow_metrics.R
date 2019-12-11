@@ -47,6 +47,20 @@ get_all_predicted_flow_metrics <- function(db_path){
   return(RSQLite::dbGetQuery(predicted_metrics_db, sql_query))
 }
 
+get_all_raw_predicted_flow_metrics <- function(input_folder){
+  # adapted from https://stackoverflow.com/questions/30242065/trying-to-merge-multiple-csv-files-in-r
+  filenames = list.files(path=input_folder, full.names=TRUE)
+  datalist = lapply(filenames, function (x) utils::read.csv(file=x, header=TRUE))
+  results <- Reduce(function(x,y) rbind(x,y), datalist)
+  names(results)[names(results) == 'FFM'] <- 'Metric'  # rename the FFM field to Metric
+
+  # remove duplicates
+  results <- results[!duplicated(results[,c("Metric", "COMID")]), ]  # deduplicate on unique comid/Metric combo
+
+  return(results)
+}
+
+
 
 save_all_predicted_flow_metrics <- function(output_path){
   if(missing(output_path)){
@@ -54,6 +68,6 @@ save_all_predicted_flow_metrics <- function(output_path){
     package_root <- system.file(package="ffcAPIClient")
     output_path <- paste(package_root, "data", "flow_metrics.Rdata", sep="/")
   }
-  flow_metrics <- get_all_predicted_flow_metrics(db_path="C:/Users/dsx/Dropbox/Code/belleflopt/db.sqlite3")
+  flow_metrics <- get_all_raw_predicted_flow_metrics(input_folder="C:/Users/dsx/Dropbox/Code/belleflopt/data/ffm_modeling/Data/NHD FFM predictions")
   save(flow_metrics, file=output_path)
 }
