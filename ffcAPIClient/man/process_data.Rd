@@ -2,10 +2,14 @@
 % Please edit documentation in R/ffc_api_client.R
 \name{process_data}
 \alias{process_data}
-\title{Sends flow timeseries data off to the functional flows calculator. Does *not* retrieve results!}
+\title{Send flow data for processing}
 \usage{
 process_data(flows_df, flow_field, date_field, start_date, name)
 }
 \description{
-Sends flow timeseries data off to the functional flows calculator. Does *not* retrieve results!
+In most cases, you won't need to use this function! If you're wondering what to do, use
+get_ffc_results_for_df instead.
+}
+\details{
+Sends flow timeseries data off to the functional flows calculator. Does not retrieve results!
 }

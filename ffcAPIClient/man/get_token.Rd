@@ -2,10 +2,10 @@
 % Please edit documentation in R/ffc_api_client.R
 \name{get_token}
 \alias{get_token}
-\title{Retrieves a token previously set by set_token in the same R session}
+\title{Retrieve Previously Set Token}
 \usage{
 get_token()
 }
 \description{
-Retrieves a token previously set by set_token in the same R session
+Retrieves the authorization token previously set by set_token in the same R session.
 }

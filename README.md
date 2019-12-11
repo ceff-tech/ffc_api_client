@@ -22,7 +22,7 @@ code to work correctly!
 # Usage Example
 ```r
 # Initialize a Run
-test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code
+test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
 

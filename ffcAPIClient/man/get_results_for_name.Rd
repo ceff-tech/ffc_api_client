@@ -2,10 +2,14 @@
 % Please edit documentation in R/ffc_api_client.R
 \name{get_results_for_name}
 \alias{get_results_for_name}
-\title{Gets the results for the given named run of the FFC. Returns the nested list - no other processing}
+\title{Retrieve processed results from FFC.}
 \usage{
 get_results_for_name(name, autodelete)
 }
 \description{
+In most cases, you won't need to use this function! If you're wondering what to do, use
+get_ffc_results_for_df instead.
+}
+\details{
 Gets the results for the given named run of the FFC. Returns the nested list - no other processing
 }

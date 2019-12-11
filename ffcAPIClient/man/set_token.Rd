@@ -2,12 +2,16 @@
 % Please edit documentation in R/ffc_api_client.R
 \name{set_token}
 \alias{set_token}
-\title{Provide the token string used for accessing the Eflows site.
-This is a function so that it can set the package private TOKEN variable}
+\title{Set Eflows Website Access Token}
 \usage{
 set_token(token_string)
 }
+\arguments{
+\item{token_string}{character}
+}
 \description{
-Provide the token string used for accessing the Eflows site.
-This is a function so that it can set the package private TOKEN variable
+Provide the token string used for accessing the Eflows site. A token is a
+method of authorization for identifying your user account within scripts.
+By providing the token, this package uses your user account when interacting
+with the eflows web service/API.
 }

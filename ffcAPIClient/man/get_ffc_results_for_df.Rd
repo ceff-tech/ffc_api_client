@@ -2,12 +2,30 @@
 % Please edit documentation in R/ffc_api_client.R
 \name{get_ffc_results_for_df}
 \alias{get_ffc_results_for_df}
-\title{This is the primary function to use from the API client itself to obtain
-raw FFC results. It will generate a unique ID, run the data frame through
-the FFC, and then delete the results for that ID from the website so as not
-to clutter up the user's account, or store too much data on the server side.}
+\title{Run Data Frame Through Functional Flows Calculator}
 \usage{
 get_ffc_results_for_df(df, flow_field, date_field, start_date)
+}
+\arguments{
+\item{df}{DataFrame. A time series data frame with flow and date columns}
+
+\item{flow_field}{character, default "flow". The name of the field in \code{df} that contains
+flow values.}
+
+\item{date_field}{character, default "date". The name of the field in \code{df} that contains
+date values for each flow. The date field must be in MM/DD/YYYY format
+as either factor or character values - true dates likely will not work
+based on the API we're using. If you need to convert date values, add
+a field to your existing data frame with the values in MM/DD/YYYY format
+before providing it to this function.}
+
+\item{start_date}{character, default "10/1". What month and day should the water
+year start on? Neither month nor day needs to be zero-padded here, so
+March first could just be 3/1, while December 12th can be 12/12.}
+}
+\value{
+list of results from the functional flows calculator. More information will be
+        forthcoming as we inspect the structure of what is returned.
 }
 \description{
 This is the primary function to use from the API client itself to obtain
