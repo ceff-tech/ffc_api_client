@@ -3,7 +3,7 @@
 #' ffcAPIClient: Processes time-series flow data using the online functional
 #' flows calculator
 #'
-#' For now, see the documentation for \code{get_ffc_results_for_df}
+#' For now, see the documentation for \code{\link{get_ffc_results_for_df}}
 #'
 #' @examples
 #' # Initialize a Run

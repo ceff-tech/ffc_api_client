@@ -1,7 +1,7 @@
 Package: ffcAPIClient
 Type: Package
 Title: Functional Flows Calculator API Client
-Version: 0.1.0
+Version: 0.1.1
 Author: Nick Santos
 Maintainer: Nick Santos <nrsantos@ucdavis.edu>
 Description: A client for the Python-based functional flows calculator API hosted
