@@ -7,7 +7,7 @@ Check out examples.Rmd to see the usage of this code - right now it can send a d
 the API for processing, retrieve the results, and process the DRH data into an R data frame.
 Other processing that interfaces with the Colorado School of Mines code could be added easily.
 
-# Setup
+## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
 in your R console, or install the package any way you prefer.
 2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`
@@ -19,7 +19,7 @@ instructions to enable pasting - it will tell you how after you try to paste). H
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
 code to work correctly!
 
-# Usage Example
+## Usage Example
 ```r
 # Initialize a Run
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
@@ -32,7 +32,7 @@ drh_data <- ffcAPIClient::get_drh(results)
 plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
 ```
 
-# Predicted Flow Metrics
+## Predicted Flow Metrics
 I'm working to get the code to a state to compare the percentiles generated from the observed data
 and the percentiles predicted by modeling. As part of this, the code includes the full results
 of the modeling output as a data frame accessible in `ffcAPIClient::flow_metrics`. More practically,
@@ -69,7 +69,7 @@ segment on the North Yuba:
 2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model
 ```
 
-# Considerations
+## Considerations
 This code was written to avoid setup headaches associated with getting the existing code set up on many machines and enable many people
 to use it. That said, it's not as feature-complete, and may be slower than running everything on your own computer. As currently written,
 certain items will slow down the more you run data through the calculator, since it currently retrieves *all* results every time you
