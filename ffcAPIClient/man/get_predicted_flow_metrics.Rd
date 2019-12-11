@@ -6,6 +6,9 @@
 \usage{
 get_predicted_flow_metrics(com_id)
 }
+\arguments{
+\item{com_id}{character. A string of a NHD COMID to retrieve metrics for.}
+}
 \description{
 This function returns the 10th, 25th, 50th, 75th, and 90th percentile
 values for each flow metric as predicted for the stream segment you

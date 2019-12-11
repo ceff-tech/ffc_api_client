@@ -12,6 +12,8 @@
 #' you can do it there. But if you just want to filter by COM_ID, this function
 #' can handle that for you.
 #'
+#' @param com_id character. A string of a NHD COMID to retrieve metrics for.
+#'
 #' @export
 get_predicted_flow_metrics <- function(com_id){
   return(flow_metrics[flow_metrics$COMID == com_id, ])
