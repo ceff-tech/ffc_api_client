@@ -87,8 +87,9 @@ segment on the North Yuba:
 ```
 
 ## Considerations
-This code was written to avoid setup headaches associated with getting the existing code set up on many machines and enable many people
-to use it. That said, it's not as feature-complete, and may be slower than running everything on your own computer. As currently written,
-certain items will slow down the more you run data through the calculator, since it currently retrieves *all* results every time you
-want to get a single result. But it does clean up after itself and won't leave behind
-runs you execute with this code.
+This code was written to avoid setup headaches associated with getting the existing code set up on many
+machines and enable many people to use it. That said, it's not as feature-complete, and may be slower than
+running everything on your own computer. It could be slow if you have run many items through the calculator in
+the web interface since it currently retrieves *all* results every time you want to get a single result.
+If you delete those results in the web interface at eflows.ucdavis.edu, then this code will be faster.
+This package cleans up after itself and won't leave behind runs you execute with this code.
