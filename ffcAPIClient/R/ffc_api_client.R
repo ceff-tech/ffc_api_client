@@ -23,7 +23,7 @@
 #' ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 #'
 #' ## retrieves flow data for North Fork American gage and sends it through the FFC
-#' results <- get_ffc_results_for_usgs_gage(11427000)
+#' results <- ffcAPIClient::get_ffc_results_for_usgs_gage(11427000)
 #' drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
 #' drh_plot  # display the plot
 #'
