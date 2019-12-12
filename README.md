@@ -47,6 +47,7 @@ drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path arg
 drh_plot  # display the plot
 
 ```
+![Dimensionless Reference Hydrograph (DRH) plot](sample_drh.png)
 
 ## Predicted Flow Metrics
 I'm working to get the code to a state to compare the percentiles generated from the observed data
