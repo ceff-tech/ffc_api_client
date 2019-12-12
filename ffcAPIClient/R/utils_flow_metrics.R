@@ -7,10 +7,6 @@
 #' percentiles are available as fields such as \code{pct_10}, \code{pct_25}, etc
 #' for each percentile.
 #'
-#' The raw flow metric data for all segments is available as package data
-#' named \code{flow_metrics} so if you wish to do more advanced filtering,
-#' you can do it there. But if you just want to filter by COM_ID, this function
-#' can handle that for you.
 #'
 #' @param com_id character. A string of a NHD COMID to retrieve metrics for.
 #'
