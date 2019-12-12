@@ -19,7 +19,10 @@ instructions to enable pasting - it will tell you how after you try to paste). H
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
 code to work correctly!
 
-## Usage Example
+## Usage Examples
+
+### Basic Example with Fake Data
+
 ```r
 # Initialize a Run
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
@@ -30,6 +33,19 @@ results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC
 ## get the DRH data as a data frame with percentiles for columns and days for rows
 drh_data <- ffcAPIClient::get_drh(results) 
 plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+```
+
+### Retrieve, calculate, and plot a USGS gage
+This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
+```r
+# don't forget to set your token first if you haven't already
+ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
+
+# retrieves flow data for North Fork American gage and sends it through the FFC
+results <- get_ffc_results_for_usgs_gage(11427000)  
+drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
+drh_plot  # display the plot
+
 ```
 
 ## Predicted Flow Metrics

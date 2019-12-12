@@ -6,15 +6,26 @@
 #' For now, see the documentation for \code{\link{get_ffc_results_for_df}}
 #'
 #' @examples
-#' # Initialize a Run
+#' # Example 1
+#' ## Initialize a Run
 #' test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
 #' ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES)  # you'll need to get your own of this - see above
 #' results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
 #'
-#' # Retrieve Results and Plot
+#' ## Retrieve Results and Plot
 #' ## get the DRH data as a data frame with percentiles for columns and days for rows
 #' drh_data <- ffcAPIClient::get_drh(results)
 #' plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+#'
+#' # Example 2: Retrieve, Process, Plot USGS gage
+#' ## This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
+#' ## don't forget to set your token first if you haven't already
+#' ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
+#'
+#' ## retrieves flow data for North Fork American gage and sends it through the FFC
+#' results <- get_ffc_results_for_usgs_gage(11427000)
+#' drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
+#' drh_plot  # display the plot
 #'
 #' @docType package
 #' @name ffcAPIClient
@@ -133,7 +144,7 @@ delete_ffc_run_by_id <- function(id){
 #' the FFC, and then delete the results for that ID from the website so as not
 #' to clutter up the user's account, or store too much data on the server side.
 #'
-#' @param df DataFrame. A time series data frame with flow and date columns
+#' @param flows_df DataFrame. A time series data frame with flow and date columns
 #' @param flow_field character, default "flow". The name of the field in \code{df} that contains
 #'         flow values.
 #' @param date_field character, default "date". The name of the field in \code{df} that contains
@@ -149,7 +160,7 @@ delete_ffc_run_by_id <- function(id){
 #'         forthcoming as we inspect the structure of what is returned.
 #' @export
 #'
-get_ffc_results_for_df <- function(df, flow_field, date_field, start_date){
+get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date){
   if(missing(flow_field)){
     flow_field = "flow"  # this value is compatible with what you'd upload to the web interface
   }
@@ -157,12 +168,22 @@ get_ffc_results_for_df <- function(df, flow_field, date_field, start_date){
     date_field = "date"  # this value is compatible with what you'd upload to the web interface
   }
   if(missing(start_date)){
-	start_date = "10/1"  # default to the beginning of the water year
+	  start_date = "10/1"  # default to the beginning of the water year
   }
 
   # we'll use a UUID for this because we want to make sure we don't collide with anything else the user already has in the FFC online
   id = uuid::UUIDgenerate()
 
-  process_data(df, flow_field, date_field, start_date = start_date, name = id)
+  process_data(flows_df, flow_field, date_field, start_date = start_date, name = id)
   return(get_results_for_name(id))
+}
+
+
+get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
+  if(missing(start_date)){
+    start_date = "10/1"  # default to the beginning of the water year
+  }
+
+  flows_df <- get_usgs_gage_data(gage_id)
+  return(get_ffc_results_for_df(flows_df, start_date=start_date))
 }
