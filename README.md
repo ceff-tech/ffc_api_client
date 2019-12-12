@@ -11,10 +11,10 @@ Other processing that interfaces with the Colorado School of Mines code could be
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
 in your R console, or install the package any way you prefer.
 2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`
-3. Now we need to retrieve your token. In Firefox (only tested there), log into https://eflows.ucdavis.edu. Once logged in, press F12 to bring up the Inspector, then switch to the Console tab.
+3. Now we need to retrieve your token. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, press F12 on your keyboard to bring up the Inspector, then switch to the Console tab.
 4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow Firefox's
 instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
-5. Firefox will place text on the line below the command you typed - this is your "token". Save this value and we'll use it below
+5. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private - if other people knew the value, they could use it to access your account on eflows.ucdavis.edu!
 
 That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
 code to work correctly!
