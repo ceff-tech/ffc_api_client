@@ -44,8 +44,6 @@ pkg.env$SERVER_URL <- 'https://eflows.ucdavis.edu/api/'
 #'
 #' @param token_string character
 #' @export
-#'
-#' This is a function so that it can set the package private TOKEN variable.
 set_token <-function(token_string){
   pkg.env$TOKEN <- token_string
 }
@@ -53,6 +51,7 @@ set_token <-function(token_string){
 #' Retrieve Previously Set Token
 #'
 #' Retrieves the authorization token previously set by set_token in the same R session.
+#'
 #' @export
 get_token <- function(){
   return(pkg.env$TOKEN)
@@ -102,6 +101,7 @@ process_data <- function(flows_df, flow_field, date_field, start_date, name){
 #' get_ffc_results_for_df instead.
 #'
 #' Gets the results for the given named run of the FFC. Returns the nested list - no other processing
+#'
 #' @export
 get_results_for_name <- function(name, autodelete){
 
@@ -158,6 +158,7 @@ delete_ffc_run_by_id <- function(id){
 #'         March first could just be 3/1, while December 12th can be 12/12.
 #' @return list of results from the functional flows calculator. More information will be
 #'         forthcoming as we inspect the structure of what is returned.
+#'
 #' @export
 #'
 get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date){
@@ -178,7 +179,14 @@ get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date)
   return(get_results_for_name(id))
 }
 
-
+#' Run Gage Data Through the Functional Flows Calculator
+#'
+#' Provided with an integer Gage ID, this function pulls the timeseries data for the
+#' gage and processes it in a single step. Returns the functional flow calculator's results list.
+#'
+#' @param gage_id integer. The USGS Gage ID value for the gage you want to return timeseries data for
+#'
+#' @return list. Functional Flow Calculator results
 get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
   if(missing(start_date)){
     start_date = "10/1"  # default to the beginning of the water year

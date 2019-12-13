@@ -18,5 +18,6 @@ Imports:
     uuid,
     ggplot2,
     dataRetrieval,
-    lubridate
+    lubridate,
+    R6,
 RoxygenNote: 7.0.2
