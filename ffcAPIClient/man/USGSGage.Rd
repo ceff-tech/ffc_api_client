@@ -8,10 +8,10 @@ This class retrieves data for a USGS gage.
 }
 \examples{
 gage$gage_id <- 11427000
-gage <- ffcAPIClient::USGSGage$new()
+gage <- ffcAPIClient::USGSGagedev$new()
 gage$gage_id <- 11427000
 gage$get_data()
-gage$get_comid_for_gage()
+gage$get_comid()
 gage$comid
 [1] 14996611
 ffcAPIClient::get_predicted_flow_metrics(gage$comid)
@@ -47,7 +47,7 @@ ffcAPIClient::get_predicted_flow_metrics(gage$comid)
 \itemize{
 \item \href{#method-validate}{\code{USGSGage$validate()}}
 \item \href{#method-get_data}{\code{USGSGage$get_data()}}
-\item \href{#method-get_comid_for_gage}{\code{USGSGage$get_comid_for_gage()}}
+\item \href{#method-get_comid}{\code{USGSGage$get_comid()}}
 \item \href{#method-get_predicted_metrics}{\code{USGSGage$get_predicted_metrics()}}
 \item \href{#method-clone}{\code{USGSGage$clone()}}
 }
@@ -69,10 +69,10 @@ ffcAPIClient::get_predicted_flow_metrics(gage$comid)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_comid_for_gage"></a>}}
-\subsection{Method \code{get_comid_for_gage()}}{
+\if{html}{\out{<a id="method-get_comid"></a>}}
+\subsection{Method \code{get_comid()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid_for_gage()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid()}\if{html}{\out{</div>}}
 }
 
 }

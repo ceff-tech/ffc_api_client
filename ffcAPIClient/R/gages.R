@@ -4,10 +4,10 @@
 #'
 #' @examples
 #' gage$gage_id <- 11427000
-#' gage <- ffcAPIClient::USGSGage$new()
+#' gage <- ffcAPIClient::USGSGagedev$new()
 #' gage$gage_id <- 11427000
 #' gage$get_data()
-#' gage$get_comid_for_gage()
+#' gage$get_comid()
 #' gage$comid
 #' [1] 14996611
 #' ffcAPIClient::get_predicted_flow_metrics(gage$comid)
@@ -112,21 +112,10 @@ USGSGage <- R6::R6Class("USGSGage", list(
   #' attributes must be set before running this. latitude and longitude can be set manually,
   #' or by running get_data().
   #'
-  get_comid_for_gage = function(){
+  get_comid = function(){
     self$validate(latlong=TRUE)
 
-    if(length(nhdR::nhd_plus_list(vpu=18)) == 0){  # checks if the NHDPlus Data has already been downloaded
-      nhdR::nhd_plus_get(vpu=18)  # downloads and caches it for use
-    }
-
-    # This does all the spatial stuff for us automatically - basically does a spatial join at this gage's
-    # latitude and longitude to find the stream segments within 100 meters. Then we'll pull the COMIDs
-    spatial_qry <- nhdR::nhd_plus_query(self$longitude,
-                                self$latitude,
-                                dsn = c("NHDFlowline"),
-                                buffer_dist = units::as_units(100, "m"))
-
-    self$comid <- spatial_qry$sp$NHDFlowline[1]$COMID  # gets the first COMID returned
+    self$comid <- get_comid_for_long_lat(self$longitude, self$latitude)
     invisible(self)  # return itself invisibly, but after setting the COMID
   },
 
