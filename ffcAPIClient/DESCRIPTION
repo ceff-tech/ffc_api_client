@@ -20,4 +20,6 @@ Imports:
     dataRetrieval,
     lubridate,
     R6,
+    nhdR,
+    units
 RoxygenNote: 7.0.2
