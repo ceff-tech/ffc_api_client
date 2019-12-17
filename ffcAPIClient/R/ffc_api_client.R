@@ -187,6 +187,8 @@ get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date)
 #' @param gage_id integer. The USGS Gage ID value for the gage you want to return timeseries data for
 #'
 #' @return list. Functional Flow Calculator results
+#'
+#' @export
 get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
   if(missing(start_date)){
     start_date = "10/1"  # default to the beginning of the water year
