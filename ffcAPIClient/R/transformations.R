@@ -35,8 +35,8 @@ plot_drh <- function(results, output_path){
     ggplot2::geom_ribbon(data=drh_data, ggplot2::aes(x=days, ymin=ten, ymax=ninty), fill="skyblue", alpha=0.3) +
     ggplot2::geom_ribbon(data=drh_data, ggplot2::aes(x=days, ymin=twenty_five, ymax=seventy_five), fill="slateblue", alpha=0.3) +
     ggplot2::geom_line(data=drh_data, ggplot2::aes(x=days, y=fifty), color="black", lwd=1.2) +
-    ggplot2::theme_classic(base_family = "Roboto Condensed") +
-    ggplot2::labs(title="Dimensionless Hydrograph", x="Julian Day",
+    ggplot2::theme_classic() +
+    ggplot2::labs(title="Dimensionless Hydrograph", x="Water Year Day",
          y="Daily median flow / Avg annual flow",
          caption="Daily median flow with 10/90 percentiles (light blue), and 25/75 percentiles in purple")
 
