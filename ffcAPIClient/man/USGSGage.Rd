@@ -8,7 +8,7 @@ This class retrieves data for a USGS gage.
 }
 \examples{
 gage$gage_id <- 11427000
-gage <- ffcAPIClient::USGSGagedev$new()
+gage <- ffcAPIClient::USGSGage$new()
 gage$gage_id <- 11427000
 gage$get_data()
 gage$get_comid()

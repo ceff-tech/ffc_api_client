@@ -46,3 +46,132 @@ plot_drh <- function(results, output_path){
 
   return(drh_plot)
 }
+
+merge_list <- function(df1, df2){
+  return(merge(df1, df2, by="Year"))
+}
+
+#' Convert FFC results list to data frame with metric names
+#'
+#' More documentation forthcoming
+#'
+#' @export
+get_results_as_df <- function (results){
+  main_items <- c("summer", "fall", "spring", "fallWinter")
+  winter_timings <- c("timings", "durations", "magnitudes", "frequencys")
+
+  results_main <- mapply(convert_season_to_df, main_items, MoreArgs=list(all_data=results, rename_metrics=rename_by_metric, yearRanges=results$yearRanges))
+  results_main_df <- Reduce(merge_list, results_main)
+
+  results_winter <- mapply(convert_season_to_df, winter_timings, MoreArgs=list(all_data=results$winter, rename_metrics=rename_by_metric$winter, yearRanges=results$yearRanges))
+  results_winter_df <- Reduce(merge_list, results_winter)
+
+  return(merge(results_main_df, results_winter_df, by="Year"))
+}
+
+
+convert_season_to_df <- function(season, all_data, rename_metrics, yearRanges){
+  print(season)
+  if(missing(rename_metrics)){
+    rename_metrics <- FALSE
+    do_rename <- FALSE
+  }else{  # if it's not messing, take the appropriate item from rename_metrics
+    rename_metrics <- rename_metrics[[season]]
+    do_rename <- TRUE
+  }
+
+  season <- all_data[[season]]
+
+  # not using same approach as DRH because of null values - maybe both need to use this though???
+  output_data <- t(data.table::rbindlist(season, use.names=FALSE))
+  colnames(output_data) <- names(season)
+  rownames(output_data) <- yearRanges
+  output_data <- data.frame(output_data)
+
+  if(do_rename){
+    output_data <- rename_df_to_metrics(output_data, rename_metrics)
+  }
+
+  # do this after the field rename
+  output_data["Year"] <- rownames(output_data)  # set the year explicitly so we can merge later
+
+  return(output_data)
+}
+
+
+rename_df_to_metrics <- function(dataframe, rename_metrics){
+  keys <- names(rename_metrics)
+  values <- unlist(rename_metrics)
+  map <- setNames(values, keys)  # make the map that we'll use to replace the values
+  current_column_names <- colnames(dataframe)  # get the FFC's column names
+  current_column_names[] <- map[current_column_names]  # translate them to the metric names
+  colnames(dataframe) <- current_column_names  # assign the translated names back to the columns
+  return(dataframe)
+}
+
+rename_by_metric <- list(
+  "summer" = list(
+    "timings" = "DS_Tim_Julian",
+    "durations_wet" = "DS_Dur_WS",
+    "timings_water" = "DS_Tim",
+    "no_flow_counts" = "__summer_no_flow_counts",
+    "durations_flush" = "__summer_durations_flush",
+    "magnitudes_fifty" = "DS_Mag_50",
+    "magnitudes_ninety" = "DS_Mag_90"
+  ),
+  "winter" = list(
+    "timings" = list(
+      "ten" = "Peak_Tim_10_Julian",
+      "two" = "Peak_Tim_50_Julian",
+      "five" = "Peak_Tim_20_Julian",
+      "fifty" = "Peak_Tim_2_Julian",
+      "twenty" = "Peak_Tim_5_Julian",
+      "ten_water" = "Peak_Tim_10",
+      "two_water" = "Peak_Tim_50",
+      "five_water" = "Peak_Tim_20",
+      "fifty_water" = "Peak_Tim_2",
+      "twenty_water" = "Peak_Tim_5"
+    ),
+    "durations" =list(
+      "ten" = "Peak_Dur_10",
+      "two" = "Peak_Dur_50",
+      "five" = "Peak_Dur_20",
+      "fifty" = "Peak_Dur_2",
+      "twenty" = "Peak_Dur_5"
+    ),
+    "magnitudes" = list(
+      "ten" = "Peak_10",
+      "two" = "Peak_50",
+      "five" = "Peak_20",
+      "fifty" = "Peak_2",
+      "twenty" = "Peak_5"
+    ),
+    "frequencys" = list(
+      "ten" = "Peak_Fre_10",
+      "two" = "Peak_Fre_50",
+      "five" = "Peak_Fre_20",
+      "fifty" = "Peak_Fre_2",
+      "twenty" = "Peak_Fre_5"
+    )
+  ),
+  "fall" = list(
+    "timings" = "FA_Dur_Julian",
+    "durations" = "FA_Dur",
+    "magnitudes" = "FA_Mag",
+    "wet_timings" = "Wet_Tim_Julian",
+    "timings_water" = "FA_Tim",
+    "wet_timings_water" = "Wet_Tim"
+  ),
+  "spring" = list(
+    "rocs" = "SP_ROC",
+    "timings" = "SP_Tim_Julian",
+    "durations" = "SP_Dur",
+    "magnitudes" = "SP_Mag",
+    "timings_water" = "SP_Tim"
+  ),
+  "fallWinter" = list(
+    "bfl_durs" = "Wet_BFL_Dur",
+    "baseflows_10" = "Wet_BFL_Mag_10",
+    "baseflows_50" = "Wet_BFL_Mag_50"
+  )
+)
