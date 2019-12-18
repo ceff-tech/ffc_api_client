@@ -47,9 +47,6 @@ plot_drh <- function(results, output_path){
   return(drh_plot)
 }
 
-merge_list <- function(df1, df2){
-  return(merge(df1, df2, by="Year"))
-}
 
 #' Convert FFC results list to data frame with metric names
 #'
@@ -67,6 +64,33 @@ get_results_as_df <- function (results){
   results_winter_df <- Reduce(merge_list, results_winter)
 
   return(merge(results_main_df, results_winter_df, by="Year"))
+}
+
+
+get_percentiles <- function(results_df, percentiles){
+  if(missing(percentiles)){
+    percentiles <- c(0.1, 0.25, 0.5, 0.75, 0.9)
+  }
+  metrics_list <- list()
+  for (metric in colnames(results_df)){
+    if (metric == "Year"){
+      next
+    }
+    metrics_list[[metric]] = quantile(results_df[metric], probs=percentiles, na.rm=TRUE, names=TRUE, type=8)
+  }
+  output_data <- t(data.frame(metrics_list))
+  colnames(output_data) <- percentiles * 100
+  output_data["Metric"] <- rownames(output_data)
+  return(output_data)
+
+}
+
+
+#' Merges Data Frames by Year Column
+#'
+#' Just a simple function that can be used with Reduce to merge multiple data frames together by year
+merge_list <- function(df1, df2){
+  return(merge(df1, df2, by="Year"))
 }
 
 
@@ -109,6 +133,11 @@ rename_df_to_metrics <- function(dataframe, rename_metrics){
   return(dataframe)
 }
 
+# The following item maps the names of JSON list items coming out of the FFC to the actual metric names
+# In cases where there's no matching metric (such as the Julian Day calcs), it uses the nearest metric name
+# and appends the change (such as DS_Tim, the real metric, vs. DS_Tim_Julian, the FFC only calculation).
+# in a few cases, there was no equivalent match (no_flow_counts), so those were renamed with a seasonal
+# prefix so they are traced back, but do not follow the same naming schema/formula.
 rename_by_metric <- list(
   "summer" = list(
     "timings" = "DS_Tim_Julian",
