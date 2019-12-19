@@ -120,6 +120,12 @@ USGSGage <- R6::R6Class("USGSGage", list(
   },
 
   get_predicted_metrics = function(){
+    if(is.na(self$comid)){
+      self$get_comid()
+    }
+    if(is.na(self$comid)){
+      stop("Unable to get COMID for gage. Set gage$comid manually before running")
+    }
     return(get_predicted_flow_metrics(self$comid))
   }
 ))

@@ -197,3 +197,18 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
   flows_df <- get_usgs_gage_data(gage_id)
   return(get_ffc_results_for_df(flows_df, start_date=start_date))
 }
+
+#' @export
+evaluate_gage_alteration<- function (gage_id, token){
+  set_token(token)
+  gage <- USGSGage$new()
+  gage$gage_id <- gage_id
+  gage$get_data()
+  predictions_df <- gage$get_predicted_metrics()
+
+  ffc_results <- get_ffc_results_for_df(gage$timeseries_data)
+  results_df <- get_results_as_df(ffc_results)
+  percentiles <- get_percentiles(results_df)
+  plot_comparison_boxes(percentiles, predictions_df)
+
+}

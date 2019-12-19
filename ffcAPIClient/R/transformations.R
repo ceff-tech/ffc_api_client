@@ -67,6 +67,32 @@ get_results_as_df <- function (results){
 }
 
 
+plot_comparison_boxes <- function(ffc_results_df, predictions_df){ #, ){
+  groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
+
+  ffc_results_df["result_type"] <- "observed"
+  predictions_df["result_type"] <- "predicted"
+
+  drop_cols <- c("COMID", "source")
+  predictions_df <- dplyr::select(predictions_df, -dplyr::one_of(drop_cols))
+
+  full_df <- rbind(ffc_results_df, predictions_df)
+
+  full_df <- dplyr::filter(full_df, !grepl("_Julian", Metric))
+  full_df <- dplyr::filter(full_df, !grepl("X__", Metric))
+
+  for(group in groups){
+    metrics <- dplyr::filter(full_df, grepl(group, Metric))
+    plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=Metric, fill=result_type))  +
+      ggplot2::geom_boxplot(
+        ggplot2::aes(ymin = p10, lower = p25, middle = p50, upper = p75, ymax = p90),
+        stat = "identity"
+      )
+    show(plt)
+  }
+}
+
+
 get_percentiles <- function(results_df, percentiles){
   if(missing(percentiles)){
     percentiles <- c(0.1, 0.25, 0.5, 0.75, 0.9)
@@ -79,7 +105,8 @@ get_percentiles <- function(results_df, percentiles){
     metrics_list[[metric]] = quantile(results_df[metric], probs=percentiles, na.rm=TRUE, names=TRUE, type=8)
   }
   output_data <- t(data.frame(metrics_list))
-  colnames(output_data) <- percentiles * 100
+  colnames(output_data) <- paste("p", percentiles * 100, sep="")
+  output_data <- as.data.frame(output_data)
   output_data["Metric"] <- rownames(output_data)
   return(output_data)
 
