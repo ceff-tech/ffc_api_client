@@ -32,7 +32,7 @@
 NULL
 
 pkg.env <- new.env(parent=emptyenv())  # set up a new environment to store the token
-pkg.env$TOKEN <- "" # initialize the empty token
+pkg.env$TOKEN <- NA # initialize the empty token
 pkg.env$SERVER_URL <- 'https://eflows.ucdavis.edu/api/'
 
 #' Set Eflows Website Access Token
@@ -70,6 +70,10 @@ make_flow_json <- function(flows_df, flow_field, date_field){
 
 #' Prepares the JSON payload to send to the eflows website.
 make_json <- function(data_json, start_date, token, extra){
+  if(is.na(token)){
+    stop("Token must be set using set_token(your_token_value) before sending data to FFC API. See README or documentation
+         for more information on setting the token.")
+  }
   flows_json <- paste('{"ff_jwt":"', token, '"', data_json, ', "start_date": "', start_date, '"', extra, '}', sep="")
   return(flows_json)
 }
