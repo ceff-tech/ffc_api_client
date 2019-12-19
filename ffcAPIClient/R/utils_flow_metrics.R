@@ -18,8 +18,10 @@ get_predicted_flow_metrics <- function(com_id){
 
 #' @export
 get_comid_for_long_lat <- function(longitude, latitude){
-  if(length(nhdR::nhd_plus_list(vpu=18)) == 0){  # checks if the NHDPlus Data has already been downloaded
-    nhdR::nhd_plus_get(vpu=18)  # downloads and caches it for use
+  if(length(nhdR::nhd_plus_list(vpu=18)) < 20){  # checks if the NHDPlus Data has already been downloaded
+    # if there aren't at least 20 items (which is what it returns as of 2019/12/19), then the download might
+    # be incomplete and we should forcibly have nhdR correct itself.
+    nhdR::nhd_plus_get(vpu = 18, force_dl = TRUE, force_unzip = TRUE)  # downloads and caches it for use
   }
 
   # This does all the spatial stuff for us automatically - basically does a spatial join at this gage's
