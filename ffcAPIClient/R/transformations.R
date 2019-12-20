@@ -41,6 +41,7 @@ plot_drh <- function(results, output_path){
          caption="Daily median flow with 10/90 percentiles (light blue), and 25/75 percentiles in purple")
 
   if(!is.null(output_path)){
+    print(paste("Saving DRH to", output_path))
     ggplot2::ggsave(filename = output_path, width = 7, height = 5, units = "in", dpi=300)
   }
 
