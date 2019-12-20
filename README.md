@@ -72,9 +72,11 @@ drh_plot  # display the plot
 ```
 ![Dimensionless Reference Hydrograph (DRH) plot](sample_drh.png)
 
+There is quite a bit more functionality available that we're working on documenting here and in the package still. Look for that soon!
+
 ## Predicted Flow Metrics
-I'm working to get the code to a state to compare the percentiles generated from the observed data
-and the percentiles predicted by modeling. As part of this, the code includes the full results
+This package compares the percentiles generated from the observed data
+and the percentiles predicted by modeling. As part of this functionality, the code includes the full results
 of the modeling output as a data frame accessible in `ffcAPIClient::flow_metrics`. More practically,
 if you have a variable `com_id` that stores an NHD stream segment identifier (COMID), then you
 can also use `ffcAPIClient::get_predicted_flow_metrics(com_id)` to retrieve a data frame with
