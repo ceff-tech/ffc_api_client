@@ -210,9 +210,30 @@ evaluate_gage_alteration<- function (gage_id, token){
   gage$get_data()
   predictions_df <- gage$get_predicted_metrics()
 
-  ffc_results <- get_ffc_results_for_df(gage$timeseries_data)
+  evaluate_timeseries_alteration(gage$timeseries_data, predictions_df)
+}
+
+#' @export
+evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude){
+  if(is.na(comid) && (is.na(longitude) || is.na(latitude))){
+    stop("Must provide either segment comid or *both* longitude and latitude to evaluate alteration. One of these
+         is needed in order to look up predicted metrics for this location")
+  }
+
+  if(is.na(comid)){  # now, if comid is null, we definitely have both latitude and longitude, so just get the COMID
+    comid <- get_comid_for_long_lat(longitude, latitude)
+  }
+
+  set_token(token)
+  predicted_flow_metrics <- get_predicted_flow_metrics(comid)
+  evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics)
+}
+
+
+evaluate_timeseries_alteration(timeseries_data, predictions_df){
+  ffc_results <- get_ffc_results_for_df(timeseries_data)
   results_df <- get_results_as_df(ffc_results)
   percentiles <- get_percentiles(results_df)
   plot_comparison_boxes(percentiles, predictions_df)
-
 }
+
