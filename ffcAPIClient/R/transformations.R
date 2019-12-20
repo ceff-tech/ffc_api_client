@@ -87,14 +87,17 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
 
   for(group in groups){
     metrics <- dplyr::filter(full_df, grepl(group, Metric))
-    plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=Metric, fill=result_type))  +
+    group_plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=Metric, fill=result_type))  +
       ggplot2::geom_boxplot(
         ggplot2::aes(ymin = p10, lower = p25, middle = p50, upper = p75, ymax = p90),
         stat = "identity"
       )
-    show(plt)
+    show(group_plt)
     if(!is.null(output_folder)){
-      ggplot2::ggsave(paste(output_folder, "/", group, ".png", sep=""), width = 7, height = 5, units = "in", dpi=300)
+      group_name <- sub("_\\d", "_", group, fixed=TRUE)  # make it safe - remove the regex filter on the Peak name
+      output_path <- paste(output_folder, "/", group_name, ".png", sep="")
+      print(paste("Writing", output_path))
+      ggplot2::ggsave(output_path, plot=group_plt, width = 7, height = 5, units = "in", dpi=300)
     }
   }
 }
