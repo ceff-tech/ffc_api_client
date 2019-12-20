@@ -1,11 +1,14 @@
 # Simple Functional Flows Calculator API client
-This is a quick take on using the eflows.ucdavis.edu API instead of installing the Python
-calculator code on a local machine. Setup is simple - the R code will install any missing
-packages when run, and all you need is to retrieve a token from your account on eflows.ucdavis.edu
-
-Check out examples.Rmd to see the usage of this code - right now it can send a data frame to
-the API for processing, retrieve the results, and process the DRH data into an R data frame.
-Other processing that interfaces with the Colorado School of Mines code could be added easily.
+This package is designed to:
+1. Process data through the online functional flows calculator
+2. Transform that data and return plots of the Dimensionless Reference Hydrograph (DRH) as well as boxplots showing
+  the observed versus predicted percentile values for each metric.
+3. Have shortcut functions that handle all of this, while exposing the internals so you can access useful intermediate
+  products, such as the functional flows calculator results as an R dataframe, in case you need to do more
+  complex analysis.
+  
+It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
+segment COMID or longitude and latitude (it will look up the COMID for you). See Setup and Examples below for more.
 
 ## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
@@ -20,16 +23,6 @@ That's it. You can now run data through the ffc using the online calculator. Mak
 code to work correctly!
 
 ## Usage Examples
-This package is designed to:
-1. Process data through the online functional flows calculator
-2. Transform that data and return plots of the Dimensionless Reference Hydrograph (DRH) as well as boxplots showing
-  the observed versus predicted percentile values for each metric.
-3. Have shortcut functions that handle all of this, while exposing the internals so you can access useful intermediate
-  products, such as the functional flows calculator results as an R dataframe, in case you need to do more
-  complex analysis.
-  
-It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
-segment COMID or longitude and latitude (it will look up the COMID for you).
 
 ### Easy-mode examples
 ```r
@@ -117,9 +110,7 @@ segment on the North Yuba:
 ```
 
 ## Considerations
-This code was written to avoid setup headaches associated with getting the existing code set up on many
-machines and enable many people to use it. That said, it's not as feature-complete, and may be slower than
-running everything on your own computer. It could be slow if you have run many items through the calculator in
+This package could be slow if you have run many items through the calculator in
 the web interface since it currently retrieves *all* results every time you want to get a single result.
 If you delete those results in the web interface at eflows.ucdavis.edu, then this code will be faster.
 This package cleans up after itself and won't leave behind runs you execute with this code.
