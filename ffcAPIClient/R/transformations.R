@@ -66,7 +66,7 @@ get_results_as_df <- function (results){
   return(merge(results_main_df, results_winter_df, by="Year"))
 }
 
-
+#' @export
 plot_comparison_boxes <- function(ffc_results_df, predictions_df){ #, ){
   groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
 
@@ -92,7 +92,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df){ #, ){
   }
 }
 
-
+#' @export
 get_percentiles <- function(results_df, percentiles){
   if(missing(percentiles)){
     percentiles <- c(0.1, 0.25, 0.5, 0.75, 0.9)
@@ -122,7 +122,6 @@ merge_list <- function(df1, df2){
 
 
 convert_season_to_df <- function(season, all_data, rename_metrics, yearRanges){
-  print(season)
   if(missing(rename_metrics)){
     rename_metrics <- FALSE
     do_rename <- FALSE
