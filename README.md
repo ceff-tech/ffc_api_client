@@ -20,8 +20,38 @@ That's it. You can now run data through the ffc using the online calculator. Mak
 code to work correctly!
 
 ## Usage Examples
+This package is designed to:
+1. Process data through the online functional flows calculator
+2. Transform that data and return plots of the Dimensionless Reference Hydrograph (DRH) as well as boxplots showing
+  the observed versus predicted percentile values for each metric.
+3. Have shortcut functions that handle all of this, while exposing the internals so you can access useful intermediate
+  products, such as the functional flows calculator results as an R dataframe, in case you need to do more
+  complex analysis.
+  
+It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
+segment COMID or longitude and latitude (it will look up the COMID for you).
 
-### Basic Example with Fake Data
+### Easy-mode examples
+```r
+# If you have a gage and a token, you can get all results simply by running
+ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+# output_folder is optional. When provided, it will save plots there. It will show plots regardless.
+
+If you have a data frame with flow and date fields that isn't a gage, you can run
+ffcAPIClient::evaluate_gage_alteration(timeseries_df = your_df, token = "your_token", output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+# it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
+# longitude and latitude arguments.
+
+```
+Both of these functions plot results immediately and optionally save the plots to the output folder. They
+also return a list with keys `ffc_results_df`, `percentiles`, and `drh`, so you can access the transformed
+data directly for additional calculations.
+* `ffc_results_df` includes the raw data from the functional flows calculator for each flow metric by 
+   day of water year. 
+* `percentiles` includes the calculated 10th, 25th, 50th, 75th, and 90th percentiles for each metric
+* `drh` contains the raw DRH data with columns for percentiles and rows for days of water year.
+
+### Examples Using the DRH Only
 
 ```r
 # Initialize a Run

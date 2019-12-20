@@ -203,37 +203,60 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
 }
 
 #' @export
-evaluate_gage_alteration<- function (gage_id, token){
+evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
+  if(missing(plot_output_folder)){
+    plot_output_folder <- NULL
+  }
+
   set_token(token)
   gage <- USGSGage$new()
   gage$gage_id <- gage_id
   gage$get_data()
   predictions_df <- gage$get_predicted_metrics()
 
-  evaluate_timeseries_alteration(gage$timeseries_data, predictions_df)
+  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, predictions_df, plot_output_folder)
+  return(results_list)
 }
 
 #' @export
-evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude){
-  if(is.na(comid) && (is.na(longitude) || is.na(latitude))){
+evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder){
+  if(missing(plot_output_folder)){
+    plot_output_folder <- NULL
+  }
+
+  if(missing(comid) && (missing(longitude) || missing(latitude))){
     stop("Must provide either segment comid or *both* longitude and latitude to evaluate alteration. One of these
          is needed in order to look up predicted metrics for this location")
   }
 
-  if(is.na(comid)){  # now, if comid is null, we definitely have both latitude and longitude, so just get the COMID
+  if(missing(comid)){  # now, if comid is null, we definitely have both latitude and longitude, so just get the COMID
     comid <- get_comid_for_long_lat(longitude, latitude)
-  }
+  }  # and if comid isn't null, then we already have it to proceed
 
   set_token(token)
   predicted_flow_metrics <- get_predicted_flow_metrics(comid)
-  evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics)
+  results_list <- evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics, plot_output_folder)
+  return(results_list)
 }
 
 
-evaluate_timeseries_alteration(timeseries_data, predictions_df){
+evaluate_timeseries_alteration(timeseries_data, predictions_df, plot_output_folder){
+  if(missing(plot_output_folder)){
+    plot_output_folder <- NULL
+    drh_output_path <- NULL
+  }else{
+    drh_output_path <- paste(plot_output_folder, "drh.png", sep="/")
+  }
+
   ffc_results <- get_ffc_results_for_df(timeseries_data)
+  plot_drh(ffc_results, output_path = drh_output_path)
   results_df <- get_results_as_df(ffc_results)
   percentiles <- get_percentiles(results_df)
-  plot_comparison_boxes(percentiles, predictions_df)
+  plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
+  return(list(
+    "ffc_results_df" = results_df,
+    "percentiles" = percentiles,
+    "drh_data" = get_drh(ffc_results)
+  ))
 }
 

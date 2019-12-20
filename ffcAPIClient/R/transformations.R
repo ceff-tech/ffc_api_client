@@ -67,7 +67,11 @@ get_results_as_df <- function (results){
 }
 
 #' @export
-plot_comparison_boxes <- function(ffc_results_df, predictions_df){ #, ){
+plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder){ #, ){
+  if(missing(output_folder)){
+    output_folder <- NULL
+  }
+
   groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
 
   ffc_results_df["result_type"] <- "observed"
@@ -89,6 +93,9 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df){ #, ){
         stat = "identity"
       )
     show(plt)
+    if(!is.null(output_folder)){
+      ggplot2::ggsave(paste(output_folder, "/", group, ".png", sep=""), width = 7, height = 5, units = "in", dpi=300)
+    }
   }
 }
 
