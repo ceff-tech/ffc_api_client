@@ -2,7 +2,6 @@
 #'
 #' This class retrieves data for a USGS gage.
 #'
-#' @examples
 #' #library(ffcAPIClient)
 #' #gageid <- 11427000
 #' #gage <- USGSGage$new()
