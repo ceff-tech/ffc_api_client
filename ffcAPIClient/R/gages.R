@@ -3,7 +3,6 @@
 #' This class retrieves data for a USGS gage.
 #'
 #' @examples
-#' gage$gage_id <- 11427000
 #' gage <- ffcAPIClient::USGSGage$new()
 #' gage$gage_id <- 11427000
 #' gage$get_data()
@@ -115,7 +114,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
   get_comid = function(){
     self$validate(latlong=TRUE)
 
-    self$comid <- get_comid_for_long_lat(self$longitude, self$latitude)
+    self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
     invisible(self)  # return itself invisibly, but after setting the COMID
   },
 

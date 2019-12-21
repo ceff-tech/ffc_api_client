@@ -230,7 +230,7 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   }
 
   if(missing(comid)){  # now, if comid is null, we definitely have both latitude and longitude, so just get the COMID
-    comid <- get_comid_for_long_lat(longitude, latitude)
+    comid <- get_comid_for_lon_lat(longitude, latitude)
   }  # and if comid isn't null, then we already have it to proceed
 
   set_token(token)
