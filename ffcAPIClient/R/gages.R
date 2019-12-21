@@ -2,15 +2,15 @@
 #'
 #' This class retrieves data for a USGS gage.
 #'
-#' @examples
-#' gage$gage_id <- 11427000
-#' gage <- ffcAPIClient::USGSGage$new()
-#' gage$gage_id <- 11427000
-#' gage$get_data()
-#' gage$get_comid()
-#' gage$comid
+#' #library(ffcAPIClient)
+#' #gageid <- 11427000
+#' #gage <- USGSGage$new()
+#' #gage$gage_id <- gageid
+#' #gage$get_data()
+#' #gage$get_comid()
+#' #gage$comid
 #' [1] 14996611
-#' ffcAPIClient::get_predicted_flow_metrics(gage$comid)
+#' #ffcAPIClient::get_predicted_flow_metrics(gage$comid)
 #'                 Metric    COMID          p10          p25        p50          p75          p90 source
 #' 70804        DS_Dur_WS 14996611 1.051875e+02 1.273438e+02   154.0625 1.785563e+02 1.953908e+02  model
 #' 211050       DS_Mag_50 14996611 4.998793e+01 6.732828e+01   104.4028 1.464183e+02 1.882733e+02  model
@@ -115,7 +115,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
   get_comid = function(){
     self$validate(latlong=TRUE)
 
-    self$comid <- get_comid_for_long_lat(self$longitude, self$latitude)
+    self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
     invisible(self)  # return itself invisibly, but after setting the COMID
   },
 
