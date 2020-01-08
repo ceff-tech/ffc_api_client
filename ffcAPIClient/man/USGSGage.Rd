@@ -6,15 +6,16 @@
 \description{
 This class retrieves data for a USGS gage.
 }
-\examples{
-gage$gage_id <- 11427000
-gage <- ffcAPIClient::USGSGage$new()
-gage$gage_id <- 11427000
-gage$get_data()
-gage$get_comid()
-gage$comid
+\details{
+#library(ffcAPIClient)
+#gageid <- 11427000
+#gage <- USGSGage$new()
+#gage$gage_id <- gageid
+#gage$get_data()
+#gage$get_comid()
+#gage$comid
 [1] 14996611
-ffcAPIClient::get_predicted_flow_metrics(gage$comid)
+#ffcAPIClient::get_predicted_flow_metrics(gage$comid)
                 Metric    COMID          p10          p25        p50          p75          p90 source
 70804        DS_Dur_WS 14996611 1.051875e+02 1.273438e+02   154.0625 1.785563e+02 1.953908e+02  model
 211050       DS_Mag_50 14996611 4.998793e+01 6.732828e+01   104.4028 1.464183e+02 1.882733e+02  model
@@ -40,7 +41,6 @@ ffcAPIClient::get_predicted_flow_metrics(gage$comid)
 2459762 Wet_BFL_Mag_10 14996611 1.519943e+02 1.960031e+02   278.2581 4.384614e+02 5.489183e+02  model
 2600008 Wet_BFL_Mag_50 14996611 4.148992e+02 5.902507e+02   924.1728 1.175461e+03 1.426576e+03  model
 2740254        Wet_Tim 14996611 4.937500e+01 5.905000e+01    73.0000 8.835625e+01 1.035083e+02  model
-
 }
 \section{Methods}{
 \subsection{Public methods}{
