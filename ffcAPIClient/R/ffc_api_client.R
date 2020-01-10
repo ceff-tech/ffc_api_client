@@ -239,7 +239,7 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   return(results_list)
 }
 
-
+#'@export
 evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plot_output_folder){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
