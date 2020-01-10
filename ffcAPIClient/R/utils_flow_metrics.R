@@ -13,7 +13,7 @@
 #' @export
 get_predicted_flow_metrics <- function(com_id){
   fm_data_env <- new.env()
-  data("flow_metrics", envir=fm_data_env)
+  data("flow_metrics", envir=fm_data_env, package="ffcAPIClient")
   flow_metrics <- get("flow_metrics", envir=fm_data_env)
   return(flow_metrics[flow_metrics$COMID == com_id, ])
 }
