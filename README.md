@@ -31,9 +31,10 @@ ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token",
 # output_folder is optional. When provided, it will save plots there. It will show plots regardless.
 
 # If you have a data frame with flow and date fields that isn't a gage, you can run
-ffcAPIClient::evaluate_timeseries_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration")
+ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration", comid=yoursegmentcomid)
 # it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
 # longitude and latitude arguments.
+# Make sure that dates are in the same format as the FFC requires on its website. We may add reformatting in the future
 
 ```
 Both of these functions plot results immediately and optionally save the plots to the output folder. They
