@@ -54,7 +54,11 @@ plot_drh <- function(results, output_path){
 #' More documentation forthcoming
 #'
 #' @export
-get_results_as_df <- function (results){
+get_results_as_df <- function (results, drop_fields){
+  if(missing(drop_fields)){
+    drop_fields <- c("Peak_Tim_20", "Peak_Tim_50", "Peak_Dur_50", "Peak_Dur_20", "Peak_Fre_50", "Peak_Fre_20", "Peak_50", "Peak_20")
+  }
+
   main_items <- c("summer", "fall", "spring", "fallWinter")
   winter_timings <- c("timings", "durations", "magnitudes", "frequencys")
 
@@ -63,6 +67,8 @@ get_results_as_df <- function (results){
 
   results_winter <- mapply(convert_season_to_df, winter_timings, MoreArgs=list(all_data=results$winter, rename_metrics=rename_by_metric$winter, yearRanges=results$yearRanges))
   results_winter_df <- Reduce(merge_list, results_winter)
+
+  results_winter_df <- dplyr::select(results_winter_df, -dplyr::one_of(drop_fields))  # drop the extra Peak Fields by default, or whatever fields are supplied.
 
   return(merge(results_main_df, results_winter_df, by="Year"))
 }
@@ -136,7 +142,7 @@ convert_season_to_df <- function(season, all_data, rename_metrics, yearRanges){
   if(missing(rename_metrics)){
     rename_metrics <- FALSE
     do_rename <- FALSE
-  }else{  # if it's not messing, take the appropriate item from rename_metrics
+  }else{  # if it's not missing, take the appropriate item from rename_metrics
     rename_metrics <- rename_metrics[[season]]
     do_rename <- TRUE
   }
@@ -175,10 +181,7 @@ rename_df_to_metrics <- function(dataframe, rename_metrics){
 # and appends the change (such as DS_Tim, the real metric, vs. DS_Tim_Julian, the FFC only calculation).
 # in a few cases, there was no equivalent match (no_flow_counts), so those were renamed with a seasonal
 # prefix so they are traced back, but do not follow the same naming schema/formula.
-# IMPORTANTLY: Their winter metrics don't use the same percentile metric naming scheme as the rest of the group
-# so they'll initially make sense below, but then you might think they should be flipped around so that
-# 20 ==> 5 year recurrence like the rest of the CEFF stuff. But that's not what's coming out - it's clear
-# that the numbers indicate recurrence directly and not percentiles.
+
 rename_by_metric <- list(
   "summer" = list(
     "timings" = "DS_Tim_Julian",
@@ -192,36 +195,36 @@ rename_by_metric <- list(
   "winter" = list(
     "timings" = list(
       "ten" = "Peak_Tim_10_Julian",
-      "two" = "Peak_Tim_2_Julian",
-      "five" = "Peak_Tim_5_Julian",
-      "fifty" = "Peak_Tim_50_Julian",
-      "twenty" = "Peak_Tim_20_Julian",
+      "two" = "Peak_Tim_50_Julian",
+      "five" = "Peak_Tim_20_Julian",
+      "fifty" = "Peak_Tim_2_Julian",
+      "twenty" = "Peak_Tim_5_Julian",
       "ten_water" = "Peak_Tim_10",
-      "two_water" = "Peak_Tim_2",
-      "five_water" = "Peak_Tim_5",
-      "fifty_water" = "Peak_Tim_50",
-      "twenty_water" = "Peak_Tim_20"
+      "two_water" = "Peak_Tim_50",
+      "five_water" = "Peak_Tim_20",
+      "fifty_water" = "Peak_Tim_2",
+      "twenty_water" = "Peak_Tim_5"
     ),
     "durations" =list(
       "ten" = "Peak_Dur_10",
-      "two" = "Peak_Dur_2",
-      "five" = "Peak_Dur_5",
-      "fifty" = "Peak_Dur_50",
-      "twenty" = "Peak_Dur_20"
+      "two" = "Peak_Dur_50",
+      "five" = "Peak_Dur_20",
+      "fifty" = "Peak_Dur_2",
+      "twenty" = "Peak_Dur_5"
     ),
     "magnitudes" = list(
       "ten" = "Peak_10",
-      "two" = "Peak_2",
-      "five" = "Peak_5",
-      "fifty" = "Peak_50",
-      "twenty" = "Peak_20"
+      "two" = "Peak_50",
+      "five" = "Peak_20",
+      "fifty" = "Peak_2",
+      "twenty" = "Peak_5"
     ),
     "frequencys" = list(
       "ten" = "Peak_Fre_10",
-      "two" = "Peak_Fre_2",
-      "five" = "Peak_Fre_5",
-      "fifty" = "Peak_Fre_50",
-      "twenty" = "Peak_Fre_20"
+      "two" = "Peak_Fre_50",
+      "five" = "Peak_Fre_20",
+      "fifty" = "Peak_Fre_2",
+      "twenty" = "Peak_Fre_5"
     )
   ),
   "fall" = list(

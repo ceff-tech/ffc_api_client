@@ -49,8 +49,10 @@ get_all_predicted_flow_metrics <- function(db_path){
 
 get_all_raw_predicted_flow_metrics <- function(input_folder){
   # adapted from https://stackoverflow.com/questions/30242065/trying-to-merge-multiple-csv-files-in-r
-  filenames = list.files(path=input_folder, full.names=TRUE)
-  datalist = lapply(filenames, function (x) utils::read.csv(file=x, header=TRUE))
+  filenames <- list.files(path=input_folder, full.names=TRUE)
+  filenames <- filenames[grepl("\\.csv$", filenames)]
+  print(filenames)
+  datalist <- lapply(filenames, function (x) utils::read.csv(file=x, header=TRUE))
   results <- Reduce(function(x,y) rbind(x,y), datalist)
   names(results)[names(results) == 'FFM'] <- 'Metric'  # rename the FFM field to Metric
 
@@ -66,7 +68,8 @@ save_all_predicted_flow_metrics <- function(output_path){
   if(missing(output_path)){
     # we'll make it this way since only the package root is guaranteed to exist here.
     package_root <- system.file(package="ffcAPIClient")
-    output_path <- paste(package_root, "R", "flow_metrics.rda", sep="/")
+    output_path <- paste(package_root, "data", "flow_metrics.rda", sep="/")
+    print(paste("Saving Output to ", output_path))
   }
   flow_metrics <- get_all_raw_predicted_flow_metrics(input_folder="C:/Users/dsx/Dropbox/Code/belleflopt/data/ffm_modeling/Data/NHD FFM predictions")
   save(flow_metrics, file=output_path)
