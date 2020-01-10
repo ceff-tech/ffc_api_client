@@ -26,12 +26,14 @@ code to work correctly!
 
 ### Easy-mode examples
 ```r
+library(ffcAPIClient)  # currently you must call this in the session - it loads some data - we're working to make this not be necessary
+
 # If you have a gage and a token, you can get all results simply by running
 ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
 # output_folder is optional. When provided, it will save plots there. It will show plots regardless.
 
 # If you have a data frame with flow and date fields that isn't a gage, you can run
-ffcAPIClient::evaluate_gage_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+ffcAPIClient::evaluate_timeseries_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration")
 # it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
 # longitude and latitude arguments.
 
@@ -48,6 +50,7 @@ data directly for additional calculations.
 
 ```r
 # Initialize a Run
+library(ffcAPIClient)
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
@@ -61,6 +64,7 @@ plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
 ### Retrieve, calculate, and plot a USGS gage
 This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
 ```r
+library(ffcAPIClient)
 # don't forget to set your token first if you haven't already
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 
@@ -93,14 +97,14 @@ segment on the North Yuba:
 670137          FA_Mag 8058513 1.129055e+02 1.711441e+02   270.44481 4.731658e+02 8.309241e+02  model
 810383          FA_Tim 8058513 7.830000e+00 1.444375e+01    23.46667 3.002500e+01 4.729750e+01  model
 950629         Peak_10 8058513 8.031502e+03 1.316898e+04 19158.34402 2.434368e+04 2.613562e+04  model
-1090875        Peak_20 8058513 5.456749e+03 8.858951e+03 13062.81469 1.348278e+04 1.642180e+04  model
-1231121        Peak_50 8058513 2.903039e+03 4.493501e+03  5484.65786 6.384782e+03 1.405851e+04  model
+1090875        Peak_5 8058513 5.456749e+03 8.858951e+03 13062.81469 1.348278e+04 1.642180e+04  model
+1231121        Peak_2 8058513 2.903039e+03 4.493501e+03  5484.65786 6.384782e+03 1.405851e+04  model
 1355941    Peak_Dur_10 8058513 1.000000e+00 1.000000e+00     1.00000 2.000000e+00 4.000000e+00    obs
-1426661    Peak_Dur_20 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 6.000000e+00    obs
-1497381    Peak_Dur_50 8058513 1.000000e+00 1.000000e+00     4.00000 1.000000e+01 2.900000e+01    obs
+1426661    Peak_Dur_5 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 6.000000e+00    obs
+1497381    Peak_Dur_2 8058513 1.000000e+00 1.000000e+00     4.00000 1.000000e+01 2.900000e+01    obs
 1568101    Peak_Fre_10 8058513 1.000000e+00 1.000000e+00     1.00000 1.000000e+00 2.000000e+00    obs
-1638821    Peak_Fre_20 8058513 1.000000e+00 1.000000e+00     1.00000 2.000000e+00 3.000000e+00    obs
-1709541    Peak_Fre_50 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 5.000000e+00    obs
+1638821    Peak_Fre_5 8058513 1.000000e+00 1.000000e+00     1.00000 2.000000e+00 3.000000e+00    obs
+1709541    Peak_Fre_2 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 5.000000e+00    obs
 1795687         SP_Dur 8058513 4.600000e+01 5.500000e+01    67.86250 8.962500e+01 1.210167e+02  model
 1935933         SP_Mag 8058513 1.338260e+03 1.826367e+03  2632.40321 4.145245e+03 6.601865e+03  model
 2060753         SP_ROC 8058513 3.845705e-02 4.863343e-02     0.06250 8.132020e-02 1.141117e-01    obs
