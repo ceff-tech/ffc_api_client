@@ -26,8 +26,6 @@ code to work correctly!
 
 ### Easy-mode examples
 ```r
-library(ffcAPIClient)  # currently you must call this in the session - it loads some data - we're working to make this not be necessary
-
 # If you have a gage and a token, you can get all results simply by running
 ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
 # output_folder is optional. When provided, it will save plots there. It will show plots regardless.
@@ -50,7 +48,6 @@ data directly for additional calculations.
 
 ```r
 # Initialize a Run
-library(ffcAPIClient)
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
@@ -64,7 +61,6 @@ plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
 ### Retrieve, calculate, and plot a USGS gage
 This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
 ```r
-library(ffcAPIClient)
 # don't forget to set your token first if you haven't already
 ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
 
