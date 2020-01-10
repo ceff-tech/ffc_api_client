@@ -37,8 +37,8 @@ plot_drh <- function(results, output_path){
     ggplot2::geom_line(data=drh_data, ggplot2::aes(x=days, y=fifty), color="black", lwd=1.2) +
     ggplot2::theme_classic() +
     ggplot2::labs(title="Dimensionless Hydrograph", x="Water Year Day",
-         y="Daily median flow / Avg annual flow",
-         caption="Daily median flow with 10/90 percentiles (light blue), and 25/75 percentiles in purple")
+                  y="Daily median flow / Avg annual flow",
+                  caption="Daily median flow with 10/90 percentiles (light blue), and 25/75 percentiles in purple")
 
   if(!is.null(output_path)){
     print(paste("Saving DRH to", output_path))
@@ -175,6 +175,10 @@ rename_df_to_metrics <- function(dataframe, rename_metrics){
 # and appends the change (such as DS_Tim, the real metric, vs. DS_Tim_Julian, the FFC only calculation).
 # in a few cases, there was no equivalent match (no_flow_counts), so those were renamed with a seasonal
 # prefix so they are traced back, but do not follow the same naming schema/formula.
+# IMPORTANTLY: Their winter metrics don't use the same percentile metric naming scheme as the rest of the group
+# so they'll initially make sense below, but then you might think they should be flipped around so that
+# 20 ==> 5 year recurrence like the rest of the CEFF stuff. But that's not what's coming out - it's clear
+# that the numbers indicate recurrence directly and not percentiles.
 rename_by_metric <- list(
   "summer" = list(
     "timings" = "DS_Tim_Julian",
@@ -188,36 +192,36 @@ rename_by_metric <- list(
   "winter" = list(
     "timings" = list(
       "ten" = "Peak_Tim_10_Julian",
-      "two" = "Peak_Tim_50_Julian",
-      "five" = "Peak_Tim_20_Julian",
-      "fifty" = "Peak_Tim_2_Julian",
-      "twenty" = "Peak_Tim_5_Julian",
+      "two" = "Peak_Tim_2_Julian",
+      "five" = "Peak_Tim_5_Julian",
+      "fifty" = "Peak_Tim_50_Julian",
+      "twenty" = "Peak_Tim_20_Julian",
       "ten_water" = "Peak_Tim_10",
-      "two_water" = "Peak_Tim_50",
-      "five_water" = "Peak_Tim_20",
-      "fifty_water" = "Peak_Tim_2",
-      "twenty_water" = "Peak_Tim_5"
+      "two_water" = "Peak_Tim_2",
+      "five_water" = "Peak_Tim_5",
+      "fifty_water" = "Peak_Tim_50",
+      "twenty_water" = "Peak_Tim_20"
     ),
     "durations" =list(
       "ten" = "Peak_Dur_10",
-      "two" = "Peak_Dur_50",
-      "five" = "Peak_Dur_20",
-      "fifty" = "Peak_Dur_2",
-      "twenty" = "Peak_Dur_5"
+      "two" = "Peak_Dur_2",
+      "five" = "Peak_Dur_5",
+      "fifty" = "Peak_Dur_50",
+      "twenty" = "Peak_Dur_20"
     ),
     "magnitudes" = list(
       "ten" = "Peak_10",
-      "two" = "Peak_50",
-      "five" = "Peak_20",
-      "fifty" = "Peak_2",
-      "twenty" = "Peak_5"
+      "two" = "Peak_2",
+      "five" = "Peak_5",
+      "fifty" = "Peak_50",
+      "twenty" = "Peak_20"
     ),
     "frequencys" = list(
       "ten" = "Peak_Fre_10",
-      "two" = "Peak_Fre_50",
-      "five" = "Peak_Fre_20",
-      "fifty" = "Peak_Fre_2",
-      "twenty" = "Peak_Fre_5"
+      "two" = "Peak_Fre_2",
+      "five" = "Peak_Fre_5",
+      "fifty" = "Peak_Fre_50",
+      "twenty" = "Peak_Fre_20"
     )
   ),
   "fall" = list(
