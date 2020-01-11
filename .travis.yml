@@ -1,7 +1,39 @@
 language: r
+
 branches:
   except:
   - packageTest
+  
+
+
+cache:
+  packages: yes
+
+r_packages:
+  - testthat
+  - roxygen2
+  - covr
+
+addons:
+  apt:
+    packages:
+      - gdal-bin
+      - proj-bin
+      - libgdal-dev
+      - libgdal1-dev
+      - libproj-dev
+      - libgeos-dev
+      - r-cran-ncdf4
+      - libv8-3.14-dev
+      - libprotobuf-dev
+      - protobuf-compiler
+      - libudunits2-dev
+      - libnetcdf-dev
+
+repos: 
+  CRAN: https://cran.rstudio.com
+  rforge: http://R-Forge.R-project.org
+
 before_install:
-- cd ffcAPIClient
-- sudo apt-get -y install libudunits2-dev
+  - cd ffcAPIClient
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
