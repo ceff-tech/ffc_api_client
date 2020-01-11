@@ -10,6 +10,8 @@ This package is designed to:
 It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
 segment COMID or longitude and latitude (it will look up the COMID for you). See Setup and Examples below for more.
 
+[![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
+
 ## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
 in your R console, or install the package any way you prefer.
