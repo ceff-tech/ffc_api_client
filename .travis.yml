@@ -8,8 +8,7 @@ branches:
   except:
   - packageTest
 
-cache:
-  packages: yes
+cache: packages
 
 r_packages:
   - testthat
