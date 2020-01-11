@@ -14,6 +14,9 @@ r_packages:
   - roxygen2
   - covr
 
+# quite a bit of this config was taken from https://stackoverflow.com/questions/55126857/resolve-rgdal-package-failing-on-travis-build
+# to try to reduce the long trial and error process of which apt packages I needed for which
+# R packages. Could maybe be pared down a bit to save time/resources.
 addons:
   apt:
     packages:
