@@ -259,3 +259,49 @@ evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plo
   ))
 }
 
+#' FFCProcessor Class
+#'
+#' The new workhorse of the client - this class is meant to bring together the scattershot functions
+#' in other parts of the package so that data can be integrated into a single class with a single
+#' set of tasks. Other functions are likely to be supported for a while (and this may even rely on them),
+#' but long run, much of the code in this file might move into this class, with the shortcut functions
+#' creating this class behind the scenes and returning an instance of this object.
+#'
+#' More details to come, and more examples.
+#'
+#' @export
+FFCProcessor <- R6::R6Class("FFCProcessor", list(
+  token = NA,
+  start_date = NA,
+  stream_class = NA,
+  params = NA,
+  comid = NA,
+  timeseries = NA,
+  gage = NA,
+  ffc_results_df = NA,
+  percentiles = NA,
+  predictions = NA,
+  drh_data = NA,
+  plots = NA,
+  plot_output_folder = NA,
+  alteration = NA,
+
+  get_ffc_results = function(){
+    # TODO - check to make sure we have everything we need first
+    set_token(token)
+    results <- evaluate_timeseries_alteration(timeseries_data = timeseries, predictions_df = predictions)
+    self$drh_data <- results$drh_data
+    self$perecentiles <- results$percentiles
+    ffc_results_df <- results$ffc_results_df
+
+    invisible(self)
+  },
+
+  #' Provides alteration scores
+  #'
+  #' Checks the results against the predictions and returns the appropriate alteration score
+  #'
+  evaluate_alteration = function(){
+
+  }
+))
