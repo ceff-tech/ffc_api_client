@@ -1,10 +1,12 @@
 language: r
 
+notifications:
+  email:
+    - ns-ffc_api_client@maskedmail.net
+
 branches:
   except:
   - packageTest
-  
-
 
 cache:
   packages: yes
