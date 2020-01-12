@@ -1,7 +1,12 @@
+library(ffcAPIClient)  # TODO: The test can't find USGSGage when run via "check" (but works fine via "test") unless
+                        # I include this (won't work with just the package prefix). I'd like to resolve this, but for now,
+                        # this makes the test pass, and tests that use the gage code itself pass, so I'm not super worried about it.
+
 test_that("Gage COMID behaves", {
   gage_id <- 11336000
-  gage <- ffcAPIClient::USGSGage$new()
+  gage <- USGSGage$new()
   gage$id <- gage_id
+
   expect_error(gage$get_comid())  # right now, we use the gage's longitude and latitude to get IDs - need to get data befor we can use those though, so it should fail
 
   gage$get_data()

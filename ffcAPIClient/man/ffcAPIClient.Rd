@@ -9,6 +9,7 @@ flows calculator}
 For now, see the documentation for \code{\link{get_ffc_results_for_df}}
 }
 \examples{
+\dontrun{
 # Example 1
 ## Initialize a Run
 test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
@@ -29,5 +30,5 @@ ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your ow
 results <- ffcAPIClient::get_ffc_results_for_usgs_gage(11427000)
 drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
 drh_plot  # display the plot
-
+}
 }
