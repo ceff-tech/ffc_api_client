@@ -5,7 +5,7 @@
 #' #library(ffcAPIClient)
 #' #gageid <- 11427000
 #' #gage <- USGSGage$new()
-#' #gage$gage_id <- gageid
+#' #gage$id <- gageid
 #' #gage$get_data()
 #' #gage$get_comid()
 #' #gage$comid
@@ -40,7 +40,7 @@
 #' @export
 USGSGage <- R6::R6Class("USGSGage", list(
 
-  gage_id = NA,
+  id = NA,
   comid = NA,  # The COMID of the stream segment this gage is on.
   timeseries_data = NA,
   latitude = NA,
@@ -54,8 +54,8 @@ USGSGage <- R6::R6Class("USGSGage", list(
       latlong = FALSE
     }
 
-    if(is.na(self$gage_id)){
-      stop("Must set gage_id property of USGSGage before calling get_data")
+    if(is.na(self$id)){
+      stop("Must set id property of USGSGage before calling other gage functions")
     }
 
     if(latlong == TRUE && (is.na(self$latitude) || is.na(self$longitude))){
@@ -69,7 +69,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
     self$validate()
 
     # check metadata (flow is 00060, daily mean is 00003)
-    usgs_daily_1 <- dataRetrieval::whatNWISdata(siteNumber=self$gage_id, service='dv',
+    usgs_daily_1 <- dataRetrieval::whatNWISdata(siteNumber=self$id, service='dv',
                              parameterCd = '00060',
                              statCd="00003")
 
@@ -108,7 +108,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
   #' Looks up the COMID for this gage
   #'
   #' This method looks up the COMID for the gage and sets the comid attribute. It does not return
-  #' the COMID. It returns this object for chaining. The gage's gage_id, latitude, and longitude
+  #' the COMID. It returns this object for chaining. The gage's id, latitude, and longitude
   #' attributes must be set before running this. latitude and longitude can be set manually,
   #' or by running get_data().
   #'
@@ -141,7 +141,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
 #' @export
 get_usgs_gage_data <- function(gage_id){
   gage = USGSGage$new()
-  gage$gage_id <- gage_id
+  gage$id <- gage_id
   gage$get_data()
   return(gage$timeseries_data)
 }

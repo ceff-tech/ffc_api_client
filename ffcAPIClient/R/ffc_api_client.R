@@ -210,7 +210,7 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
 
   set_token(token)
   gage <- USGSGage$new()
-  gage$gage_id <- gage_id
+  gage$id <- gage_id
   gage$get_data()
   predictions_df <- gage$get_predicted_metrics()
 

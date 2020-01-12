@@ -13,6 +13,6 @@ get_comid_for_lon_lat(longitude, latitude)
 }
 \description{
 This function returns the COMID associated with a specific USGS gage.
-It can be used to associate gage data with flow metric predictions a 
+It can be used to associate gage data with flow metric predictions a
 stream segment identified with the \code{com_id} input variable.
 }

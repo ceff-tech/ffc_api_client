@@ -10,7 +10,7 @@ This class retrieves data for a USGS gage.
 #library(ffcAPIClient)
 #gageid <- 11427000
 #gage <- USGSGage$new()
-#gage$gage_id <- gageid
+#gage$id <- gageid
 #gage$get_data()
 #gage$get_comid()
 #gage$comid
