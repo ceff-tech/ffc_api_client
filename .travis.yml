@@ -1,5 +1,9 @@
 language: r
 
+# right now, I only want a build to alert if I have actual failures - I know I have warnings and will fix them when I can,
+# but I need to know if something changes and breaks the package.
+warnings_are_errors: false
+
 notifications:
   email:
     - ns-ffc_api_client@maskedmail.net

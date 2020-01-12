@@ -1,3 +1,5 @@
+context("Gages")
+
 library(ffcAPIClient)  # TODO: The test can't find USGSGage when run via "check" (but works fine via "test") unless
                         # I include this (won't work with just the package prefix). I'd like to resolve this, but for now,
                         # this makes the test pass, and tests that use the gage code itself pass, so I'm not super worried about it.

@@ -1,3 +1,4 @@
+context("Package Workflows")
 token = Sys.getenv("EFLOWS_WEBSITE_TOKEN")
 
 test_that("Evaluate Gage Alteration Fails",{
