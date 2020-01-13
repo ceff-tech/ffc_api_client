@@ -1,4 +1,22 @@
-
+#' Assess the alteration of a single flow metric
+#'
+#' Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
+#' whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
+#' an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
+#' in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)
+#'
+#' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
+#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
+#'                     calculated percentile values from the FFC.
+#' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
+#' @param ffc_values vector of raw observed metric values (FFC output) for this metric
+#' @param low_bound_percentile character name of the field in predictions that has the lower bound for normal (default "p10")
+#' @param high_bound_percentile character name of the field in predictions that has the upper bound for normal (default "p90")
+#' @param predicted_proportion numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
+#'                             is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
+#'                             (default "0.2")
+#' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
+#' @export
 single_metric_alteration <- function(metric, percentiles, predictions, ffc_values, low_bound_percentile, high_bound_percentile, prediction_proportion, days_in_water_year){
   if(missing(low_bound)){
     low_bound_percentile = "p10"
@@ -37,6 +55,23 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
   return(determine_status(percentiles, low_bound, high_bound, assessed_observations, metric, days_in_water_year, prediction_proportion))
 }
 
+#' Calculate the alteration status of a flow metric
+#'
+#' This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,
+#' a lower and upper bound, and a set of observations that have already been assessed for whether they're within that lower
+#' or upper bound so that they are -1 for low/early, 0 for within range, and 1 for high/late. They need to already be assessed
+#' because some metrics (*ahem* timing) need their own ways to assess low/high, or early/late
+#'
+#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
+#'                     calculated percentile values from the FFC.
+#' @param low_bound a value that is the lower end of the normal range for this metric - typically the p10 value from predicted metrics
+#' @param high_bound a value that is the upper end of the normal range for this metric - typically the p90 value from predicted metrics
+#' @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
+#'                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
+#' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
+#' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
+#' @param predicted_proportion numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
+#'                             is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
 determine_status <- function(percentiles, low_bound, high_bound, assessed_observations, metric, days_in_water_year, prediction_proportion){
   status_code = 3
   status = "indeterminate"
