@@ -184,6 +184,7 @@ get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date)
   return(get_results_for_name(id))
 }
 
+
 #' Run Gage Data Through the Functional Flows Calculator
 #'
 #' Provided with an integer Gage ID, this function pulls the timeseries data for the
@@ -203,6 +204,7 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
   return(get_ffc_results_for_df(flows_df, start_date=start_date))
 }
 
+
 #' @export
 evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   if(missing(plot_output_folder)){
@@ -219,8 +221,9 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   return(results_list)
 }
 
+
 #' @export
-evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder){
+evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, date_format_string){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
   }
@@ -234,19 +237,33 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
     comid <- get_comid_for_lon_lat(longitude, latitude)
   }  # and if comid isn't null, then we already have it to proceed
 
+  if(missing(date_format_string)){
+    print("Using default date format string of %m/%d/%Y")
+    date_format_string <- "%m/%d/%Y"
+  }
+
   set_token(token)
   predicted_flow_metrics <- get_predicted_flow_metrics(comid)
-  results_list <- evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics, plot_output_folder)
+  results_list <- evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics, plot_output_folder, date_format_string)
   return(results_list)
 }
 
-evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plot_output_folder){
+evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plot_output_folder, date_format_string){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
     drh_output_path <- NULL
   }else{
     drh_output_path <- paste(plot_output_folder, "drh.png", sep="/")
   }
+
+  if(missing(date_format_string)){
+    print("Using default date format string of %m/%d/%Y")
+    date_format_string <- "%m/%d/%Y"
+  }
+
+  timeseries_data <- convert_dates(timeseries_data, date_format_string)  # standardize the dates based on the format string
+  timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
+  timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
 
   ffc_results <- get_ffc_results_for_df(timeseries_data)
   plot_drh(ffc_results, output_path = drh_output_path)
@@ -259,6 +276,13 @@ evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plo
     "drh_data" = get_drh(ffc_results)
   ))
 }
+
+convert_dates <- function(timeseries_data, date_format_string){
+  timeseries_dates <- strptime(as.character(timeseries_data$date), format = date_format_string)
+  timeseries_data$date <- strftime(timeseries_dates, "%m/%d/%Y")
+  return(timeseries_data)
+}
+
 
 #' FFCProcessor Class
 #'
