@@ -20,37 +20,37 @@ test_that("Non-modulo Midpoint Works",{
 # confirm it's being correctly assigned otherwise
 
 test_that("Timing value is in range", {
-  expect_equal(early_or_late(200, 100, 300, days_in_water_year = 365), "within range")
+  expect_equal(early_or_late(200, 100, 300, days_in_water_year = 365), 0)
 })
 
 
 test_that("Late Midpoint Early Timing", {
-  expect_equal(early_or_late(50, 100, 200, days_in_water_year = 365), "early")
+  expect_equal(early_or_late(50, 100, 200, days_in_water_year = 365), -1)
 })
 
 test_that("Late Midpoint Early Timing Rollover", {
-  expect_equal(early_or_late(350, 100, 200, days_in_water_year = 365), "early")
+  expect_equal(early_or_late(350, 100, 200, days_in_water_year = 365), -1)
 })
 
 
 test_that("Late Midpoint Late Timing", {
-  expect_equal(early_or_late(300, 100, 200, days_in_water_year = 365), "late")
+  expect_equal(early_or_late(300, 100, 200, days_in_water_year = 365), 1)
 })
 
 # No possibility for Late Midpoint, Late Timing Rollover
 
 
 test_that("Early Midpoint Early Timing", {
-  expect_equal(early_or_late(65, 100, 350, days_in_water_year = 365), "early")
+  expect_equal(early_or_late(65, 100, 350, days_in_water_year = 365), -1)
 })
 
 # No possibility for early midpoint, early timing rollover
 
 
 test_that("Early Midpoint Late Timing", {
-  expect_equal(early_or_late(50, 150, 325, days_in_water_year = 365), "late")
+  expect_equal(early_or_late(50, 150, 325, days_in_water_year = 365), 1)
 })
 
 test_that("Early Midpoint Late Timing Rollover", {
-  expect_equal(early_or_late(25, 150, 325, days_in_water_year = 365), "late")
+  expect_equal(early_or_late(25, 150, 325, days_in_water_year = 365), 1)
 })
