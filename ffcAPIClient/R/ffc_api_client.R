@@ -361,3 +361,73 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
 
 
 }
+
+
+#'
+#'
+#' So here's a pain in the rear - for timing metrics, none of them have percentiles that cross water years
+#' (which seems kind of suspicious to me, but whatever), so the upper bound will never be earlier
+#' in the water year than the lower bound - that makes things a bit easier. BUT, for alteration,
+#' we have plenty of timing metrics that are predicted to be very early in the water year. If the actual
+#' value is early enough that it's in the previous water year (looking at you fall flushing flow), then
+#' we don't want to mark it as being *late* when it's actually early! So, we need to have some rules for early
+#' and late for timing. Planning to determine the range of values that aren't in the inter-80th percentile range
+#' and then find the day of the water year that's in the middle. Timings earlier than that are late, timings after that
+#' are early.
+timing_alteration <- function(median_value, low_bound, upper_bound, days_in_water_year){
+  if(missing(days_in_water_year)){
+    days_in_water_year <- 365
+  }
+}
+
+
+modulo_midpoint <- function(first_value, second_value, modulo_value){
+  if(first_value < second_value){
+    return((second_value - first_value) %/% 2)  # force integer division
+  }
+  range_size <- modulo_value - first_value + second_value
+  raw_middistance <- range_size %/% 2  # do an integer division
+  raw_midpoint <- first_value + raw_middistance
+  midpoint <- raw_midpoint %% modulo_value  # get it to be a timing value again
+  if(midpoint == 0){
+    midpoint <- 1  # push it to day 1, there is no day 0
+  }
+
+  return(midpoint)
+}
+
+
+#' Determine if timing metrics are early, late, or in range
+#'
+#' Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or "within range"
+#' based on the modeled early_value, modeled late_value, and the actual value. It returns "within range"
+#' if the value is between early_value and late_value. If not, it splits the distance between late_value and
+#' early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
+#' the late_value (then returns "late"), or the early value (then returns "early")
+#'
+#' @export
+early_or_late <- function(value, early_value, late_value, days_in_water_year){
+  if(missing(days_in_water_year)){
+    days_in_water_year <- 365
+  }
+
+  if(value > early_value && value < late_value){
+    return("within range")
+  }
+
+  midpoint <- modulo_midpoint(first_value = late_value, second_value = early_value, modulo_value = days_in_water_year)
+  if(midpoint < early_value){  # it's the midpoint is in the first part of the water year
+    if(value > midpoint && value < early_value){  # and the value is between the beginning of the water year and now
+      return("early")  # then it's early
+    }else{
+      return("late")  # if it's not early, it's late!
+    }
+  }else{  # the midpoint is after the late value in the water year
+    if(value < midpoint && value > late_value){
+      return("late")
+    }else{
+      return("early")
+    }
+  }
+}
+
