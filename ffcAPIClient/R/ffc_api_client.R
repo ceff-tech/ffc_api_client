@@ -279,7 +279,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   comid = NA,
   timeseries = NA,
   gage = NA,
-  ffc_results_df = NA,
+  ffc_results = NA,
   percentiles = NA,
   predictions = NA,
   drh_data = NA,
@@ -293,7 +293,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     results <- evaluate_timeseries_alteration(timeseries_data = timeseries, predictions_df = predictions)
     self$drh_data <- results$drh_data
     self$perecentiles <- results$percentiles
-    ffc_results_df <- results$ffc_results_df
+    ffc_results <- results$ffc_results_df
 
     invisible(self)
   },
@@ -303,6 +303,61 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   #' Checks the results against the predictions and returns the appropriate alteration score
   #'
   evaluate_alteration = function(){
+    if(is.na(self$percentiles) || is.na(self$predictions) || is.na(self$ffc_results)){
+      stop("Must already have all results from the Functional Flow Calculator and predictions for stream segment to
+           evaluate alteration. Make sure that the FFCProcessor has $percentiles, $predictions, and $ffc_results set
+           before calling $evaluate_alteration().")
+    }
+    metrics <- self$predictions$Metrics
 
+    # need a function that takes one metric's percentiles, predictions, and raw ffc values and returns a metric, alteration type, and text description ("likely unaltered", "likely altered", etc)
+    # then we can run an apply operation, rbind the results back together, save them on the object and return them
+
+    invisible(self)
   }
 ))
+
+
+single_metric_alteration <- function(metric, percentiles, predictions, ffc_values, low_bound_percentile, high_bound_percentile, prediction_proportion){
+  if(missing(low_bound)){
+    low_bound_percentile = "p10"
+  }
+  if(missing(high_bound)){
+    high_bound_percentile = "p90"
+  }
+  if(missing(prediction_proportion)){
+    prediction_proportion = 0.2
+  }
+
+  low_bound <- predictions[[low_bound_percentile]]
+  high_bound <- predictions[[high_bound_percentile]]
+
+  ffc_no_NAs <- ffc_values[!is.na(ffc_values)]
+  ffc_num_observations <- length(ffc_no_NAs)
+  ffc_above_low_bound <- ffc_no_NAs[ffc_no_NAs > low_bound]
+  ffc_i80r <- ffc_above_low_bound[ffc_above_low_bound < high_bound]
+
+  status_code = 3
+  status = "indeterminate"
+  alteration_type = "unknown"
+  # Aiming at Type 1 unaltered here - median in bounds AND 50% of observations in bounds
+  if(percentiles$p50 > low_bound && percentiles$p50 < high_bound){
+    # see if count of values in bounds > 50% of total non-NA values
+    if((length(ffc_i80r) / ffc_num_observations) >= 0.5){
+      status_code = 1
+      status = "likely unaltered"
+      alteration_type = "none found"
+    }
+  }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
+    # TODO: This won't work for timing metrics (d'oh) - let's say a metric is predicted to start on day 365 for the 10th pctile
+    # then even if it starts *really* late in reality, it's going to show as starting early (and other similar "rollover"/
+    # modulo errors) - we can fix this by changing this logic to roll it back around if the metric has "Tim" in it.
+    if(percentiles$p50 < (low_bound - (low_bound * prediction_proportion))){
+      status_code = 2
+      status = "likely altered"
+      alteration_type = "low/early"
+    }
+  }
+
+
+}
