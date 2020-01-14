@@ -14,5 +14,4 @@
 #'   \item{name}{text}
 #'   ...
 #' }
-#' @source \url{}
 "flow_metrics"

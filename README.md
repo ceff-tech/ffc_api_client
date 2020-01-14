@@ -12,6 +12,10 @@ segment COMID or longitude and latitude (it will look up the COMID for you). See
 
 [![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
 
+## Full Documentation
+There are many examples below, including instructions on how to set up and use the core parts of the package.
+However, full documentation of the package is included only in the [online documentation](.ffcAPIClient/docs/index.html) or in the [PDF manual](./manuals/ffcAPIClient_latest.pdf).
+
 ## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
 in your R console, or install the package any way you prefer.
