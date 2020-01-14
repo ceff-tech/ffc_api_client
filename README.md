@@ -14,7 +14,7 @@ segment COMID or longitude and latitude (it will look up the COMID for you). See
 
 ## Full Documentation
 There are many examples below, including instructions on how to set up and use the core parts of the package.
-However, full documentation of the package is included only in the [online documentation](.ffcAPIClient/docs/index.html) or in the [PDF manual](./manuals/ffcAPIClient_latest.pdf).
+However, full documentation of the package is included only in the [online documentation](https://ceff-tech.github.io/ffc_api_client) or in the [PDF manual](./manuals/ffcAPIClient_latest.pdf).
 
 ## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
