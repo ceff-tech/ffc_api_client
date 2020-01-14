@@ -150,6 +150,8 @@ convert_season_to_df <- function(season, all_data, rename_metrics, yearRanges){
   season <- all_data[[season]]
 
   # not using same approach as DRH because of null values - maybe both need to use this though???
+
+  season <- lapply(season, tidyr::replace_na)
   output_data <- t(data.table::rbindlist(season, use.names=FALSE))
   colnames(output_data) <- names(season)
   rownames(output_data) <- yearRanges
