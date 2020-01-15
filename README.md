@@ -134,6 +134,8 @@ This package cleans up after itself and won't leave behind runs you execute with
 
 ## Change Log
 ### Version 0.9.4
+* [Breaking Change] List item `$ffc_results_df` returned from `evaluate_alteration` functions changed to `$ffc_results` for
+    consistency with FFCProcessor object and allowing for more flexibility in the future.
 * [Enhancement] Basic alteration assessment capabilities included. Require more testing before use
 * [Documentation] Reworking documentation to make best workflows clearer
 

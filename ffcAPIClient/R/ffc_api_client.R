@@ -206,6 +206,10 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
 
 #' Generate FFC Results and Plots for Gage Data
 #'
+#' @param gage_id
+#' @param token
+#' @param plot_output_folder
+#'
 #' @export
 evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   if(missing(plot_output_folder)){
@@ -273,7 +277,7 @@ evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plo
   percentiles <- get_percentiles(results_df)
   plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
   return(list(
-    "ffc_results_df" = results_df,
+    "ffc_results" = results_df,
     "percentiles" = percentiles,
     "drh_data" = get_drh(ffc_results)
   ))

@@ -6,8 +6,7 @@ Author: Nick Santos, Ryan Peek
 Maintainer: Nick Santos <nrsantos@ucdavis.edu>
 Description: A client for the Python-based functional flows calculator API hosted
     at eflows.ucdavis.edu. Requires a token from the eflows.ucdavis.edu website to
-    operate. More information forthcoming. See README at https://github.com/ceff-tech/ffc_api_client
-    Use four spaces when indenting paragraphs within the Description.
+    operate.
 License: MIT
 Encoding: UTF-8
 LazyData: true

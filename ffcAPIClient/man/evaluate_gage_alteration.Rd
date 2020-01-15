@@ -6,6 +6,9 @@
 \usage{
 evaluate_gage_alteration(gage_id, token, plot_output_folder)
 }
+\arguments{
+\item{plot_output_folder}{}
+}
 \description{
 Generate FFC Results and Plots for Gage Data
 }
