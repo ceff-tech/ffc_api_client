@@ -12,6 +12,14 @@ segment COMID or longitude and latitude (it will look up the COMID for you). See
 
 [![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
 
+1. [Documentation](#full-documentation)
+2. [Setup](#setup)
+3. [Usage Examples](#usage-examples)
+4. [Predicted Flow Metrics](#predicted-flow-metrics)
+5. [Considerations](#considerations)
+6. [Change Log](#change-log)
+
+
 ## Full Documentation
 There are many examples below, including instructions on how to set up and use the core parts of the package.
 However, full documentation of the package is included only in the [online documentation](https://ceff-tech.github.io/ffc_api_client/reference/index.html) or in the [PDF manual](./manuals/ffcAPIClient_latest.pdf).
@@ -123,3 +131,10 @@ This package could be slow if you have run many items through the calculator in
 the web interface since it currently retrieves *all* results every time you want to get a single result.
 If you delete those results in the web interface at eflows.ucdavis.edu, then this code will be faster.
 This package cleans up after itself and won't leave behind runs you execute with this code.
+
+## Change Log
+### Version 0.9.3
+* [Enhancement] Can now provide a time format string to `assess_alteration` - it will use that to read the values
+  in the time field and reformat them to send to the FFC as needed.
+* [Bugfix] FFC results no longer fail to transform if one flow metric is entirely NULL
+
