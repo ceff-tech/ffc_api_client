@@ -206,16 +206,23 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
 
 #' Generate FFC Results and Plots for Gage Data
 #'
-#' This is a shortcut function that does most of the heavy lifting for you. If you provide it a USGS gage ID and your token
-#' to access the online functional flows calculator, it will
+#' This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results.
 #'
-#' 1) Download the timeseries data for the USGS gage
-#' 2) Look up the predicted unimpaired metric values for the gage's stream segment
-#' 3) Send the timeseries data through the functional flows calculator
-#' 4) Transform the results into a data frame with rows for years and metric values as columns
-#' 5) Produce percentiles for those metric values
-#' 6) Transform the dimensionless reference hydrograph data into a data frame
-#' 7) Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
+#' If you provide it a USGS gage ID and your token to access the online functional flows calculator, this function then:
+#'
+#' 1. Download the timeseries data for the USGS gage
+#'
+#' 2. Look up the predicted unimpaired metric values for the gage's stream segment
+#'
+#' 3. Send the timeseries data through the functional flows calculator
+#'
+#' 4. Transform the results into a data frame with rows for years and metric values as columns
+#'
+#' 5. Produce percentiles for those metric values
+#'
+#' 6. Transform the dimensionless reference hydrograph data into a data frame
+#'
+#' 7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
 #'
 #' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
 #' any further processing.

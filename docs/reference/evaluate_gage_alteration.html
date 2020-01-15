@@ -36,8 +36,7 @@
 
 
 <meta property="og:title" content="Generate FFC Results and Plots for Gage Data — evaluate_gage_alteration" />
-<meta property="og:description" content="This is a shortcut function that does most of the heavy lifting for you. If you provide it a USGS gage ID and your token
-to access the online functional flows calculator, it will" />
+<meta property="og:description" content="This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,8 +106,7 @@ to access the online functional flows calculator, it will" />
     </div>
 
     <div class="ref-description">
-    <p>This is a shortcut function that does most of the heavy lifting for you. If you provide it a USGS gage ID and your token
-to access the online functional flows calculator, it will</p>
+    <p>This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results.</p>
     </div>
 
     <pre class="usage"><span class='fu'>evaluate_gage_alteration</span>(<span class='no'>gage_id</span>, <span class='no'>token</span>, <span class='no'>plot_output_folder</span>)</pre>
@@ -133,13 +131,14 @@ displayed interactively and saved as files named by the functional flow componen
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>1) Download the timeseries data for the USGS gage
-2) Look up the predicted unimpaired metric values for the gage's stream segment
-3) Send the timeseries data through the functional flows calculator
-4) Transform the results into a data frame with rows for years and metric values as columns
-5) Produce percentiles for those metric values
-6) Transform the dimensionless reference hydrograph data into a data frame
-7) Output plots comparing the observed timeseries data with the predicted unimpaired metric values.</p>
+    <p>If you provide it a USGS gage ID and your token to access the online functional flows calculator, this function then:</p>
+<p>1. Download the timeseries data for the USGS gage</p>
+<p>2. Look up the predicted unimpaired metric values for the gage's stream segment</p>
+<p>3. Send the timeseries data through the functional flows calculator</p>
+<p>4. Transform the results into a data frame with rows for years and metric values as columns</p>
+<p>5. Produce percentiles for those metric values</p>
+<p>6. Transform the dimensionless reference hydrograph data into a data frame</p>
+<p>7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.</p>
 <p>Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
 any further processing.</p>
 
