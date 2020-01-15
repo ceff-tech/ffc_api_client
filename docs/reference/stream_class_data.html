@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert FFC results list to data frame with metric names — get_results_as_df • ffcAPIClient</title>
+<title>Geomorphic Stream Classification — stream_class_data • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,14 @@
 
 
 
-<meta property="og:title" content="Convert FFC results list to data frame with metric names — get_results_as_df" />
-<meta property="og:description" content="More documentation forthcoming" />
+<meta property="og:title" content="Geomorphic Stream Classification — stream_class_data" />
+<meta property="og:description" content="Contains the geomorphic classification by stream COMID for ~70,000 stream
+segments in California (low-order streams excluded). Streams were classified
+as described in Lane, Belize A., Samuel Sandoval-Solis, Eric D. Stein,
+Sarah M. Yarnell, Gregory B. Pasternack, and Helen E. Dahlke. 2018.
+“Beyond Metrics? The Role of Hydrologic Baseline Archetypes in Environmental
+ Water Management.” Environmental Management 62 (4): 678–93.
+ https://doi.org/10.1007/s00267-018-1077-7." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,23 +106,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert FFC results list to data frame with metric names</h1>
+    <h1>Geomorphic Stream Classification</h1>
     
-    <div class="hidden name"><code>get_results_as_df.Rd</code></div>
+    <div class="hidden name"><code>stream_class_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>More documentation forthcoming</p>
+    <p>Contains the geomorphic classification by stream COMID for ~70,000 stream
+segments in California (low-order streams excluded). Streams were classified
+as described in Lane, Belize A., Samuel Sandoval-Solis, Eric D. Stein,
+Sarah M. Yarnell, Gregory B. Pasternack, and Helen E. Dahlke. 2018.
+“Beyond Metrics? The Role of Hydrologic Baseline Archetypes in Environmental
+ Water Management.” Environmental Management 62 (4): 678–93.
+ https://doi.org/10.1007/s00267-018-1077-7.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_results_as_df</span>(<span class='no'>results</span>, <span class='no'>drop_fields</span>)</pre>
+    <pre class="usage"><span class='no'>stream_class_data</span></pre>
 
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame :</p><dl class='dl-horizontal'>
+  <dt>CLASS</dt><dd><p>The stream classification ID</p></dd>
+  <dt>COMID</dt><dd><p>The NHD COMID of the stream segment</p></dd>
+  <dt>CLASS_CODE</dt><dd><p>The character stream classification ID - follows the form:
+    SM = Snowmelt, HSR = High Volume Snowmelt and Rain, LSR = Low Volume Snowmelt and Rain,
+    WS = Winter Storms, GW = Groundwater, PGR = Perennial Groundwater and Rain,
+    FER = Flashy Ephemeral Rain, RGW = Rain and Seasonal Groundwater,
+    HLP = High elevation, low precipitation</p></dd>
+
+</dl><p><a href='https://doi.org/10.1007/s00267-018-1077-7'>https://doi.org/10.1007/s00267-018-1077-7</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#format">Format</a></li>
     </ul>
 
   </div>

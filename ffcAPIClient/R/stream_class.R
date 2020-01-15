@@ -1,3 +1,5 @@
+# parameters by stream class adapted from https://github.com/ceff-tech/eflow-client/blob/master/src/constants/params.js
+
 general_parameters = list(
   "general_params" = list(
     "annual_result_low_Percentille_filter" = 0,
@@ -64,7 +66,7 @@ class_params = list(
   "PGR" = general_parameters,  # perrenial groundwater and rain
   "GW" = general_parameters, # groundwater
   "FER" = general_parameters, # flashy ephemeral rain
-  "RSG" = general_parameters, # rain and seasonal groundwater - TODO = CONFIRM CLASS ID IS CORRECT
+  "RGW" = general_parameters, # rain and seasonal groundwater
   "HLP" = general_parameters # high elevation low precipitation
 )
 
@@ -96,13 +98,33 @@ class_params$FER$summer_params$sensitivity <- 1100
 class_params$FER$summer_params$peak_sensitivity <- 0.1
 
 # Rain and Seasonal Groundwater changes
-class_params$RSG$spring_params$max_peak_flow_date <- 255
-class_params$RSG$spring_params$peak_filter_percentage <- 0.15
-class_params$RSG$spring_params$window_sigma <- 2.5
-class_params$RSG$spring_params$min_percentage_of_max_flow <- 0.15
-class_params$RSG$summer_params$sigma <- 4
-class_params$RSG$summer_params$sensitivity <- 1100
-class_params$RSG$summer_params$peak_sensitivity <- 0.1
+class_params$RGW$spring_params$max_peak_flow_date <- 255
+class_params$RGW$spring_params$peak_filter_percentage <- 0.15
+class_params$RGW$spring_params$window_sigma <- 2.5
+class_params$RGW$spring_params$min_percentage_of_max_flow <- 0.15
+class_params$RGW$summer_params$sigma <- 4
+class_params$RGW$summer_params$sensitivity <- 1100
+class_params$RGW$summer_params$peak_sensitivity <- 0.1
 
 
+get_stream_class_code_for_comid <- function(comid){
+  stream_class_data <- get_dataset("stream_class_data")
+  return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS_CODE))
+}
 
+#' Get the parameters sent to the FFC for a stream segment
+#'
+#' Given a COMID, looks up the hydrogeomorphic stream classification, then uses that to find the default parameters that
+#' should be sent to the FFC online for that stream class. Returns a nested list of parameters to send to the FFC.
+#'
+#' @param comid An NHD stream segment COMID
+#'
+#' @export
+get_ffc_parameters_for_comid <- function(comid){
+  stream_class_code <- get_stream_class_code_for_comid(comid)
+  if(length(stream_class_code) == 0){  # the comid wasn't found
+    return(general_parameters)  # so return the general parameters
+  }
+
+  return(class_params[[stream_class_code]])  # otherwise, return the class-specific parameters (which could be general, or not)
+}

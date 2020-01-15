@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert FFC results list to data frame with metric names — get_results_as_df • ffcAPIClient</title>
+<title>Get the parameters sent to the FFC for a stream segment — get_ffc_parameters_for_comid • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Convert FFC results list to data frame with metric names — get_results_as_df" />
-<meta property="og:description" content="More documentation forthcoming" />
+<meta property="og:title" content="Get the parameters sent to the FFC for a stream segment — get_ffc_parameters_for_comid" />
+<meta property="og:description" content="Given a COMID, looks up the hydrogeomorphic stream classification, then uses that to find the default parameters that
+should be sent to the FFC online for that stream class. Returns a nested list of parameters to send to the FFC." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,23 +101,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert FFC results list to data frame with metric names</h1>
+    <h1>Get the parameters sent to the FFC for a stream segment</h1>
     
-    <div class="hidden name"><code>get_results_as_df.Rd</code></div>
+    <div class="hidden name"><code>get_ffc_parameters_for_comid.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>More documentation forthcoming</p>
+    <p>Given a COMID, looks up the hydrogeomorphic stream classification, then uses that to find the default parameters that
+should be sent to the FFC online for that stream class. Returns a nested list of parameters to send to the FFC.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_results_as_df</span>(<span class='no'>results</span>, <span class='no'>drop_fields</span>)</pre>
+    <pre class="usage"><span class='fu'>get_ffc_parameters_for_comid</span>(<span class='no'>comid</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>comid</th>
+      <td><p>An NHD stream segment COMID</p></td>
+    </tr>
+    </table>
 
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>

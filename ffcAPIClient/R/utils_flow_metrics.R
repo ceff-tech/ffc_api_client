@@ -1,3 +1,19 @@
+
+# create an environment to store data that we load only when we need it, but where the data is also public
+ffcAPIClient_data_env <- new.env()
+
+# this function lets us have one environment where we load the data from disk a single time.
+# on the first load, it checks if the data is already in the environment, and then on subsequent
+# calls for the same dataset, just returns that dataset.
+get_dataset <- function(dataset_name){
+  if(!hasName(ffcAPIClient_data_env, dataset_name)){  # if it's not already loaded into our data environment, load it
+    data(list=c(dataset_name), envir=ffcAPIClient_data_env, package="ffcAPIClient")  # need it to be in a list or else it treats it as a bareword dataset (but still works???)
+  }
+  # then return it for use
+  return(get(dataset_name, envir=ffcAPIClient_data_env))
+
+}
+
 #' Retrieves flow predicted flow metric values for a stream segment
 #'
 #' This function returns the 10th, 25th, 50th, 75th, and 90th percentile
@@ -12,9 +28,7 @@
 #'
 #' @export
 get_predicted_flow_metrics <- function(com_id){
-  fm_data_env <- new.env()
-  data("flow_metrics", envir=fm_data_env, package="ffcAPIClient")
-  flow_metrics <- get("flow_metrics", envir=fm_data_env)
+  flow_metrics <- get_dataset("flow_metrics")
   return(flow_metrics[flow_metrics$COMID == com_id, ])
 }
 
