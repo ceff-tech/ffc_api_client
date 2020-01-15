@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ffcAPIClient: Processes time-series flow data using the online functional
-flows calculator — ffcAPIClient • ffcAPIClient</title>
+<title>Send flow data for processing — process_data • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -36,9 +35,9 @@ flows calculator — ffcAPIClient • ffcAPIClient</title>
 
 
 
-<meta property="og:title" content="ffcAPIClient: Processes time-series flow data using the online functional
-flows calculator — ffcAPIClient" />
-<meta property="og:description" content="For now, see the documentation for get_ffc_results_for_df" />
+<meta property="og:title" content="Send flow data for processing — process_data" />
+<meta property="og:description" content="In most cases, you won't need to use this function! If you're wondering what to do, use
+get_ffc_results_for_df instead." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -102,47 +101,28 @@ flows calculator — ffcAPIClient" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>ffcAPIClient: Processes time-series flow data using the online functional
-flows calculator</h1>
+    <h1>Send flow data for processing</h1>
     
-    <div class="hidden name"><code>ffcAPIClient.Rd</code></div>
+    <div class="hidden name"><code>process_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>For now, see the documentation for <code><a href='get_ffc_results_for_df.html'>get_ffc_results_for_df</a></code></p>
+    <p>In most cases, you won't need to use this function! If you're wondering what to do, use
+get_ffc_results_for_df instead.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>process_data</span>(<span class='no'>flows_df</span>, <span class='no'>flow_field</span>, <span class='no'>date_field</span>, <span class='no'>start_date</span>, <span class='no'>name</span>)</pre>
 
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='co'># Example 1</span>
-<span class='co'>## Initialize a Run</span>
-<span class='no'>test_data</span> <span class='kw'>&lt;-</span> <span class='fu'>example_gagedata</span>()  <span class='co'># just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here</span>
-<span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/set_token.html'>set_token</a></span>(<span class='no'>YOUR_TOKEN_VALUE_IN_QUOTES</span>)  <span class='co'># you'll need to get your own of this - see above</span>
-<span class='no'>results</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/get_ffc_results_for_df.html'>get_ffc_results_for_df</a></span>(<span class='no'>test_data</span>)  <span class='co'># send it to the FFC online to process</span>
+    <p>Sends flow timeseries data off to the functional flows calculator. Does not retrieve results!</p>
 
-<span class='co'>## Retrieve Results and Plot</span>
-<span class='co'>## get the DRH data as a data frame with percentiles for columns and days for rows</span>
-<span class='no'>drh_data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/get_drh.html'>get_drh</a></span>(<span class='no'>results</span>)
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>drh_data</span>$<span class='no'>seventy_five</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"l"</span>)  <span class='co'># plot the seventy-fifth percentile DRH</span>
-
-<span class='co'># Example 2: Retrieve, Process, Plot USGS gage</span>
-<span class='co'>## This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely</span>
-<span class='co'>## don't forget to set your token first if you haven't already</span>
-<span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/set_token.html'>set_token</a></span>(<span class='no'>YOUR_TOKEN_VALUE_IN_QUOTES</span>) <span class='co'># you'll need to get your own of this - see above</span>
-
-<span class='co'>## retrieves flow data for North Fork American gage and sends it through the FFC</span>
-<span class='no'>results</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/get_ffc_results_for_usgs_gage.html'>get_ffc_results_for_usgs_gage</a></span>(<span class='fl'>11427000</span>)
-<span class='no'>drh_plot</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ffcAPIClient</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ffcAPIClient/man/plot_drh.html'>plot_drh</a></span>(<span class='no'>results</span>)  <span class='co'># includes optional output_path argument to save to file automatically</span>
-<span class='no'>drh_plot</span>  <span class='co'># display the plot</span>
-}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#examples">Examples</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>
