@@ -303,7 +303,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   comid = NA,
   timeseries = NA,
   gage = NA,
-  ffc_results_df = NA,
+  ffc_results = NA,
   percentiles = NA,
   predictions = NA,
   drh_data = NA,
@@ -317,7 +317,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     results <- evaluate_timeseries_alteration(timeseries_data = timeseries, predictions_df = predictions)
     self$drh_data <- results$drh_data
     self$perecentiles <- results$percentiles
-    ffc_results_df <- results$ffc_results_df
+    ffc_results <- results$ffc_results_df
 
     invisible(self)
   },
@@ -327,6 +327,16 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   #' Checks the results against the predictions and returns the appropriate alteration score
   #'
   evaluate_alteration = function(){
+    if(is.na(self$percentiles) || is.na(self$predictions) || is.na(self$ffc_results)){
+      stop("Must already have all results from the Functional Flow Calculator and predictions for stream segment to
+           evaluate alteration. Make sure that the FFCProcessor has $percentiles, $predictions, and $ffc_results set
+           before calling $evaluate_alteration().")
+    }
+    metrics <- self$predictions$Metrics
 
+    # need a function that takes one metric's percentiles, predictions, and raw ffc values and returns a metric, alteration type, and text description ("likely unaltered", "likely altered", etc)
+    # then we can run an apply operation, rbind the results back together, save them on the object and return them
+
+    invisible(self)
   }
 ))
