@@ -206,9 +206,24 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
 
 #' Generate FFC Results and Plots for Gage Data
 #'
-#' @param gage_id
-#' @param token
-#' @param plot_output_folder
+#' This is a shortcut function that does most of the heavy lifting for you. If you provide it a USGS gage ID and your token
+#' to access the online functional flows calculator, it will
+#'
+#' 1) Download the timeseries data for the USGS gage
+#' 2) Look up the predicted unimpaired metric values for the gage's stream segment
+#' 3) Send the timeseries data through the functional flows calculator
+#' 4) Transform the results into a data frame with rows for years and metric values as columns
+#' 5) Produce percentiles for those metric values
+#' 6) Transform the dimensionless reference hydrograph data into a data frame
+#' 7) Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
+#'
+#' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
+#' any further processing.
+#'
+#' @param gage_id The USGS gage ID to pull timeseries data from
+#' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.
+#' @param plot_output_folder Optional - when not provided, plots are displayed interactively only. When provided, they are
+#'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
 #'
 #' @export
 evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
@@ -254,6 +269,8 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   return(results_list)
 }
 
+# Does the bulk of the processing, but not a public function - both other evaluate_alteration functions use this under
+# the hood after doing some other checks, etc.
 evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plot_output_folder, date_format_string){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
@@ -283,6 +300,7 @@ evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plo
   ))
 }
 
+# Converts dates from the provided format string into the format used by the FFC online
 convert_dates <- function(timeseries_data, date_format_string){
   timeseries_dates <- strptime(as.character(timeseries_data$date), format = date_format_string)
   timeseries_data$date <- strftime(timeseries_dates, "%m/%d/%Y")

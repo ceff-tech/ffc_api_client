@@ -7,8 +7,26 @@
 evaluate_gage_alteration(gage_id, token, plot_output_folder)
 }
 \arguments{
-\item{plot_output_folder}{}
+\item{gage_id}{The USGS gage ID to pull timeseries data from}
+
+\item{token}{The token used to access the online FFC - see the Github repository's README under Setup for how to get this.}
+
+\item{plot_output_folder}{Optional - when not provided, plots are displayed interactively only. When provided, they are
+displayed interactively and saved as files named by the functional flow componenent into the provided folder}
 }
 \description{
-Generate FFC Results and Plots for Gage Data
+This is a shortcut function that does most of the heavy lifting for you. If you provide it a USGS gage ID and your token
+to access the online functional flows calculator, it will
+}
+\details{
+1) Download the timeseries data for the USGS gage
+2) Look up the predicted unimpaired metric values for the gage's stream segment
+3) Send the timeseries data through the functional flows calculator
+4) Transform the results into a data frame with rows for years and metric values as columns
+5) Produce percentiles for those metric values
+6) Transform the dimensionless reference hydrograph data into a data frame
+7) Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
+
+Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
+any further processing.
 }
