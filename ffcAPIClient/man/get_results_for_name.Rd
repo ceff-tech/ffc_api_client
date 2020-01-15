@@ -6,10 +6,13 @@
 \usage{
 get_results_for_name(name, autodelete)
 }
-\description{
-In most cases, you won't need to use this function! If you're wondering what to do, use
-get_ffc_results_for_df instead.
+\arguments{
+\item{name}{the name of the run to retrieve from the online FFC}
+
+\item{autodelete}{when TRUE, deletes the run in the online FFC, if found. When FALSE, leaves run in FFC online for later
+retrieval.}
 }
-\details{
-Gets the results for the given named run of the FFC. Returns the nested list - no other processing
+\description{
+Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
+by the caller.
 }

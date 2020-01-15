@@ -36,8 +36,8 @@
 
 
 <meta property="og:title" content="Retrieve processed results from FFC. — get_results_for_name" />
-<meta property="og:description" content="In most cases, you won't need to use this function! If you're wondering what to do, use
-get_ffc_results_for_df instead." />
+<meta property="og:description" content="Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
+by the caller." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -70,7 +70,7 @@ get_ffc_results_for_df instead." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -107,22 +107,32 @@ get_ffc_results_for_df instead." />
     </div>
 
     <div class="ref-description">
-    <p>In most cases, you won't need to use this function! If you're wondering what to do, use
-get_ffc_results_for_df instead.</p>
+    <p>Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
+by the caller.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_results_for_name</span>(<span class='no'>name</span>, <span class='no'>autodelete</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>name</th>
+      <td><p>the name of the run to retrieve from the online FFC</p></td>
+    </tr>
+    <tr>
+      <th>autodelete</th>
+      <td><p>when TRUE, deletes the run in the online FFC, if found. When FALSE, leaves run in FFC online for later
+retrieval.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Gets the results for the given named run of the FFC. Returns the nested list - no other processing</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#details">Details</a></li>
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>

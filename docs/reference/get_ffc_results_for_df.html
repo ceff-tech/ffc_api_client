@@ -36,10 +36,9 @@
 
 
 <meta property="og:title" content="Run Data Frame Through Functional Flows Calculator — get_ffc_results_for_df" />
-<meta property="og:description" content="This is the primary function to use from the API client itself to obtain
-raw FFC results. It will generate a unique ID, run the data frame through
-the FFC, and then delete the results for that ID from the website so as not
-to clutter up the user's account, or store too much data on the server side." />
+<meta property="og:description" content="This is primarily an internal function used to run data through the functional flows
+calculator online, but is also available for those that wish to run the data themselves
+and then do any other handling and transformation for postprocessing on their own." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -72,7 +71,7 @@ to clutter up the user's account, or store too much data on the server side." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -109,10 +108,9 @@ to clutter up the user's account, or store too much data on the server side." />
     </div>
 
     <div class="ref-description">
-    <p>This is the primary function to use from the API client itself to obtain
-raw FFC results. It will generate a unique ID, run the data frame through
-the FFC, and then delete the results for that ID from the website so as not
-to clutter up the user's account, or store too much data on the server side.</p>
+    <p>This is primarily an internal function used to run data through the functional flows
+calculator online, but is also available for those that wish to run the data themselves
+and then do any other handling and transformation for postprocessing on their own.</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_ffc_results_for_df</span>(<span class='no'>flows_df</span>, <span class='no'>flow_field</span>, <span class='no'>date_field</span>, <span class='no'>start_date</span>)</pre>
@@ -150,6 +148,14 @@ March first could just be 3/1, while December 12th can be 12/12.</p></td>
 
     <p>list of results from the functional flows calculator. More information will be
         forthcoming as we inspect the structure of what is returned.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Most people will want to use <code>evaluate_alteration</code> (for timeseries dataframes)
+or <code>evaluate_gage_alteration</code> (for USGS gages) instead.</p>
+<p>Internally, this is the primary function to use from the API client itself to obtain
+raw FFC results. It will generate a unique ID, run the data frame through
+the FFC, and then delete the results for that ID from the website so as not
+to clutter up the user's account, or store too much data on the server side.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -157,6 +163,7 @@ March first could just be 3/1, while December 12th can be 12/12.</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

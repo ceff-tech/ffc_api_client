@@ -11,7 +11,8 @@ but long run, much of the code in this file might move into this class, with the
 creating this class behind the scenes and returning an instance of this object.
 }
 \details{
-More details to come, and more examples.
+More details to come, and more examples. For now, still use the general functions \code{\link{evaluate_alteration}}
+and \code{\link{evaluate_gage_alteration}}
 }
 \section{Methods}{
 \subsection{Public methods}{

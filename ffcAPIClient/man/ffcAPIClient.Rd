@@ -6,29 +6,20 @@
 \title{ffcAPIClient: Processes time-series flow data using the online functional
 flows calculator}
 \description{
-For now, see the documentation for \code{\link{get_ffc_results_for_df}}
+For now, see the documentation for \code{\link{evaluate_alteration}} and
+\code{\link{evaluate_gage_alteration}}
 }
 \examples{
 \dontrun{
-# Example 1
-## Initialize a Run
-test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
-ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES)  # you'll need to get your own of this - see above
-results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
+# If you have a gage and a token, you can get all results simply by running
+ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+# output_folder is optional. When provided, it will save plots there. It will show plots regardless.
 
-## Retrieve Results and Plot
-## get the DRH data as a data frame with percentiles for columns and days for rows
-drh_data <- ffcAPIClient::get_drh(results)
-plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+# If you have a data frame with flow and date fields that isn't a gage, you can run
+ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration", comid=yoursegmentcomid)
+# it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
+# longitude and latitude arguments.
+# Make sure that dates are in the same format as the FFC requires on its website. We may add reformatting in the future
 
-# Example 2: Retrieve, Process, Plot USGS gage
-## This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
-## don't forget to set your token first if you haven't already
-ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
-
-## retrieves flow data for North Fork American gage and sends it through the FFC
-results <- ffcAPIClient::get_ffc_results_for_usgs_gage(11427000)
-drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
-drh_plot  # display the plot
 }
 }

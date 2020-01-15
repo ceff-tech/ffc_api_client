@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Merges Data Frames by Year Column — merge_list • ffcAPIClient</title>
+<title>Generate FFC Results and Plots for Timeseries Data — evaluate_alteration • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Merges Data Frames by Year Column — merge_list" />
-<meta property="og:description" content="Just a simple function that can be used with Reduce to merge multiple data frames together by year" />
+<meta property="og:title" content="Generate FFC Results and Plots for Timeseries Data — evaluate_alteration" />
+<meta property="og:description" content="Generate FFC Results and Plots for Timeseries Data" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,16 +100,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Merges Data Frames by Year Column</h1>
+    <h1>Generate FFC Results and Plots for Timeseries Data</h1>
     
-    <div class="hidden name"><code>merge_list.Rd</code></div>
+    <div class="hidden name"><code>evaluate_alteration.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Just a simple function that can be used with Reduce to merge multiple data frames together by year</p>
+    <p>Generate FFC Results and Plots for Timeseries Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>merge_list</span>(<span class='no'>df1</span>, <span class='no'>df2</span>)</pre>
+    <pre class="usage"><span class='fu'>evaluate_alteration</span>(
+  <span class='no'>timeseries_df</span>,
+  <span class='no'>token</span>,
+  <span class='no'>comid</span>,
+  <span class='no'>longitude</span>,
+  <span class='no'>latitude</span>,
+  <span class='no'>plot_output_folder</span>,
+  <span class='no'>date_format_string</span>
+)</pre>
 
 
 

@@ -28,7 +28,15 @@ list of results from the functional flows calculator. More information will be
         forthcoming as we inspect the structure of what is returned.
 }
 \description{
-This is the primary function to use from the API client itself to obtain
+This is primarily an internal function used to run data through the functional flows
+calculator online, but is also available for those that wish to run the data themselves
+and then do any other handling and transformation for postprocessing on their own.
+}
+\details{
+Most people will want to use \code{\link{evaluate_alteration}} (for timeseries dataframes)
+or \code{\link{evaluate_gage_alteration}} (for USGS gages) instead.
+
+Internally, this is the primary function to use from the API client itself to obtain
 raw FFC results. It will generate a unique ID, run the data frame through
 the FFC, and then delete the results for that ID from the website so as not
 to clutter up the user's account, or store too much data on the server side.

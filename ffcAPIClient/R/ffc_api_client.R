@@ -3,30 +3,21 @@
 #' ffcAPIClient: Processes time-series flow data using the online functional
 #' flows calculator
 #'
-#' For now, see the documentation for \code{\link{get_ffc_results_for_df}}
+#' For now, see the documentation for \code{\link{evaluate_alteration}} and
+#' \code{\link{evaluate_gage_alteration}}
 #'
 #' @examples
 #' \dontrun{
-#' # Example 1
-#' ## Initialize a Run
-#' test_data <- example_gagedata()  # just get some fake gage data - based on Daniel Philippus' code - you can build your own data frame here
-#' ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES)  # you'll need to get your own of this - see above
-#' results <- ffcAPIClient::get_ffc_results_for_df(test_data)  # send it to the FFC online to process
+#' # If you have a gage and a token, you can get all results simply by running
+#' ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+#' # output_folder is optional. When provided, it will save plots there. It will show plots regardless.
 #'
-#' ## Retrieve Results and Plot
-#' ## get the DRH data as a data frame with percentiles for columns and days for rows
-#' drh_data <- ffcAPIClient::get_drh(results)
-#' plot(drh_data$seventy_five, type="l")  # plot the seventy-fifth percentile DRH
+#' # If you have a data frame with flow and date fields that isn't a gage, you can run
+#' ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration", comid=yoursegmentcomid)
+#' # it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
+#' # longitude and latitude arguments.
+#' # Make sure that dates are in the same format as the FFC requires on its website. We may add reformatting in the future
 #'
-#' # Example 2: Retrieve, Process, Plot USGS gage
-#' ## This example retrieves USGS gage data, runs it through the FFC online, and plots the DRH nicely
-#' ## don't forget to set your token first if you haven't already
-#' ffcAPIClient::set_token(YOUR_TOKEN_VALUE_IN_QUOTES) # you'll need to get your own of this - see above
-#'
-#' ## retrieves flow data for North Fork American gage and sends it through the FFC
-#' results <- ffcAPIClient::get_ffc_results_for_usgs_gage(11427000)
-#' drh_plot <- ffcAPIClient::plot_drh(results)  # includes optional output_path argument to save to file automatically
-#' drh_plot  # display the plot
 #' }
 #' @docType package
 #' @name ffcAPIClient
@@ -58,8 +49,8 @@ get_token <- function(){
   return(pkg.env$TOKEN)
 }
 
-#' Makes the part of the JSON string that is just for the flow data - needs to be passed
-#' into make_json later as "data_json"
+# Makes the part of the JSON string that is just for the flow data - needs to be passed
+# into make_json later as "data_json"
 make_flow_json <- function(flows_df, flow_field, date_field){
   flows <- jsonlite::toJSON(flows_df[[flow_field]])
   dates <- jsonlite::toJSON(flows_df[[date_field]])
@@ -69,7 +60,7 @@ make_flow_json <- function(flows_df, flow_field, date_field){
 }
 
 
-#' Prepares the JSON payload to send to the eflows website.
+# Prepares the JSON payload to send to the eflows website.
 make_json <- function(data_json, start_date, token, extra){
   if(is.na(token)){
     stop("Token must be set using set_token(your_token_value) before sending data to FFC API. See README or documentation
@@ -102,10 +93,12 @@ process_data <- function(flows_df, flow_field, date_field, start_date, name){
 
 #' Retrieve processed results from FFC.
 #'
-#' In most cases, you won't need to use this function! If you're wondering what to do, use
-#' get_ffc_results_for_df instead.
+#' Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
+#' by the caller.
 #'
-#' Gets the results for the given named run of the FFC. Returns the nested list - no other processing
+#' @param name the name of the run to retrieve from the online FFC
+#' @param autodelete when TRUE, deletes the run in the online FFC, if found. When FALSE, leaves run in FFC online for later
+#'        retrieval.
 #'
 #' @export
 get_results_for_name <- function(name, autodelete){
@@ -144,7 +137,14 @@ delete_ffc_run_by_id <- function(id){
 
 #' Run Data Frame Through Functional Flows Calculator
 #'
-#' This is the primary function to use from the API client itself to obtain
+#' This is primarily an internal function used to run data through the functional flows
+#' calculator online, but is also available for those that wish to run the data themselves
+#' and then do any other handling and transformation for postprocessing on their own.
+#'
+#' Most people will want to use \code{\link{evaluate_alteration}} (for timeseries dataframes)
+#' or \code{\link{evaluate_gage_alteration}} (for USGS gages) instead.
+#'
+#' Internally, this is the primary function to use from the API client itself to obtain
 #' raw FFC results. It will generate a unique ID, run the data frame through
 #' the FFC, and then delete the results for that ID from the website so as not
 #' to clutter up the user's account, or store too much data on the server side.
@@ -204,7 +204,8 @@ get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
   return(get_ffc_results_for_df(flows_df, start_date=start_date))
 }
 
-
+#' Generate FFC Results and Plots for Gage Data
+#'
 #' @export
 evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   if(missing(plot_output_folder)){
@@ -221,7 +222,8 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   return(results_list)
 }
 
-
+#' Generate FFC Results and Plots for Timeseries Data
+#'
 #' @export
 evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, date_format_string){
   if(missing(plot_output_folder)){
@@ -292,7 +294,8 @@ convert_dates <- function(timeseries_data, date_format_string){
 #' but long run, much of the code in this file might move into this class, with the shortcut functions
 #' creating this class behind the scenes and returning an instance of this object.
 #'
-#' More details to come, and more examples.
+#' More details to come, and more examples. For now, still use the general functions \code{\link{evaluate_alteration}}
+#' and \code{\link{evaluate_gage_alteration}}
 #'
 #' @export
 FFCProcessor <- R6::R6Class("FFCProcessor", list(

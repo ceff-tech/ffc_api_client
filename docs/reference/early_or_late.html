@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Merges Data Frames by Year Column — merge_list • ffcAPIClient</title>
+<title>Determine if timing metrics are early, late, or in range — early_or_late • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,12 @@
 
 
 
-<meta property="og:title" content="Merges Data Frames by Year Column — merge_list" />
-<meta property="og:description" content="Just a simple function that can be used with Reduce to merge multiple data frames together by year" />
+<meta property="og:title" content="Determine if timing metrics are early, late, or in range — early_or_late" />
+<meta property="og:description" content="Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or &quot;within range&quot;
+based on the modeled early_value, modeled late_value, and the actual value. It returns within range (0)
+if the value is between early_value and late_value. If not, it splits the distance between late_value and
+early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
+the late_value (then returns late (1)), or the early value (then returns early (-1))" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,16 +104,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Merges Data Frames by Year Column</h1>
+    <h1>Determine if timing metrics are early, late, or in range</h1>
     
-    <div class="hidden name"><code>merge_list.Rd</code></div>
+    <div class="hidden name"><code>early_or_late.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Just a simple function that can be used with Reduce to merge multiple data frames together by year</p>
+    <p>Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or "within range"
+based on the modeled early_value, modeled late_value, and the actual value. It returns within range (0)
+if the value is between early_value and late_value. If not, it splits the distance between late_value and
+early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
+the late_value (then returns late (1)), or the early value (then returns early (-1))</p>
     </div>
 
-    <pre class="usage"><span class='fu'>merge_list</span>(<span class='no'>df1</span>, <span class='no'>df2</span>)</pre>
+    <pre class="usage"><span class='fu'>early_or_late</span>(<span class='no'>value</span>, <span class='no'>early_value</span>, <span class='no'>late_value</span>, <span class='no'>days_in_water_year</span>)</pre>
 
 
 

@@ -48,7 +48,7 @@ ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token",
 ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration", comid=yoursegmentcomid)
 # it also *REQUIRES* you provide either a comid argument with the stream segment COMID, or both
 # longitude and latitude arguments.
-# Make sure that dates are in the same format as the FFC requires on its website. We may add reformatting in the future
+# If your dates are in a different format, provide the format string as argument date_format_string
 
 ```
 Both of these functions plot results immediately and optionally save the plots to the output folder. They
@@ -133,6 +133,10 @@ If you delete those results in the web interface at eflows.ucdavis.edu, then thi
 This package cleans up after itself and won't leave behind runs you execute with this code.
 
 ## Change Log
+### Version 0.9.4
+* [Enhancement] Basic alteration assessment capabilities included. Require more testing before use
+* [Documentation] Reworking documentation to make best workflows clearer
+
 ### Version 0.9.3
 * [Enhancement] Can now provide a time format string to `assess_alteration` - it will use that to read the values
   in the time field and reformat them to send to the FFC as needed.
