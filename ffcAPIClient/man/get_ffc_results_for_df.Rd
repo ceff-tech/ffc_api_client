@@ -4,10 +4,12 @@
 \alias{get_ffc_results_for_df}
 \title{Run Data Frame Through Functional Flows Calculator}
 \usage{
-get_ffc_results_for_df(flows_df, flow_field, date_field, start_date)
+get_ffc_results_for_df(flows_df, comid, flow_field, date_field, start_date)
 }
 \arguments{
 \item{flows_df}{DataFrame. A time series data frame with flow and date columns}
+
+\item{comid}{character. The COMID of the stream segment}
 
 \item{flow_field}{character, default "flow". The name of the field in \code{df} that contains
 flow values.}

@@ -79,10 +79,11 @@ make_json <- function(data_json, start_date, token, extra){
 #' Sends flow timeseries data off to the functional flows calculator. Does not retrieve results!
 #'
 #' @export
-process_data <- function(flows_df, flow_field, date_field, start_date, name){
-  creation_params <- paste(',"name":"', name, '","params":{"general_params":{"annual_result_low_Percentille_filter":0,"annual_result_high_Percentille_filter":100,"max_nan_allowed_per_year":100},"fall_params":{"max_zero_allowed_per_year":270,"max_nan_allowed_per_year":100,"min_flow_rate":1,"broad_sigma":15,"wet_season_sigma":12,"peak_sensitivity":0.005,"peak_sensitivity_wet":0.005,"max_flush_duration":40,"min_flush_percentage":0.1,"wet_threshold_perc":0.2,"peak_detect_perc":0.3,"flush_threshold_perc":0.3,"date_cutoff":75},"spring_params":{"max_zero_allowed_per_year":270,"max_nan_allowed_per_year":100,"max_peak_flow_date":350,"search_window_left":20,"search_window_right":50,"peak_sensitivity":0.1,"peak_filter_percentage":0.5,"min_max_flow_rate":0.1,"window_sigma":10,"fit_sigma":1.3,"sensitivity":0.2,"min_percentage_of_max_flow":0.5,"lag_time":4,"timing_cutoff":138,"min_flow_rate":1},"summer_params":{"max_zero_allowed_per_year":270,"max_nan_allowed_per_year":100,"sigma":7,"sensitivity":900,"peak_sensitivity":0.2,"max_peak_flow_date":325,"min_summer_flow_percent":0.125,"min_flow_rate":1},"winter_params":{"max_zero_allowed_per_year":270,"max_nan_allowed_per_year":100}},"location":"test2","riverName":"test2"', sep="")
+process_data <- function(flows_df, params, flow_field, date_field, start_date, name){
+  creation_params <- paste(',"name":"', name, '","params":', params, sep="")
   data_json <- make_flow_json(flows_df, flow_field, date_field)
   flows_json <- make_json(data_json, start_date, token = pkg.env$TOKEN, extra = creation_params)
+  #return(flows_json)
 
   endpoint <- paste(pkg.env$SERVER_URL,'uploadData', sep="")
   response <- httr::POST(endpoint, httr::content_type("application/json"), body=flows_json)
@@ -150,6 +151,7 @@ delete_ffc_run_by_id <- function(id){
 #' to clutter up the user's account, or store too much data on the server side.
 #'
 #' @param flows_df DataFrame. A time series data frame with flow and date columns
+#' @param comid character. The COMID of the stream segment
 #' @param flow_field character, default "flow". The name of the field in \code{df} that contains
 #'         flow values.
 #' @param date_field character, default "date". The name of the field in \code{df} that contains
@@ -166,7 +168,7 @@ delete_ffc_run_by_id <- function(id){
 #'
 #' @export
 #'
-get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date){
+get_ffc_results_for_df <- function(flows_df, comid, flow_field, date_field, start_date){
   if(missing(flow_field)){
     flow_field = "flow"  # this value is compatible with what you'd upload to the web interface
   }
@@ -176,109 +178,25 @@ get_ffc_results_for_df <- function(flows_df, flow_field, date_field, start_date)
   if(missing(start_date)){
 	  start_date = "10/1"  # default to the beginning of the water year
   }
+  if(missing(comid)){
+    params <- get_ffc_parameters_for_comid_as_json(00000000)  # if the COMID isn't provided, send a invalid one through - it'll return the general params
+  }else{
+    params <- get_ffc_parameters_for_comid_as_json(comid)
+  }
+
 
   # we'll use a UUID for this because we want to make sure we don't collide with anything else the user already has in the FFC online
   id = uuid::UUIDgenerate()
 
-  process_data(flows_df, flow_field, date_field, start_date = start_date, name = id)
+  process_data(flows_df, params, flow_field = flow_field, date_field = date_field, start_date = start_date, name = id)
   return(get_results_for_name(id))
 }
 
 
-#' Run Gage Data Through the Functional Flows Calculator
-#'
-#' Provided with an integer Gage ID, this function pulls the timeseries data for the
-#' gage and processes it in a single step. Returns the functional flow calculator's results list.
-#'
-#' @param gage_id integer. The USGS Gage ID value for the gage you want to return timeseries data for
-#'
-#' @return list. Functional Flow Calculator results
-#'
-#' @export
-get_ffc_results_for_usgs_gage <- function(gage_id, start_date){
-  if(missing(start_date)){
-    start_date = "10/1"  # default to the beginning of the water year
-  }
-
-  flows_df <- get_usgs_gage_data(gage_id)
-  return(get_ffc_results_for_df(flows_df, start_date=start_date))
-}
-
-#' Generate FFC Results and Plots for Gage Data
-#'
-#' This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results.
-#'
-#' If you provide it a USGS gage ID and your token to access the online functional flows calculator, this function then:
-#'
-#' 1. Download the timeseries data for the USGS gage
-#'
-#' 2. Look up the predicted unimpaired metric values for the gage's stream segment
-#'
-#' 3. Send the timeseries data through the functional flows calculator
-#'
-#' 4. Transform the results into a data frame with rows for years and metric values as columns
-#'
-#' 5. Produce percentiles for those metric values
-#'
-#' 6. Transform the dimensionless reference hydrograph data into a data frame
-#'
-#' 7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
-#'
-#' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
-#' any further processing.
-#'
-#' @param gage_id The USGS gage ID to pull timeseries data from
-#' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.
-#' @param plot_output_folder Optional - when not provided, plots are displayed interactively only. When provided, they are
-#'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
-#'
-#' @export
-evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
-  if(missing(plot_output_folder)){
-    plot_output_folder <- NULL
-  }
-
-  set_token(token)
-  gage <- USGSGage$new()
-  gage$id <- gage_id
-  gage$get_data()
-  predictions_df <- gage$get_predicted_metrics()
-
-  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, predictions_df, plot_output_folder)
-  return(results_list)
-}
-
-#' Generate FFC Results and Plots for Timeseries Data
-#'
-#' @export
-evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, date_format_string){
-  if(missing(plot_output_folder)){
-    plot_output_folder <- NULL
-  }
-
-  if(missing(comid) && (missing(longitude) || missing(latitude))){
-    stop("Must provide either segment comid or *both* longitude and latitude to evaluate alteration. One of these
-         is needed in order to look up predicted metrics for this location")
-  }
-
-  if(missing(comid)){  # now, if comid is null, we definitely have both latitude and longitude, so just get the COMID
-    comid <- get_comid_for_lon_lat(longitude, latitude)
-  }  # and if comid isn't null, then we already have it to proceed
-
-  if(missing(date_format_string)){
-    print("Using default date format string of %m/%d/%Y")
-    date_format_string <- "%m/%d/%Y"
-  }
-
-  set_token(token)
-  predicted_flow_metrics <- get_predicted_flow_metrics(comid)
-  results_list <- evaluate_timeseries_alteration(timeseries_df, predicted_flow_metrics, plot_output_folder, date_format_string)
-  return(results_list)
-}
 
 # Does the bulk of the processing, but not a public function - both other evaluate_alteration functions use this under
 # the hood after doing some other checks, etc.
-evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plot_output_folder, date_format_string){
+evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_df, plot_output_folder, date_format_string){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
     drh_output_path <- NULL
@@ -295,7 +213,7 @@ evaluate_timeseries_alteration <- function (timeseries_data, predictions_df, plo
   timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
   timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
 
-  ffc_results <- get_ffc_results_for_df(timeseries_data)
+  ffc_results <- get_ffc_results_for_df(timeseries_data, comid)
   plot_drh(ffc_results, output_path = drh_output_path)
   results_df <- get_results_as_df(ffc_results)
   percentiles <- get_percentiles(results_df)

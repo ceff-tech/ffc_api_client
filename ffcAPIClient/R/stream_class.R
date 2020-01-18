@@ -123,8 +123,22 @@ get_stream_class_code_for_comid <- function(comid){
 get_ffc_parameters_for_comid <- function(comid){
   stream_class_code <- get_stream_class_code_for_comid(comid)
   if(length(stream_class_code) == 0){  # the comid wasn't found
+    warning("Couldn't find COMID or no COMID provided. Sending the general parameters to the FFC online, which may result in different results than if a COMID was provided or could be found.")
     return(general_parameters)  # so return the general parameters
   }
 
+  print(paste("COMID", comid, "is of stream class", stream_class_code,"- sending parameters to FFC online for that stream class. This may produce different results than if you run data through the FFC yourself using their default parameters."))
   return(class_params[[stream_class_code]])  # otherwise, return the class-specific parameters (which could be general, or not)
+}
+
+get_ffc_parameters_for_comid_as_json <- function(comid){
+  parameters <- get_ffc_parameters_for_comid(comid)
+  json_representation <- jsonlite::toJSON(parameters)
+
+  # jsonlite wraps numbers in list format for JSON, so we'll drop that - the FFC parameters have no lists. This will need
+  # to change it they ever have a list
+  json_representation <- gsub("\\[", "", json_representation)
+  json_representation <- gsub("\\]", "", json_representation)
+  json_representation <- paste(json_representation, ',"location":"ffcAPIClient","riverName":"ffcAPIClient"')
+  return(json_representation)
 }

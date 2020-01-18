@@ -133,6 +133,13 @@ If you delete those results in the web interface at eflows.ucdavis.edu, then thi
 This package cleans up after itself and won't leave behind runs you execute with this code.
 
 ## Change Log
+### Version 0.9.4.2
+* [Breaking Change] The client now detects and sends the appropriate parameters to the FFC online for the stream class that
+                  it detects based on the COMID. If you are using low-level functions such as `get_ffc_results_for_df`, then
+                  you must provide an argument `comid` - check the documentation for which functions need it.
+                  Further,`process-data` now requires that the stream parameters be provided to it. I recommend moving to
+                  something like `get_ffc_results_for_df` as process_data may soon be moved to be internal only.
+
 ### Version 0.9.4.1
 * [Enhancement] New code to support sending the correct stream class parameters to the FFC - includes the ability to identify
     stream classes by COMID, but not yet send the parameters

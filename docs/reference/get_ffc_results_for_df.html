@@ -71,7 +71,7 @@ and then do any other handling and transformation for postprocessing on their ow
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4.2</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@ calculator online, but is also available for those that wish to run the data the
 and then do any other handling and transformation for postprocessing on their own.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_ffc_results_for_df</span>(<span class='no'>flows_df</span>, <span class='no'>flow_field</span>, <span class='no'>date_field</span>, <span class='no'>start_date</span>)</pre>
+    <pre class="usage"><span class='fu'>get_ffc_results_for_df</span>(<span class='no'>flows_df</span>, <span class='no'>comid</span>, <span class='no'>flow_field</span>, <span class='no'>date_field</span>, <span class='no'>start_date</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -121,6 +121,10 @@ and then do any other handling and transformation for postprocessing on their ow
     <tr>
       <th>flows_df</th>
       <td><p>DataFrame. A time series data frame with flow and date columns</p></td>
+    </tr>
+    <tr>
+      <th>comid</th>
+      <td><p>character. The COMID of the stream segment</p></td>
     </tr>
     <tr>
       <th>flow_field</th>

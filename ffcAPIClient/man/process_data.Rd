@@ -4,7 +4,7 @@
 \alias{process_data}
 \title{Send flow data for processing}
 \usage{
-process_data(flows_df, flow_field, date_field, start_date, name)
+process_data(flows_df, params, flow_field, date_field, start_date, name)
 }
 \description{
 In most cases, you won't need to use this function! If you're wondering what to do, use
