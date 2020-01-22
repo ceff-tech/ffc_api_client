@@ -90,7 +90,7 @@ determine_status <- function(percentiles, low_bound, high_bound, assessed_observ
     }
   }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
     if(grepl("_Tim", metric)){
-      timing_alteration_value <- early_or_late(percentiles$p50, low_bound, high_bound, days_in_water_year)
+      timing_alteration_value <- early_or_late_simple(percentiles$p50, low_bound, high_bound, days_in_water_year)
       if(timing_alteration_value == -1){
         alteration_type <- "early"
       }else{
@@ -209,5 +209,25 @@ early_or_late <- function(value, early_value, late_value, days_in_water_year){
       return(-1)
     }
   }
+}
+
+# Similar to early or late, but just does a simple check - if the value is less than
+# the early value in raw numbers, it's early. If it's bigger than the late value in
+# raw numbers, it's late. Assumes that nothing crosses the water year in timing.
+early_or_late_simple <- function(value, early_value, late_value, days_in_water_year){
+  if(missing(days_in_water_year)){
+    days_in_water_year <- 365
+  }
+
+  if(value >= early_value && value <= late_value){
+    return(0)
+  }
+
+  if(value < early_value){
+    return(-1)
+  }
+
+  return(1)  # if it's not in the ranges above, we're late
+
 }
 

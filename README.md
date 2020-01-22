@@ -16,7 +16,6 @@ segment COMID or longitude and latitude (it will look up the COMID for you). See
 2. [Setup](#setup)
 3. [Usage Examples](#usage-examples)
 4. [Predicted Flow Metrics](#predicted-flow-metrics)
-5. [Considerations](#considerations)
 6. [Change Log](#change-log)
 
 
@@ -125,12 +124,6 @@ segment on the North Yuba:
 2567637 Wet_BFL_Mag_50 8058513 4.369753e+02 6.272972e+02   824.51279 1.083330e+03 1.360226e+03  model
 2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model
 ```
-
-## Considerations
-This package could be slow if you have run many items through the calculator in
-the web interface since it currently retrieves *all* results every time you want to get a single result.
-If you delete those results in the web interface at eflows.ucdavis.edu, then this code will be faster.
-This package cleans up after itself and won't leave behind runs you execute with this code.
 
 ## Change Log
 ### Version 0.9.4.2
