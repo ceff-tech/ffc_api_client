@@ -66,14 +66,11 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
 #' because some metrics (*ahem* timing) need their own ways to assess low/high, or early/late
 #'
 #' @param median The calculated median value from the observed data
-#' @param low_bound a value that is the lower end of the normal range for this metric - typically the p10 value from predicted metrics
-#' @param high_bound a value that is the upper end of the normal range for this metric - typically the p90 value from predicted metrics
+#' @param predictions The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values
 #' @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
 #'                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
 #' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
 #' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
-#' @param predicted_proportion numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-#'                             is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
 determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year){
 
   # set some defaults - we'll now prove it's not this, or otherwise return these values
@@ -82,7 +79,7 @@ determine_status <- function(median, predictions, assessed_observations, metric,
   alteration_type <- "unknown"
 
   # Aiming at Type 1 unaltered here - median in bounds
-  if(in_range_strict(median, predictions$p25, predictions$p75)){
+  if(median_in_range_strict(median, predictions$p25, predictions$p75)){
     status_code = LIKELY_UNALTERED_STATUS_CODE
     status = "likely_unaltered"
   }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
@@ -149,12 +146,11 @@ determine_status <- function(median, predictions, assessed_observations, metric,
       if(observations_in_range(assessed_observations = assessed_observations)){
         status_code = LIKELY_UNALTERED_STATUS_CODE
         status = "likely_unaltered"
+        alteration_type = "none found"
       } # otherwise we leave it alone because it's indeterminate
     } else {  # otherwise, we're altered
-      if (median > (high_bound + (high_bound * prediction_proportion))){
-        status_code = LIKELY_ALTERED_STATUS_CODE
-        status = "likely altered"
-      }
+      status_code = LIKELY_ALTERED_STATUS_CODE
+      status = "likely altered"
     }
   }
 
@@ -162,33 +158,14 @@ determine_status <- function(median, predictions, assessed_observations, metric,
 }
 
 
-#'
-#'
-#' So here's a pain in the rear - for timing metrics, none of them have percentiles that cross water years
-#' (which seems kind of suspicious to me, but whatever), so the upper bound will never be earlier
-#' in the water year than the lower bound - that makes things a bit easier. BUT, for alteration,
-#' we have plenty of timing metrics that are predicted to be very early in the water year. If the actual
-#' value is early enough that it's in the previous water year (looking at you fall flushing flow), then
-#' we don't want to mark it as being *late* when it's actually early! So, we need to have some rules for early
-#' and late for timing. Planning to determine the range of values that aren't in the inter-80th percentile range
-#' and then find the day of the water year that's in the middle. Timings earlier than that are late, timings after that
-#' are early.
-timing_alteration <- function(median_value, low_bound, upper_bound, days_in_water_year){
-  if(missing(days_in_water_year)){
-    days_in_water_year <- 365
-  }
-}
-
 
 observations_in_range <- function(assessed_observations){
   observation_counts <- table(assessed_observations)
   unaltered_observations <- observation_counts[names(observation_counts) == 0]
   if((unaltered_observations / length(assessed_observations)) >= 0.5){
-    return(list(status_code = LIKELY_UNALTERED_STATUS_CODE,
-                status = "likely unaltered",
-                alteration_type = "none found",
-    ))
+    return(TRUE)
   }
+  return(FALSE)
 }
 
 
