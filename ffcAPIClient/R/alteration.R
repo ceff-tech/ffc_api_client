@@ -59,7 +59,11 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
     return(data.frame("metric" = metric, "status_code" = -2, "status" = "Not enough data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
   }
 
-  return(determine_status(percentiles[["p50"]], predictions, assessed_observations, metric, days_in_water_year))
+  return(determine_status(median = as.double(percentiles[["p50"]]),
+                          predictions = predictions,
+                          assessed_observations = assessed_observations,
+                          metric = metric,
+                          days_in_water_year = days_in_water_year))
 }
 
 assess_observations <- function(ffc_values, predictions){
