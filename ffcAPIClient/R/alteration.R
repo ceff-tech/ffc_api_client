@@ -22,23 +22,9 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid){
 #'                     calculated percentile values from the FFC.
 #' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
 #' @param ffc_values vector of raw observed metric values (FFC output) for this metric
-#' @param low_bound_percentile character name of the field in predictions that has the lower bound for normal (default "p10")
-#' @param high_bound_percentile character name of the field in predictions that has the upper bound for normal (default "p90")
-#' @param predicted_proportion numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-#'                             is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
-#'                             (default "0.2")
 #' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
 #' @export
-single_metric_alteration <- function(metric, percentiles, predictions, ffc_values, low_bound_percentile, high_bound_percentile, prediction_proportion, days_in_water_year, annual){
-  if(missing(low_bound)){
-    low_bound_percentile = "p10"
-  }
-  if(missing(high_bound)){
-    high_bound_percentile = "p90"
-  }
-  if(missing(prediction_proportion)){
-    prediction_proportion = 0.2
-  }
+single_metric_alteration <- function(metric, percentiles, predictions, ffc_values, days_in_water_year, annual){
   if(missing(days_in_water_year)){
     days_in_water_year <- 365
   }
@@ -50,8 +36,8 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
           be TRUE to run an annual analysis")
   }
 
-  low_bound <- predictions[[low_bound_percentile]]
-  high_bound <- predictions[[high_bound_percentile]]
+  low_bound <- predictions$p25
+  high_bound <- predictions$p75
 
   # we assess whether the values are altered here because it's different for timing than anything else
   # -1 = low/early
@@ -63,15 +49,13 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
   }else{
 
     ffc_no_NAs <- ffc_values[!is.na(ffc_values)]
-    ffc_above_low_bound <- ffc_no_NAs[ffc_no_NAs > low_bound]
-    ffc_i80r <- ffc_above_low_bound[ffc_above_low_bound < high_bound]
 
     assessed_observations <- ffc_no_NAs
     assessed_observations[assessed_observations < low_bound] <- -1
     assessed_observations[assessed_observations >= low_bound && assessed_observations <= high_bound] <- 0
     assessed_observations[assessed_observations > high_bound] <- 1
   }
-  return(determine_status(percentiles$p50, low_bound, high_bound, assessed_observations, metric, days_in_water_year, prediction_proportion))
+  return(determine_status(percentiles$p50, low_bound, high_bound, assessed_observations, metric, days_in_water_year))
 }
 
 #' Calculate the alteration status of a flow metric
@@ -90,60 +74,76 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
 #' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
 #' @param predicted_proportion numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
 #'                             is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
-determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year, prediction_proportion){
+determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year){
 
   # set some defaults - we'll now prove it's not this, or otherwise return these values
   status_code <- INDETERMINATE_STATUS_CODE
   status <- "indeterminate"
   alteration_type <- "unknown"
 
-  # Aiming at Type 1 unaltered here - median in bounds AND 50% of observations in bounds
-  if( (!grepl("_Tim", metric) && in_range_strict(median, predictions$p25, predictions$p75)) ||
-      (grepl("_Tim", metric) && early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year) == 0)){
-    # see if count of values in bounds > 50% of total non-NA values
-
+  # Aiming at Type 1 unaltered here - median in bounds
+  if(in_range_strict(median, predictions$p25, predictions$p75)){
+    status_code = LIKELY_UNALTERED_STATUS_CODE
+    status = "likely_unaltered"
   }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
     # set the direction here
     if(median < predictions$p25){
-      alteration_type <- "low"
+      if(grepl("_Tim", metric)){
+        alteration_type <- "early"
+      } else {
+        alteration_type <- "low"
+      }
     }
     if(median > predictions$p75){
-      alteration_type <- "high"
-    }
-
-    if(grepl("_Tim", metric)){
-      timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
-      if(timing_alteration_value == -1){
-        alteration_type <- "early"
-      }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
+      if(grepl("_Tim", metric)){
         alteration_type <- "late"
+      } else {
+      alteration_type <- "high"
       }
+    }
+    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
+    #  if(timing_alteration_value == -1){
+    #    alteration_type <- "early"
+    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
+    #    alteration_type <- "late"
+    #  }
+    # we used to have separate logic for timing because it could wrap around. But now we don't because apparently all the
+    # other FFC/predictions code assumes nothing except duration metrics crosses water years. Sarah Yarnell says that early/
+    # late are also just a function of earlier in the water year or later in the water year. Something early won't ever
+    # cross the water year boundary to appear late (which lots of the commented out code handles)
+    #if(grepl("_Tim", metric)){
+    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
+    #  if(timing_alteration_value == -1){
+    #    alteration_type <- "early"
+    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
+    #    alteration_type <- "late"
+    #  }
 
-      window_size <- predictions$p75 - predictions$p25
-      if(!((1 + 2*prediction_proportion) * window_size >= days_in_water_year)){  # if we expand the window and it's bigger than the days in the water year, we're indeterminate
-        # in here, the expanded window would have fewer days than the water year, but which days, who knows!
-        high_bound_expanded <- (predictions$p75 + predicted_proportion * window_size) %% days_in_water_year
-        low_bound_expanded <- (predictions$p25 - predicted_proportion * window_size) %% days_in_water_year
-      }
-      if (high_bound_expanded > low_bound_expanded){
-        # Since we already checked that expansion wasn't going to make the window bigger than a year, then if high bound
-        # is greater than the low bound, we know we don't cross water years. Values b/t low and high are indeterminate, outside
-        # of that range, likely altered
-        if(median > high_bound_expanded || median < low_bound_expanded){
-          status_code <- LIKELY_ALTERED_STATUS_CODE
-          status <- "likely altered"
-        }
-      }else {
-        # in here, high_bound_expanded < low_bound_expanded - aka, we crossed the water year boundary on one end. That means
-        # that the values *between* them are likely altered, and outside them are indeterminate
-
-        if(median < high_bound_expanded || median > low_bound_expanded){
-          status_code <- LIKELY_ALTERED_STATUS_CODE
-          status <- "likely_altered"
-        }
-      }
-
-    } else if (median >= predictions$p10 && median <= predictions$p90){
+    #  window_size <- predictions$p75 - predictions$p25
+    #  if(!((1 + 2*prediction_proportion) * window_size >= days_in_water_year)){  # if we expand the window and it's bigger than the days in the water year, we're indeterminate
+    #    # in here, the expanded window would have fewer days than the water year, but which days, who knows!
+    #    high_bound_expanded <- (predictions$p75 + predicted_proportion * window_size) %% days_in_water_year
+    #    low_bound_expanded <- (predictions$p25 - predicted_proportion * window_size) %% days_in_water_year
+    #  }
+    #  if (high_bound_expanded > low_bound_expanded){
+    #    # Since we already checked that expansion wasn't going to make the window bigger than a year, then if high bound
+    #    # is greater than the low bound, we know we don't cross water years. Values b/t low and high are indeterminate, outside
+    #    # of that range, likely altered
+    #    if(median > high_bound_expanded || median < low_bound_expanded){
+    #      status_code <- LIKELY_ALTERED_STATUS_CODE
+    #      status <- "likely altered"
+    #    }
+    #  }else {
+    #    # in here, high_bound_expanded < low_bound_expanded - aka, we crossed the water year boundary on one end. That means
+    #    # that the values *between* them are likely altered, and outside them are indeterminate
+    #
+    #    if(median < high_bound_expanded || median > low_bound_expanded){
+    #      status_code <- LIKELY_ALTERED_STATUS_CODE
+    #      status <- "likely_altered"
+    #    }
+    #  }
+    #}
+    if (median >= predictions$p10 && median <= predictions$p90){
       # for regular metrics, if we're in here, then we have a chance at being unaltered if
       # 50% of observations are in range
       if(observations_in_range(assessed_observations = assessed_observations)){
