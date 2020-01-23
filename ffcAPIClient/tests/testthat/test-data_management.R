@@ -1,10 +1,10 @@
 context("Data loading and management functions")
 library(ffcAPIClient)
 
-test_that("Shouldn't exist before we load it", {
-  expect_false(exists("something", envir = ffcAPIClient_data_env))
-  expect_false(exists("stream_class_data", envir = ffcAPIClient_data_env, inherits = FALSE))
-})
+#test_that("Shouldn't exist before we load it", {
+#  expect_false(exists("something", envir = ffcAPIClient_data_env))
+#  expect_false(exists("stream_class_data", envir = ffcAPIClient_data_env, inherits = FALSE))
+#})
 
 test_that("Succeeds at basic loading", {
   get_dataset("stream_class_data")

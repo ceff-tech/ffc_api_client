@@ -82,6 +82,7 @@ determine_status <- function(median, predictions, assessed_observations, metric,
   if(median_in_range_strict(median, predictions$p25, predictions$p75)){
     status_code = LIKELY_UNALTERED_STATUS_CODE
     status = "likely_unaltered"
+    alteration_type = "none_found"
   }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
     # set the direction here
     if(median < predictions$p25){
@@ -146,11 +147,11 @@ determine_status <- function(median, predictions, assessed_observations, metric,
       if(observations_in_range(assessed_observations = assessed_observations)){
         status_code = LIKELY_UNALTERED_STATUS_CODE
         status = "likely_unaltered"
-        alteration_type = "none found"
+        alteration_type = "none_found"
       } # otherwise we leave it alone because it's indeterminate
     } else {  # otherwise, we're altered
       status_code = LIKELY_ALTERED_STATUS_CODE
-      status = "likely altered"
+      status = "likely_altered"
     }
   }
 
