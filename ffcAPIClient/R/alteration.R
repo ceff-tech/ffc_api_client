@@ -2,11 +2,14 @@ LIKELY_ALTERED_STATUS_CODE = -1
 INDETERMINATE_STATUS_CODE = 0
 LIKELY_UNALTERED_STATUS_CODE = 1
 
-
 # This will be be the function that returns the alteration values for a single segment - it will
 # return a record for every metric with its alteration assessment.
 assess_alteration <- function(percentiles, predictions, ffc_values, comid){
-
+  percentiles <- percentiles[percentiles$Metric %in% as.character(predictions$Metric), ]
+  alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values)
+  alteration_df <- do.call("rbind", alteration_list)
+  alteration_df$comid <- comid
+  return(alteration_df)
 }
 
 
@@ -17,14 +20,13 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid){
 #' an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
 #' in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)
 #'
-#' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
-#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
-#'                     calculated percentile values from the FFC.
+#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
+#'                     Metric with the flow metric in it. These are calculated percentile values from the FFC.
 #' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
 #' @param ffc_values vector of raw observed metric values (FFC output) for this metric
 #' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
 #' @export
-single_metric_alteration <- function(metric, percentiles, predictions, ffc_values, days_in_water_year, annual){
+single_metric_alteration <- function(percentiles, predictions, ffc_values, days_in_water_year, annual){
   if(missing(days_in_water_year)){
     days_in_water_year <- 365
   }
@@ -35,28 +37,51 @@ single_metric_alteration <- function(metric, percentiles, predictions, ffc_value
     stop("Missing percentiles data, but not running an annual analysis. Parameter 'annual' to single_metric_alteration must
           be TRUE to run an annual analysis")
   }
-
-  low_bound <- predictions$p25
-  high_bound <- predictions$p75
+  metric <- percentiles[["Metric"]]
+  predictions <- as.data.frame(predictions)
+  predictions <- predictions[predictions$Metric == metric, ]
+  ffc_values <- dplyr::select(ffc_values, metric)
 
   # we assess whether the values are altered here because it's different for timing than anything else
   # -1 = low/early
   # 0 = in range
   # 1 = high/late
-  if(grepl("_Tim", metric)){
-    # determine if each year's observed values are early, late, or within range
-    assessed_observations = mapply(early_or_late_simple, ffc_values, MoreArgs=list("early_value" = low_bound, "late_value" = high_bound, "days_in_water_year" = days_in_water_year))
-  }else{
+  #if (grepl("_Tim", metric)) {
+  #  low_bound <- predictions$p25
+  #  high_bound <- predictions$p75
+  #  # determine if each year's observed values are early, late, or within range
+  #  assessed_observations = mapply(early_or_late_simple, ffc_values, MoreArgs = list("early_value" = low_bound, "late_value" = high_bound, "days_in_water_year" = days_in_water_year))
+  #}else{
+  assessed_observations = assess_observations(ffc_values, predictions)
+  #}
 
-    ffc_no_NAs <- ffc_values[!is.na(ffc_values)]
-
-    assessed_observations <- ffc_no_NAs
-    assessed_observations[assessed_observations < low_bound] <- -1
-    assessed_observations[assessed_observations >= low_bound && assessed_observations <= high_bound] <- 0
-    assessed_observations[assessed_observations > high_bound] <- 1
+  if (is.null(assessed_observations)) {
+    return(data.frame("metric" = metric, "status_code" = -2, "status" = "Not enough data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
   }
-  return(determine_status(percentiles$p50, low_bound, high_bound, assessed_observations, metric, days_in_water_year))
+
+  return(determine_status(percentiles[["p50"]], predictions, assessed_observations, metric, days_in_water_year))
 }
+
+assess_observations <- function(ffc_values, predictions){
+  ffc_no_NAs <- as.numeric(ffc_values[!is.na(ffc_values)])
+  if(length(ffc_no_NAs) == 0){
+    return(NULL)
+  }
+  low_bound <- predictions$p25
+  high_bound <- predictions$p75
+
+  assessed_observations <- as.vector(ffc_no_NAs)
+  # assign impossible values first so we don't overlap any real values
+  assessed_observations[assessed_observations < low_bound] <- -1
+  assessed_observations[assessed_observations > high_bound] <- -3
+  assessed_observations[assessed_observations > 0] <- -2
+
+  # now assign the real values we want
+  assessed_observations[assessed_observations == -3] <- 1
+  assessed_observations[assessed_observations == -2] <- 0
+  return(assessed_observations)
+}
+
 
 #' Calculate the alteration status of a flow metric
 #'
@@ -79,20 +104,20 @@ determine_status <- function(median, predictions, assessed_observations, metric,
   alteration_type <- "unknown"
 
   # Aiming at Type 1 unaltered here - median in bounds
-  if(median_in_range_strict(median, predictions$p25, predictions$p75)){
+  if (median_in_range_strict(median, predictions[["p25"]], predictions[["p75"]])) {
     status_code = LIKELY_UNALTERED_STATUS_CODE
     status = "likely_unaltered"
     alteration_type = "none_found"
-  }else{ # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
+  } else {  # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
     # set the direction here
-    if(median < predictions$p25){
-      if(grepl("_Tim", metric)){
+    if (median < predictions[["p25"]]){
+      if (grepl("_Tim", metric)){
         alteration_type <- "early"
       } else {
         alteration_type <- "low"
       }
     }
-    if(median > predictions$p75){
+    if(median > predictions[["p75"]]){
       if(grepl("_Tim", metric)){
         alteration_type <- "late"
       } else {
@@ -141,7 +166,7 @@ determine_status <- function(median, predictions, assessed_observations, metric,
     #    }
     #  }
     #}
-    if (median >= predictions$p10 && median <= predictions$p90){
+    if (median >= predictions[["p10"]] && median <= predictions[["p90"]]){
       # for regular metrics, if we're in here, then we have a chance at being unaltered if
       # 50% of observations are in range
       if(observations_in_range(assessed_observations = assessed_observations)){
@@ -149,19 +174,25 @@ determine_status <- function(median, predictions, assessed_observations, metric,
         status = "likely_unaltered"
         alteration_type = "none_found"
       } # otherwise we leave it alone because it's indeterminate
-    } else {  # otherwise, we're altered
+    } else { # otherwise, we're altered
       status_code = LIKELY_ALTERED_STATUS_CODE
       status = "likely_altered"
     }
   }
 
-  return(list("status_code" = status_code, "status" = status, "alteration_type" = alteration_type))
+  return(data.frame("Metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, stringsAsFactors = FALSE))
 }
 
 
 
 observations_in_range <- function(assessed_observations){
   observation_counts <- table(assessed_observations)
+
+  if(!(0 %in% names(observation_counts))){  # if we don't have *any* zeros, the code below will break. return that it's out of range
+    return(FALSE)
+  }
+
+  # now check the proportion of zeros provided
   unaltered_observations <- observation_counts[names(observation_counts) == 0]
   if((unaltered_observations / length(assessed_observations)) >= 0.5){
     return(TRUE)
@@ -171,7 +202,7 @@ observations_in_range <- function(assessed_observations){
 
 
 median_in_range_strict <- function(value, low_bound, high_bound){
-  if(value >= low_bound && value <= high_bound){
+  if (value >= low_bound && value <= high_bound) {
     return(TRUE)
   }
   return(FALSE)
