@@ -5,22 +5,17 @@
 \title{Calculate the alteration status of a flow metric}
 \usage{
 determine_status(
-  percentiles,
-  low_bound,
-  high_bound,
+  median,
+  predictions,
   assessed_observations,
   metric,
-  days_in_water_year,
-  prediction_proportion
+  days_in_water_year
 )
 }
 \arguments{
-\item{percentiles}{data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
-calculated percentile values from the FFC.}
+\item{median}{The calculated median value from the observed data}
 
-\item{low_bound}{a value that is the lower end of the normal range for this metric - typically the p10 value from predicted metrics}
-
-\item{high_bound}{a value that is the upper end of the normal range for this metric - typically the p90 value from predicted metrics}
+\item{predictions}{The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values}
 
 \item{assessed_observations}{vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
 so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1}
@@ -28,9 +23,6 @@ so that records that are low/early are -1, records that are in range are 0, and 
 \item{metric}{character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name}
 
 \item{days_in_water_year}{numeric of how many days in the water year (typically 365, but could be 366).}
-
-\item{predicted_proportion}{numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2}
 }
 \description{
 This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,

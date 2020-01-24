@@ -2,8 +2,12 @@ LIKELY_ALTERED_STATUS_CODE = -1
 INDETERMINATE_STATUS_CODE = 0
 LIKELY_UNALTERED_STATUS_CODE = 1
 
-# This will be be the function that returns the alteration values for a single segment - it will
-# return a record for every metric with its alteration assessment.
+#' Assess hydrologic alteration by flow metric
+#'
+#' This will be be the function that returns the alteration values for a single segment - it will
+#' return a record for every metric with its alteration assessment.
+#'
+#' @export
 assess_alteration <- function(percentiles, predictions, ffc_values, comid){
   percentiles <- percentiles[percentiles$Metric %in% as.character(predictions$Metric), ]
   alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values)

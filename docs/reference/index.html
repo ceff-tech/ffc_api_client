@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5</span>
       </span>
     </div>
 
@@ -117,6 +117,12 @@
         </th>
       </tr>
       <tr>
+        
+        <td>
+          <p><code><a href="assess_alteration.html">assess_alteration()</a></code> </p>
+        </td>
+        <td><p>Assess hydrologic alteration by flow metric</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="determine_status.html">determine_status()</a></code> </p>
@@ -261,20 +267,6 @@ flows calculator</p></td>
           <p><code><a href="stream_class_data.html">stream_class_data</a></code> </p>
         </td>
         <td><p>Geomorphic Stream Classification</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="timing_alteration.html">timing_alteration()</a></code> </p>
-        </td>
-        <td><p>So here's a pain in the rear - for timing metrics, none of them have percentiles that cross water years
-(which seems kind of suspicious to me, but whatever), so the upper bound will never be earlier
-in the water year than the lower bound - that makes things a bit easier. BUT, for alteration,
-we have plenty of timing metrics that are predicted to be very early in the water year. If the actual
-value is early enough that it's in the previous water year (looking at you fall flushing flow), then
-we don't want to mark it as being *late* when it's actually early! So, we need to have some rules for early
-and late for timing. Planning to determine the range of values that aren't in the inter-80th percentile range
-and then find the day of the water year that's in the middle. Timings earlier than that are late, timings after that
-are early.</p></td>
       </tr><tr>
         
         <td>

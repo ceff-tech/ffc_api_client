@@ -72,7 +72,7 @@ in if it's indeterminate or likely altered (values are low/high or early/late fo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5</span>
       </span>
     </div>
 
@@ -116,27 +116,20 @@ in if it's indeterminate or likely altered (values are low/high or early/late fo
     </div>
 
     <pre class="usage"><span class='fu'>single_metric_alteration</span>(
-  <span class='no'>metric</span>,
   <span class='no'>percentiles</span>,
   <span class='no'>predictions</span>,
   <span class='no'>ffc_values</span>,
-  <span class='no'>low_bound_percentile</span>,
-  <span class='no'>high_bound_percentile</span>,
-  <span class='no'>prediction_proportion</span>,
-  <span class='no'>days_in_water_year</span>
+  <span class='no'>days_in_water_year</span>,
+  <span class='no'>annual</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>metric</th>
-      <td><p>character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name</p></td>
-    </tr>
-    <tr>
       <th>percentiles</th>
-      <td><p>data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
-calculated percentile values from the FFC.</p></td>
+      <td><p>data frame row - should have a named value "p50" that can be accessed, at the very least and a column
+Metric with the flow metric in it. These are calculated percentile values from the FFC.</p></td>
     </tr>
     <tr>
       <th>predictions</th>
@@ -147,22 +140,8 @@ calculated percentile values from the FFC.</p></td>
       <td><p>vector of raw observed metric values (FFC output) for this metric</p></td>
     </tr>
     <tr>
-      <th>low_bound_percentile</th>
-      <td><p>character name of the field in predictions that has the lower bound for normal (default "p10")</p></td>
-    </tr>
-    <tr>
-      <th>high_bound_percentile</th>
-      <td><p>character name of the field in predictions that has the upper bound for normal (default "p90")</p></td>
-    </tr>
-    <tr>
       <th>days_in_water_year</th>
       <td><p>numeric of how many days in the water year (defaults to 365, but could be 366).</p></td>
-    </tr>
-    <tr>
-      <th>predicted_proportion</th>
-      <td><p>numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
-(default "0.2")</p></td>
     </tr>
     </table>
 

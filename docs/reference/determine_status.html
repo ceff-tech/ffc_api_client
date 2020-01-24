@@ -72,7 +72,7 @@ because some metrics (*ahem* timing) need their own ways to assess low/high, or 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5</span>
       </span>
     </div>
 
@@ -116,30 +116,23 @@ because some metrics (*ahem* timing) need their own ways to assess low/high, or 
     </div>
 
     <pre class="usage"><span class='fu'>determine_status</span>(
-  <span class='no'>percentiles</span>,
-  <span class='no'>low_bound</span>,
-  <span class='no'>high_bound</span>,
+  <span class='no'>median</span>,
+  <span class='no'>predictions</span>,
   <span class='no'>assessed_observations</span>,
   <span class='no'>metric</span>,
-  <span class='no'>days_in_water_year</span>,
-  <span class='no'>prediction_proportion</span>
+  <span class='no'>days_in_water_year</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>percentiles</th>
-      <td><p>data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
-calculated percentile values from the FFC.</p></td>
+      <th>median</th>
+      <td><p>The calculated median value from the observed data</p></td>
     </tr>
     <tr>
-      <th>low_bound</th>
-      <td><p>a value that is the lower end of the normal range for this metric - typically the p10 value from predicted metrics</p></td>
-    </tr>
-    <tr>
-      <th>high_bound</th>
-      <td><p>a value that is the upper end of the normal range for this metric - typically the p90 value from predicted metrics</p></td>
+      <th>predictions</th>
+      <td><p>The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values</p></td>
     </tr>
     <tr>
       <th>assessed_observations</th>
@@ -153,11 +146,6 @@ so that records that are low/early are -1, records that are in range are 0, and 
     <tr>
       <th>days_in_water_year</th>
       <td><p>numeric of how many days in the water year (typically 365, but could be 366).</p></td>
-    </tr>
-    <tr>
-      <th>predicted_proportion</th>
-      <td><p>numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2</p></td>
     </tr>
     </table>
 

@@ -5,35 +5,22 @@
 \title{Assess the alteration of a single flow metric}
 \usage{
 single_metric_alteration(
-  metric,
   percentiles,
   predictions,
   ffc_values,
-  low_bound_percentile,
-  high_bound_percentile,
-  prediction_proportion,
-  days_in_water_year
+  days_in_water_year,
+  annual
 )
 }
 \arguments{
-\item{metric}{character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name}
-
-\item{percentiles}{data frame row - should have a named value "p50" that can be accessed, at the very least. These are the
-calculated percentile values from the FFC.}
+\item{percentiles}{data frame row - should have a named value "p50" that can be accessed, at the very least and a column
+Metric with the flow metric in it. These are calculated percentile values from the FFC.}
 
 \item{predictions}{data frame (or other named field item) the predicted flow metric values for the segment and metric}
 
 \item{ffc_values}{vector of raw observed metric values (FFC output) for this metric}
 
-\item{low_bound_percentile}{character name of the field in predictions that has the lower bound for normal (default "p10")}
-
-\item{high_bound_percentile}{character name of the field in predictions that has the upper bound for normal (default "p90")}
-
 \item{days_in_water_year}{numeric of how many days in the water year (defaults to 365, but could be 366).}
-
-\item{predicted_proportion}{numeric. When we know that we're not unaltered, we construct an interval to assess if we're altered, which
-is a two-sided multiplication of the low_bound and the high_bound by (1+prediction_proportion). Typically 0.2
-(default "0.2")}
 }
 \description{
 Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
