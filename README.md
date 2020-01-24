@@ -148,7 +148,7 @@ segment on the North Yuba:
 * [Documentation] Reworking documentation to make best workflows clearer
 
 ### Version 0.9.3
-* [Enhancement] Can now provide a time format string to `assess_alteration` - it will use that to read the values
+* [Enhancement] Can now provide a time format string to `evaluate_alteration` - it will use that to read the values
   in the time field and reformat them to send to the FFC as needed.
 * [Bugfix] FFC results no longer fail to transform if one flow metric is entirely NULL
 
