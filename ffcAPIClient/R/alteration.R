@@ -71,8 +71,8 @@ assess_observations <- function(ffc_values, predictions){
   if(length(ffc_no_NAs) == 0){
     return(NULL)
   }
-  low_bound <- predictions$p25
-  high_bound <- predictions$p75
+  low_bound <- predictions$p10
+  high_bound <- predictions$p90
 
   assessed_observations <- as.vector(ffc_no_NAs)
   # assign impossible values first so we don't overlap any real values
