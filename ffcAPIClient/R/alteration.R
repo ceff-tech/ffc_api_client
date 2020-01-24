@@ -4,8 +4,27 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 
 #' Assess hydrologic alteration by flow metric
 #'
-#' This will be be the function that returns the alteration values for a single segment - it will
-#' return a record for every metric with its alteration assessment.
+#' Returns a data frame with an alteration status assessment for every flow metric.
+#'
+#' Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
+#' alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
+#' the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
+#' data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+#' "status", "alteration_type", and "comid".
+#'
+#' The \code{comid} will be the same for all rows, and will match what you provide
+#' as an input, but allows for merging of these results into larger tables.
+#'
+#' \code{status_code} will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
+#' \code{status} will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
+#' \code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+#' provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
+#' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
+#'
+#' @param percentiles dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90
+#' @param predictions dataframe of predicted flow metrics, as returned from \ref{\code{get_predicted_flow_metrics}}.
+#' @param ffc_values dataframe of the raw results from the online FFC, as returned by \ref{\code{evaluate_gage_alteration}} or \ref{\code{get_results_as_df}}
+#' @param comid integer comid of the stream segment the previous parameters are for
 #'
 #' @export
 assess_alteration <- function(percentiles, predictions, ffc_values, comid){
@@ -60,7 +79,7 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
   #}
 
   if (is.null(assessed_observations)) {
-    return(data.frame("metric" = metric, "status_code" = -2, "status" = "Not enough data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
+    return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
   }
 
   return(determine_status(median = as.double(percentiles[["p50"]]),
@@ -239,10 +258,15 @@ modulo_midpoint <- function(first_value, second_value, modulo_value){
 #' Determine if timing metrics are early, late, or in range
 #'
 #' Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or "within range"
-#' based on the modeled early_value, modeled late_value, and the actual value. It returns within range (0)
+#' based on the modeled early_value, modeled late_value, and the actual value.
+#'
+#' It returns within range (0)
 #' if the value is between early_value and late_value. If not, it splits the distance between late_value and
 #' early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
-#' the late_value (then returns late (1)), or the early value (then returns early (-1))
+#' the late_value (then returns late (1)), or the early value (then returns early (-1)).
+#'
+#' This function is currently not used in the package - instead, a simpler evaluation that does not roll
+#' over the calendar year is used.
 #'
 #' @export
 early_or_late <- function(value, early_value, late_value, days_in_water_year){

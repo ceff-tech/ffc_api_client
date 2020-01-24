@@ -6,7 +6,31 @@
 \usage{
 assess_alteration(percentiles, predictions, ffc_values, comid)
 }
+\arguments{
+\item{percentiles}{dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90}
+
+\item{predictions}{dataframe of predicted flow metrics, as returned from \ref{\code{get_predicted_flow_metrics}}.}
+
+\item{ffc_values}{dataframe of the raw results from the online FFC, as returned by \ref{\code{evaluate_gage_alteration}} or \ref{\code{get_results_as_df}}}
+
+\item{comid}{integer comid of the stream segment the previous parameters are for}
+}
 \description{
-This will be be the function that returns the alteration values for a single segment - it will
-return a record for every metric with its alteration assessment.
+Returns a data frame with an alteration status assessment for every flow metric.
+}
+\details{
+Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
+alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
+the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
+data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+"status", "alteration_type", and "comid".
+
+The \code{comid} will be the same for all rows, and will match what you provide
+as an input, but allows for merging of these results into larger tables.
+
+\code{status_code} will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
+\code{status} will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
+\code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
+it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
 }

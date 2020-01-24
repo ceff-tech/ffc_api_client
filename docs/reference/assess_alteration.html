@@ -36,8 +36,7 @@
 
 
 <meta property="og:title" content="Assess hydrologic alteration by flow metric — assess_alteration" />
-<meta property="og:description" content="This will be be the function that returns the alteration values for a single segment - it will
-return a record for every metric with its alteration assessment." />
+<meta property="og:description" content="Returns a data frame with an alteration status assessment for every flow metric." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,18 +106,53 @@ return a record for every metric with its alteration assessment." />
     </div>
 
     <div class="ref-description">
-    <p>This will be be the function that returns the alteration values for a single segment - it will
-return a record for every metric with its alteration assessment.</p>
+    <p>Returns a data frame with an alteration status assessment for every flow metric.</p>
     </div>
 
     <pre class="usage"><span class='fu'>assess_alteration</span>(<span class='no'>percentiles</span>, <span class='no'>predictions</span>, <span class='no'>ffc_values</span>, <span class='no'>comid</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>percentiles</th>
+      <td><p>dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90</p></td>
+    </tr>
+    <tr>
+      <th>predictions</th>
+      <td><p>dataframe of predicted flow metrics, as returned from <code>get_predicted_flow_metrics</code>.</p></td>
+    </tr>
+    <tr>
+      <th>ffc_values</th>
+      <td><p>dataframe of the raw results from the online FFC, as returned by <code>evaluate_gage_alteration</code> or <code>get_results_as_df</code></p></td>
+    </tr>
+    <tr>
+      <th>comid</th>
+      <td><p>integer comid of the stream segment the previous parameters are for</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
+alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
+the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
+data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+"status", "alteration_type", and "comid".</p>
+<p>The <code>comid</code> will be the same for all rows, and will match what you provide
+as an input, but allows for merging of these results into larger tables.</p>
+<p><code>status_code</code> will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
+<code>status</code> will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
+<code>alteration_type</code> will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
+it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

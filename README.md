@@ -128,6 +128,8 @@ segment on the North Yuba:
 ## Change Log
 ### Version 0.9.5
 * [Enhancement] New `assess_alteration` function returns a data frame with alteration results - documentation forthcoming.
+* [Change] Warning when can't determine stream segment's hydrogeomorphic type has been downgraded to a print statement.
+
 ### Version 0.9.4.2
 * [Breaking Change] The client now detects and sends the appropriate parameters to the FFC online for the stream class that
                   it detects based on the COMID. If you are using low-level functions such as `get_ffc_results_for_df`, then

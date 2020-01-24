@@ -37,10 +37,7 @@
 
 <meta property="og:title" content="Determine if timing metrics are early, late, or in range — early_or_late" />
 <meta property="og:description" content="Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or &quot;within range&quot;
-based on the modeled early_value, modeled late_value, and the actual value. It returns within range (0)
-if the value is between early_value and late_value. If not, it splits the distance between late_value and
-early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
-the late_value (then returns late (1)), or the early value (then returns early (-1))" />
+based on the modeled early_value, modeled late_value, and the actual value." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -111,20 +108,26 @@ the late_value (then returns late (1)), or the early value (then returns early (
 
     <div class="ref-description">
     <p>Properly rolls over the calendar at 365 days, but can tell you if a metric is early, late, or "within range"
-based on the modeled early_value, modeled late_value, and the actual value. It returns within range (0)
-if the value is between early_value and late_value. If not, it splits the distance between late_value and
-early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
-the late_value (then returns late (1)), or the early value (then returns early (-1))</p>
+based on the modeled early_value, modeled late_value, and the actual value.</p>
     </div>
 
     <pre class="usage"><span class='fu'>early_or_late</span>(<span class='no'>value</span>, <span class='no'>early_value</span>, <span class='no'>late_value</span>, <span class='no'>days_in_water_year</span>)</pre>
 
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>It returns within range (0)
+if the value is between early_value and late_value. If not, it splits the distance between late_value and
+early_value in two, rolling over at the end of the calendar year, and assesses if the value is closer to
+the late_value (then returns late (1)), or the early value (then returns early (-1)).</p>
+<p>This function is currently not used in the package - instead, a simpler evaluation that does not roll
+over the calendar year is used.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

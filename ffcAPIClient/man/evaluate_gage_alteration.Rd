@@ -28,7 +28,7 @@ If you provide it a USGS gage ID and your token to access the online functional 
 
 4. Transform the results into a data frame with rows for years and metric values as columns
 
-5. Produce percentiles for those metric values
+5. Produce percentiles for those metric values using R's recommended quantile method type 8 (which may return differing results from other methods, Excel, etc)
 
 6. Transform the dimensionless reference hydrograph data into a data frame
 

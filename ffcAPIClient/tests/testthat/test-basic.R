@@ -13,4 +13,8 @@ test_that("Evaluate Gage Alteration Runs",{
   ffcAPIClient::set_token(token)
   results <- ffcAPIClient::evaluate_gage_alteration(gage_id = 11336000, token = token)  # run for mcconnell gage on cosumnes
   expect_is(results, "list")
+  results <- ffcAPIClient::evaluate_gage_alteration(gage_id = 103087889, token = token)  # run for 4L Creek, Markleeville, which has some funky results
+  expect_is(results, "list")
 })
+
+
