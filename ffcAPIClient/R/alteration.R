@@ -25,11 +25,22 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
 #' @param ffc_values dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}
 #' @param comid integer comid of the stream segment the previous parameters are for
-#'
+#' @param annual boolean indicating whether to run a year over year analysis. If \code{TRUE}, then the parameter \code{percentiles}
+#'               changes and should be a data frame with only two columns - the first is still \code{Metric}, but the second is just
+#'               \code{value} representing the current year's value for the metric. \code{predictions} should then still have fields
+#'               for the \code{Metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
+#'               bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
+#'               annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
+#'               provides likely_unaltered results when \code{value} is within the \code{p25} and \code{p75} values, and provides
+#'               likely_altered otherwise without additional checks described in the CEFF guidance document, appendix F.
 #' @export
-assess_alteration <- function(percentiles, predictions, ffc_values, comid){
+assess_alteration <- function(percentiles, predictions, ffc_values, comid, annual){
+  if(missing(annual)){
+    annual <- FALSE
+  }
+
   percentiles <- percentiles[percentiles$Metric %in% as.character(predictions$Metric), ]
-  alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values)
+  alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values, annual)
   alteration_df <- do.call("rbind", alteration_list)
   alteration_df$comid <- comid
   return(alteration_df)
@@ -56,10 +67,7 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
   if(missing(annual)){
     annual <- FALSE
   }
-  if(missing(percentiles) && annual == FALSE){
-    stop("Missing percentiles data, but not running an annual analysis. Parameter 'annual' to single_metric_alteration must
-          be TRUE to run an annual analysis")
-  }
+
   metric <- percentiles[["Metric"]]
   predictions <- as.data.frame(predictions)
   predictions <- predictions[predictions$Metric == metric, ]
@@ -75,18 +83,25 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
   #  # determine if each year's observed values are early, late, or within range
   #  assessed_observations = mapply(early_or_late_simple, ffc_values, MoreArgs = list("early_value" = low_bound, "late_value" = high_bound, "days_in_water_year" = days_in_water_year))
   #}else{
-  assessed_observations = assess_observations(ffc_values, predictions)
+  if(!annual){
+    assessed_observations = assess_observations(ffc_values, predictions)
   #}
 
-  if (is.null(assessed_observations)) {
-    return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
+    if (is.null(assessed_observations)) {  # assess_observations returns NULL if there's not enough data
+      return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
+    }
+    median = as.double(percentiles[["p50"]])
+  }else{
+    assessed_observations <- NULL  # we won't need it in an annual analysis
+    median = as.double(percentiles[["value"]])
   }
 
-  return(determine_status(median = as.double(percentiles[["p50"]]),
+  return(determine_status(median = median,
                           predictions = predictions,
                           assessed_observations = assessed_observations,
                           metric = metric,
-                          days_in_water_year = days_in_water_year))
+                          days_in_water_year = days_in_water_year,
+                          annual = annual))
 }
 
 assess_observations <- function(ffc_values, predictions){
@@ -123,7 +138,10 @@ assess_observations <- function(ffc_values, predictions){
 #'                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
 #' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
 #' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
-determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year){
+determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year, annual){
+  if(missing(annual)){
+    annual <- FALSE
+  }
 
   # set some defaults - we'll now prove it's not this, or otherwise return these values
   status_code <- INDETERMINATE_STATUS_CODE
@@ -135,6 +153,10 @@ determine_status <- function(median, predictions, assessed_observations, metric,
     status_code = LIKELY_UNALTERED_STATUS_CODE
     status = "likely_unaltered"
     alteration_type = "none_found"
+  } else if (annual){
+    status_code = LIKELY_ALTERED_STATUS_CODE
+    status = "likely_altered"
+    alteration_type = "unknown"
   } else {  # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
     # set the direction here
     if (median < predictions[["p25"]]){

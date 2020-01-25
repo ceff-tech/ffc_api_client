@@ -127,6 +127,9 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.2
+* [Enhancement] Added `annual` parameter to `assess_alteration` that runs a year over year analysis.
+
 ### Version 0.9.5.1
 * [Enhancement] New parameter `plot` (boolean) to `evaluate_gage_alteration` controls whether the function produces plots or not
 

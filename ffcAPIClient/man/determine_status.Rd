@@ -9,7 +9,8 @@ determine_status(
   predictions,
   assessed_observations,
   metric,
-  days_in_water_year
+  days_in_water_year,
+  annual
 )
 }
 \arguments{

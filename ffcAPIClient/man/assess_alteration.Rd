@@ -4,7 +4,7 @@
 \alias{assess_alteration}
 \title{Assess hydrologic alteration by flow metric}
 \usage{
-assess_alteration(percentiles, predictions, ffc_values, comid)
+assess_alteration(percentiles, predictions, ffc_values, comid, annual)
 }
 \arguments{
 \item{percentiles}{dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90}
@@ -14,6 +14,15 @@ assess_alteration(percentiles, predictions, ffc_values, comid)
 \item{ffc_values}{dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}}
 
 \item{comid}{integer comid of the stream segment the previous parameters are for}
+
+\item{annual}{boolean indicating whether to run a year over year analysis. If \code{TRUE}, then the parameter \code{percentiles}
+changes and should be a data frame with only two columns - the first is still \code{Metric}, but the second is just
+\code{value} representing the current year's value for the metric. \code{predictions} should then still have fields
+for the \code{Metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
+bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
+annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
+provides likely_unaltered results when \code{value} is within the \code{p25} and \code{p75} values, and provides
+likely_altered otherwise without additional checks described in the CEFF guidance document, appendix F.}
 }
 \description{
 Returns a data frame with an alteration status assessment for every flow metric.

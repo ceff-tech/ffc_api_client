@@ -109,7 +109,7 @@
     <p>Returns a data frame with an alteration status assessment for every flow metric.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>assess_alteration</span>(<span class='no'>percentiles</span>, <span class='no'>predictions</span>, <span class='no'>ffc_values</span>, <span class='no'>comid</span>)</pre>
+    <pre class="usage"><span class='fu'>assess_alteration</span>(<span class='no'>percentiles</span>, <span class='no'>predictions</span>, <span class='no'>ffc_values</span>, <span class='no'>comid</span>, <span class='no'>annual</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -129,6 +129,17 @@
     <tr>
       <th>comid</th>
       <td><p>integer comid of the stream segment the previous parameters are for</p></td>
+    </tr>
+    <tr>
+      <th>annual</th>
+      <td><p>boolean indicating whether to run a year over year analysis. If <code>TRUE</code>, then the parameter <code>percentiles</code>
+changes and should be a data frame with only two columns - the first is still <code>Metric</code>, but the second is just
+<code>value</code> representing the current year's value for the metric. <code>predictions</code> should then still have fields
+for the <code>Metric</code>, <code>p25</code>, and <code>p75</code>, where <code>p25</code> and <code>p75</code> represent the lower and upper
+bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
+annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
+provides likely_unaltered results when <code>value</code> is within the <code>p25</code> and <code>p75</code> values, and provides
+likely_altered otherwise without additional checks described in the CEFF guidance document, appendix F.</p></td>
     </tr>
     </table>
 
