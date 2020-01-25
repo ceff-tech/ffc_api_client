@@ -9,9 +9,9 @@ assess_alteration(percentiles, predictions, ffc_values, comid)
 \arguments{
 \item{percentiles}{dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90}
 
-\item{predictions}{dataframe of predicted flow metrics, as returned from \link{\code{get_predicted_flow_metrics}}.}
+\item{predictions}{dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.}
 
-\item{ffc_values}{dataframe of the raw results from the online FFC, as returned by \link{\code{evaluate_gage_alteration}} or \link{\code{get_results_as_df}}}
+\item{ffc_values}{dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}}
 
 \item{comid}{integer comid of the stream segment the previous parameters are for}
 }

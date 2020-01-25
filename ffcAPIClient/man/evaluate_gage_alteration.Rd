@@ -4,7 +4,7 @@
 \alias{evaluate_gage_alteration}
 \title{Generate FFC Results and Plots for Gage Data}
 \usage{
-evaluate_gage_alteration(gage_id, token, plot_output_folder)
+evaluate_gage_alteration(gage_id, token, plot_output_folder, plot_results)
 }
 \arguments{
 \item{gage_id}{The USGS gage ID to pull timeseries data from}

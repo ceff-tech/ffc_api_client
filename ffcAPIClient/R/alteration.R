@@ -22,8 +22,8 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
 #'
 #' @param percentiles dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90
-#' @param predictions dataframe of predicted flow metrics, as returned from \ref{\code{get_predicted_flow_metrics}}.
-#' @param ffc_values dataframe of the raw results from the online FFC, as returned by \ref{\code{evaluate_gage_alteration}} or \ref{\code{get_results_as_df}}
+#' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
+#' @param ffc_values dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}
 #' @param comid integer comid of the stream segment the previous parameters are for
 #'
 #' @export
