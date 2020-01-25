@@ -28,9 +28,13 @@
 #'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
 #'
 #' @export
-evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
+evaluate_gage_alteration<- function (gage_id, token, plot_output_folder, plot_results){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
+  }
+
+  if(missing(plot_results)){
+    plot_results <- TRUE
   }
 
   set_token(token)
@@ -39,7 +43,7 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder){
   gage$get_data()
   predictions_df <- gage$get_predicted_metrics()
 
-  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, predictions_df, plot_output_folder)
+  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, predictions_df, plot_output_folder = plot_output_folder, plot_results = plot_results)
   return(results_list)
 }
 

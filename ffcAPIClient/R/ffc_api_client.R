@@ -196,7 +196,7 @@ get_ffc_results_for_df <- function(flows_df, comid, flow_field, date_field, star
 
 # Does the bulk of the processing, but not a public function - both other evaluate_alteration functions use this under
 # the hood after doing some other checks, etc.
-evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_df, plot_output_folder, date_format_string){
+evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_df, plot_output_folder, date_format_string, plot_results){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
     drh_output_path <- NULL
@@ -209,15 +209,21 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
     date_format_string <- "%m/%d/%Y"
   }
 
+  if(missing(plot_results)){
+    plot_results <- TRUE
+  }
+
   timeseries_data <- convert_dates(timeseries_data, date_format_string)  # standardize the dates based on the format string
   timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
   timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
 
   ffc_results <- get_ffc_results_for_df(timeseries_data, comid)
-  plot_drh(ffc_results, output_path = drh_output_path)
   results_df <- get_results_as_df(ffc_results)
   percentiles <- get_percentiles(results_df)
-  plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
+  if(plot_results){
+    plot_drh(ffc_results, output_path = drh_output_path)
+    plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
+  }
   return(list(
     "ffc_results" = results_df,
     "percentiles" = percentiles,

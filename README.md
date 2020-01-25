@@ -126,6 +126,10 @@ segment on the North Yuba:
 ```
 
 ## Change Log
+
+### Version 0.9.5.1
+* [Enhancement] New parameter `plot` (boolean) to `evaluate_gage_alteration` controls whether the function produces plots or not
+
 ### Version 0.9.5
 * [Enhancement] New `assess_alteration` function returns a data frame with alteration results - documentation forthcoming.
 * [Change] Warning when can't determine stream segment's hydrogeomorphic type has been downgraded to a print statement.
