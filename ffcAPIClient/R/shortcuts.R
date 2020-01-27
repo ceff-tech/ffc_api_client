@@ -19,8 +19,8 @@
 #'
 #' 7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
 #'
-#' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
-#' any further processing.
+#' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", and "drh_data" for
+#' any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.
 #'
 #' @param gage_id The USGS gage ID to pull timeseries data from
 #' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.

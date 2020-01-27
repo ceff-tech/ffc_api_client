@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.3</span>
       </span>
     </div>
 
@@ -139,8 +139,8 @@ displayed interactively and saved as files named by the functional flow componen
 <p>5. Produce percentiles for those metric values using R's recommended quantile method type 8 (which may return differing results from other methods, Excel, etc)</p>
 <p>6. Transform the dimensionless reference hydrograph data into a data frame</p>
 <p>7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.</p>
-<p>Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "percentiles", and "drh_data" for
-any further processing.</p>
+<p>Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", and "drh_data" for
+any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

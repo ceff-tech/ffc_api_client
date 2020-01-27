@@ -109,16 +109,21 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
 }
 
 #' @export
-get_percentiles <- function(results_df, percentiles){
+get_percentiles <- function(results_df, percentiles, quantile_type){
   if(missing(percentiles)){
     percentiles <- c(0.1, 0.25, 0.5, 0.75, 0.9)
   }
+
+  if(missing(quantile_type)){
+    quantile_type = 7
+  }
+
   metrics_list <- list()
   for (metric in colnames(results_df)){
     if (metric == "Year"){
       next
     }
-    metrics_list[[metric]] = quantile(results_df[metric], probs=percentiles, na.rm=TRUE, names=TRUE, type=8)
+    metrics_list[[metric]] = quantile(results_df[metric], probs=percentiles, na.rm=TRUE, names=TRUE, type=quantile_type)
   }
   output_data <- t(data.frame(metrics_list))
   colnames(output_data) <- paste("p", percentiles * 100, sep="")

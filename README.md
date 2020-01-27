@@ -127,6 +127,11 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.3
+* [Breaking Change] Results from `evaluate_alteration` and `evaluate_gage_alteration` now use the list key `ffc_percentiles` instead of simply `percentiles` to be clear that the percentiles are from the observed FFC results.
+* [Change] Changed quantile processing type to the default of type 7 so that observed FFC data are processed into percentiles the same way that the predicted flow metrics were calculated to minimize resulting error.
+* [Enhancement] `evaluate_alteration` and `evaluate_gage_alteration` now includes a fourth key `predicted_percentiles` with the predicted flow metric percentile values so they don't need to be looked up separately.
+
 ### Version 0.9.5.2
 * [Enhancement] Added `annual` parameter to `assess_alteration` that runs a year over year analysis.
 

@@ -226,8 +226,9 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
   }
   return(list(
     "ffc_results" = results_df,
-    "percentiles" = percentiles,
-    "drh_data" = get_drh(ffc_results)
+    "ffc_percentiles" = percentiles,
+    "drh_data" = get_drh(ffc_results),
+    "predicted_percentiles" = predictions_df
   ))
 }
 
