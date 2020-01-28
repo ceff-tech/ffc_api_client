@@ -127,6 +127,11 @@
       <td><p>Optional - when not provided, plots are displayed interactively only. When provided, they are
 displayed interactively and saved as files named by the functional flow componenent into the provided folder</p></td>
     </tr>
+    <tr>
+      <th>plot_results</th>
+      <td><p>boolean, default TRUE - when TRUE, results are plotted to the screen and any folder provided. When
+FALSE, does no plotting.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -138,9 +143,10 @@ displayed interactively and saved as files named by the functional flow componen
 <p>4. Transform the results into a data frame with rows for years and metric values as columns</p>
 <p>5. Produce percentiles for those metric values using R's recommended quantile method type 8 (which may return differing results from other methods, Excel, etc)</p>
 <p>6. Transform the dimensionless reference hydrograph data into a data frame</p>
-<p>7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.</p>
-<p>Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", and "drh_data" for
-any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.</p>
+<p>7. Determines the alteration by flow metric for the observed versus predicted values</p>
+<p>8. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.</p>
+<p>Items 4, 5, 6, and 7 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", "drh_data", and "alteration"
+for any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

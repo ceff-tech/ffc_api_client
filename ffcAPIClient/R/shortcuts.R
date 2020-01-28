@@ -17,15 +17,19 @@
 #'
 #' 6. Transform the dimensionless reference hydrograph data into a data frame
 #'
-#' 7. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
+#' 7. Determines the alteration by flow metric for the observed versus predicted values
 #'
-#' Items 4, 5, and 6 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", and "drh_data" for
-#' any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.
+#' 8. Output plots comparing the observed timeseries data with the predicted unimpaired metric values.
+#'
+#' Items 4, 5, 6, and 7 are returned back to the caller as a list with keys "ffc_results", "ffc_percentiles", "drh_data", and "alteration"
+#' for any further processing. The list also includes "predicted_percentiles", with the predicted flow metrics for the segment.
 #'
 #' @param gage_id The USGS gage ID to pull timeseries data from
 #' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.
 #' @param plot_output_folder Optional - when not provided, plots are displayed interactively only. When provided, they are
 #'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
+#' @param plot_results boolean, default TRUE - when TRUE, results are plotted to the screen and any folder provided. When
+#'        FALSE, does no plotting.
 #'
 #' @export
 evaluate_gage_alteration<- function (gage_id, token, plot_output_folder, plot_results){
