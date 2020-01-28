@@ -4,7 +4,7 @@
 \alias{get_predicted_flow_metrics}
 \title{Retrieves flow predicted flow metric values for a stream segment}
 \usage{
-get_predicted_flow_metrics(com_id)
+get_predicted_flow_metrics(comid)
 }
 \arguments{
 \item{com_id}{character. A string of a NHD COMID to retrieve metrics for.}
@@ -12,7 +12,7 @@ get_predicted_flow_metrics(com_id)
 \description{
 This function returns the 10th, 25th, 50th, 75th, and 90th percentile
 values for each flow metric as predicted for the stream segment you
-identify with the \code{com_id} input variable. It returns a data
+identify with the \code{comid} input variable. It returns a data
 frame where the metrics are rows with names in the \code{metric} field, and
 percentiles are available as fields such as \code{pct_10}, \code{pct_25}, etc
 for each percentile.

@@ -18,7 +18,7 @@ get_dataset <- function(dataset_name){
 #'
 #' This function returns the 10th, 25th, 50th, 75th, and 90th percentile
 #' values for each flow metric as predicted for the stream segment you
-#' identify with the \code{com_id} input variable. It returns a data
+#' identify with the \code{comid} input variable. It returns a data
 #' frame where the metrics are rows with names in the \code{metric} field, and
 #' percentiles are available as fields such as \code{pct_10}, \code{pct_25}, etc
 #' for each percentile.
@@ -27,9 +27,10 @@ get_dataset <- function(dataset_name){
 #' @param com_id character. A string of a NHD COMID to retrieve metrics for.
 #'
 #' @export
-get_predicted_flow_metrics <- function(com_id){
+get_predicted_flow_metrics <- function(comid){
   flow_metrics <- get_dataset("flow_metrics")
-  return(flow_metrics[flow_metrics$COMID == com_id, ])
+  flow_metrics["result_type"] <- "predicted"
+  return(flow_metrics[flow_metrics$comid == comid, ])
 }
 
 #' Retrieves COMID for a given USGS gage which collects daily data.

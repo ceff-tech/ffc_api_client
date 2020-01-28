@@ -16,9 +16,9 @@ assess_alteration(percentiles, predictions, ffc_values, comid, annual)
 \item{comid}{integer comid of the stream segment the previous parameters are for}
 
 \item{annual}{boolean indicating whether to run a year over year analysis. If \code{TRUE}, then the parameter \code{percentiles}
-changes and should be a data frame with only two columns - the first is still \code{Metric}, but the second is just
+changes and should be a data frame with only two columns - the first is still \code{metric}, but the second is just
 \code{value} representing the current year's value for the metric. \code{predictions} should then still have fields
-for the \code{Metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
+for the \code{metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
 bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
 annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
 provides likely_unaltered results when \code{value} is within the \code{p25} and \code{p75} values, and provides
@@ -30,8 +30,7 @@ Returns a data frame with an alteration status assessment for every flow metric.
 \details{
 Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
-data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
+the data under the rules. Returns a data frame with columns "metric" , "status_code",
 "status", "alteration_type", and "comid".
 
 The \code{comid} will be the same for all rows, and will match what you provide

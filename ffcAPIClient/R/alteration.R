@@ -8,8 +8,7 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #'
 #' Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 #' alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-#' the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
-#' data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
+#' the data under the rules. Returns a data frame with columns "metric" , "status_code",
 #' "status", "alteration_type", and "comid".
 #'
 #' The \code{comid} will be the same for all rows, and will match what you provide
@@ -26,9 +25,9 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' @param ffc_values dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}
 #' @param comid integer comid of the stream segment the previous parameters are for
 #' @param annual boolean indicating whether to run a year over year analysis. If \code{TRUE}, then the parameter \code{percentiles}
-#'               changes and should be a data frame with only two columns - the first is still \code{Metric}, but the second is just
+#'               changes and should be a data frame with only two columns - the first is still \code{metric}, but the second is just
 #'               \code{value} representing the current year's value for the metric. \code{predictions} should then still have fields
-#'               for the \code{Metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
+#'               for the \code{metric}, \code{p25}, and \code{p75}, where \code{p25} and \code{p75} represent the lower and upper
 #'               bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
 #'               annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
 #'               provides likely_unaltered results when \code{value} is within the \code{p25} and \code{p75} values, and provides
@@ -40,9 +39,9 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid, annua
   }
 
   # reduce the percentiles we're considering to the ones we have matching predictions for - can't assess the others
-  percentiles <- percentiles[percentiles$Metric %in% as.character(predictions$Metric), ]
-
+  percentiles <- percentiles[percentiles$metric %in% as.character(predictions$metric), ]
   # assess alteration on a metric by metric basis, bind back to data frame, and attach a comid
+
   alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values, annual)
   alteration_df <- do.call("rbind", alteration_list)
   alteration_df$comid <- comid
@@ -58,7 +57,7 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid, annua
 #' in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)
 #'
 #' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
-#'                     Metric with the flow metric in it. These are calculated percentile values from the FFC.
+#'                     metric with the flow metric in it. These are calculated percentile values from the FFC.
 #' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
 #' @param ffc_values vector of raw observed metric values (FFC output) for this metric
 #' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
@@ -71,24 +70,13 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
     annual <- FALSE
   }
 
-  metric <- percentiles[["Metric"]]
+  metric <- percentiles[["metric"]]
   predictions <- as.data.frame(predictions)
-  predictions <- predictions[predictions$Metric == metric, ]
+  predictions <- predictions[predictions$metric == metric, ]
   ffc_values <- dplyr::select(ffc_values, metric)
 
-  # we assess whether the values are altered here because it's different for timing than anything else
-  # -1 = low/early
-  # 0 = in range
-  # 1 = high/late
-  #if (grepl("_Tim", metric)) {
-  #  low_bound <- predictions$p25
-  #  high_bound <- predictions$p75
-  #  # determine if each year's observed values are early, late, or within range
-  #  assessed_observations = mapply(early_or_late_simple, ffc_values, MoreArgs = list("early_value" = low_bound, "late_value" = high_bound, "days_in_water_year" = days_in_water_year))
-  #}else{
   if(!annual){
     assessed_observations = assess_observations(ffc_values, predictions)
-  #}
 
     if (is.null(assessed_observations)) {  # assess_observations returns NULL if there's not enough data
       return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))

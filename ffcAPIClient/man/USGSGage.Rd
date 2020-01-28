@@ -16,7 +16,7 @@ This class retrieves data for a USGS gage.
 #gage$comid
 [1] 14996611
 #ffcAPIClient::get_predicted_flow_metrics(gage$comid)
-                Metric    COMID          p10          p25        p50          p75          p90 source
+                metric    COMID          p10          p25        p50          p75          p90 source
 70804        DS_Dur_WS 14996611 1.051875e+02 1.273438e+02   154.0625 1.785563e+02 1.953908e+02  model
 211050       DS_Mag_50 14996611 4.998793e+01 6.732828e+01   104.4028 1.464183e+02 1.882733e+02  model
 351296       DS_Mag_90 14996611 9.314097e+01 1.291930e+02   173.6844 2.382053e+02 3.393799e+02  model

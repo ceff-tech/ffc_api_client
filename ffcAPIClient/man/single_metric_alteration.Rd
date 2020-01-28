@@ -14,7 +14,7 @@ single_metric_alteration(
 }
 \arguments{
 \item{percentiles}{data frame row - should have a named value "p50" that can be accessed, at the very least and a column
-Metric with the flow metric in it. These are calculated percentile values from the FFC.}
+metric with the flow metric in it. These are calculated percentile values from the FFC.}
 
 \item{predictions}{data frame (or other named field item) the predicted flow metric values for the segment and metric}
 

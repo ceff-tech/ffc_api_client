@@ -219,7 +219,7 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
 
   ffc_results <- get_ffc_results_for_df(timeseries_data, comid)
   results_df <- get_results_as_df(ffc_results)
-  percentiles <- get_percentiles(results_df)
+  percentiles <- get_percentiles(results_df, comid = comid)
   alteration <- assess_alteration(percentiles = percentiles,
                                   predictions = predictions_df,
                                   ffc_values = results_df,
@@ -295,7 +295,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
            evaluate alteration. Make sure that the FFCProcessor has $percentiles, $predictions, and $ffc_results set
            before calling $evaluate_alteration().")
     }
-    metrics <- self$predictions$Metrics
+    metrics <- self$predictions$metrics
 
     # need a function that takes one metric's percentiles, predictions, and raw ffc values and returns a metric, alteration type, and text description ("likely unaltered", "likely altered", etc)
     # then we can run an apply operation, rbind the results back together, save them on the object and return them

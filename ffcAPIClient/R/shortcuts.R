@@ -48,6 +48,11 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder, plot_re
   predictions_df <- gage$get_predicted_metrics()
 
   results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, predictions_df, plot_output_folder = plot_output_folder, plot_results = plot_results)
+
+  results_list$ffc_percentiles["gage_id"] <- gage_id
+  results_list$predicted_percentiles["gage_id"] <- gage_id
+  results_list$alteration["gage_id"] <- gage_id
+
   return(results_list)
 }
 

@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.4</span>
       </span>
     </div>
 
@@ -133,9 +133,9 @@
     <tr>
       <th>annual</th>
       <td><p>boolean indicating whether to run a year over year analysis. If <code>TRUE</code>, then the parameter <code>percentiles</code>
-changes and should be a data frame with only two columns - the first is still <code>Metric</code>, but the second is just
+changes and should be a data frame with only two columns - the first is still <code>metric</code>, but the second is just
 <code>value</code> representing the current year's value for the metric. <code>predictions</code> should then still have fields
-for the <code>Metric</code>, <code>p25</code>, and <code>p75</code>, where <code>p25</code> and <code>p75</code> represent the lower and upper
+for the <code>metric</code>, <code>p25</code>, and <code>p75</code>, where <code>p25</code> and <code>p75</code> represent the lower and upper
 bounds for comparison, regardless of if they're calculated percentiles, or another set of bounds. When run in an
 annual mode, it assesses alteration similarly to the description above, and with the same result structure, but
 provides likely_unaltered results when <code>value</code> is within the <code>p25</code> and <code>p75</code> values, and provides
@@ -147,8 +147,7 @@ likely_altered otherwise without additional checks described in the CEFF guidanc
 
     <p>Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
-data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
+the data under the rules. Returns a data frame with columns "metric" , "status_code",
 "status", "alteration_type", and "comid".</p>
 <p>The <code>comid</code> will be the same for all rows, and will match what you provide
 as an input, but allows for merging of these results into larger tables.</p>

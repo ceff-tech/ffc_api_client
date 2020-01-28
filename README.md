@@ -127,6 +127,17 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.4
+* [Breaking Change] Where found, column names have been fully lowercased for consistency, including Metric -> metric and COMID -> comid
+* [Breaking Change] Parameter `com_id` to `get_predicted_flow_metrics` was renamed `comid`
+* [Enhancement] observed percentiles and predictions both include a `result_type` field, with observed FFC results containing the value "observed" and prediction percentiles fields containing the value "predicted" to allow for merging of the data frames in
+some contexts
+* [Enhancement] `evaluate_gage_alteration` now attaches a field `gage_id` to `predicted_percentiles`, `observed_percentiles`, 
+and `alteration` data frames.
+* [Enhancement] observed percentiles now include a comid field to allow for merging and accessing the comid in other contexts
+* [Enhancement] `evaluate_alteration` and `evaluate_gage_alteration` now includes a fifth key `alteration` with the assessed flow
+alteration scores in a data frame
+
 ### Version 0.9.5.3
 * [Breaking Change] Results from `evaluate_alteration` and `evaluate_gage_alteration` now use the list key `ffc_percentiles` instead of simply `percentiles` to be clear that the percentiles are from the observed FFC results.
 * [Change] Changed quantile processing type to the default of type 7 so that observed FFC data are processed into percentiles the same way that the predicted flow metrics were calculated to minimize resulting error.

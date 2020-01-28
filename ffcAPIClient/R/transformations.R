@@ -73,27 +73,26 @@ get_results_as_df <- function (results, drop_fields){
 }
 
 #' @export
-plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder){ #, ){
+plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder){
   if(missing(output_folder)){
     output_folder <- NULL
   }
 
   groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
 
-  ffc_results_df["result_type"] <- "observed"
-  predictions_df["result_type"] <- "predicted"
-
-  drop_cols <- c("COMID", "source")
+  drop_cols <- c("comid", "source")
   predictions_df <- dplyr::select(predictions_df, -dplyr::one_of(drop_cols))
+  drop_cols <- c("comid")
+  ffc_results_df <- dplyr::select(ffc_results_df, -dplyr::one_of(drop_cols))
 
   full_df <- rbind(ffc_results_df, predictions_df)
 
-  full_df <- dplyr::filter(full_df, !grepl("_Julian", Metric))
-  full_df <- dplyr::filter(full_df, !grepl("X__", Metric))
+  full_df <- dplyr::filter(full_df, !grepl("_Julian", metric))
+  full_df <- dplyr::filter(full_df, !grepl("X__", metric))
 
   for(group in groups){
-    metrics <- dplyr::filter(full_df, grepl(group, Metric))
-    group_plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=Metric, fill=result_type))  +
+    metrics <- dplyr::filter(full_df, grepl(group, metric))
+    group_plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=metric, fill=result_type))  +
       ggplot2::geom_boxplot(
         ggplot2::aes(ymin = p10, lower = p25, middle = p50, upper = p75, ymax = p90),
         stat = "identity"
@@ -109,7 +108,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
 }
 
 #' @export
-get_percentiles <- function(results_df, percentiles, quantile_type){
+get_percentiles <- function(results_df, comid, percentiles, quantile_type){
   if(missing(percentiles)){
     percentiles <- c(0.1, 0.25, 0.5, 0.75, 0.9)
   }
@@ -128,7 +127,9 @@ get_percentiles <- function(results_df, percentiles, quantile_type){
   output_data <- t(data.frame(metrics_list))
   colnames(output_data) <- paste("p", percentiles * 100, sep="")
   output_data <- as.data.frame(output_data)
-  output_data["Metric"] <- rownames(output_data)
+  output_data["metric"] <- rownames(output_data)
+  output_data["comid"] <- comid  # attach the comid column
+  output_data["result_type"] <- "observed"
   return(output_data)
 
 }
