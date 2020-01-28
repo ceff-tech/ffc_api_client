@@ -2,16 +2,15 @@ Package: ffcAPIClient
 Type: Package
 Title: Functional Flows Calculator API Client
 Version: 0.9.5.3
-Authors@R: as.person(c(
-    "Nick Santos <nrsantos@ucdavis.edu> [aut, cre]", 
-    "Ryan Peek <rapeek@ucdavis.edu> [aut]",
-    "Alyssa Obester <anobester@ucdavis.edu> [aut]",
-  ))
+Authors@R: c(
+    person("Nick", "Santos", email="nrsantos@ucdavis.edu", role=c("aut", "cre")), 
+    person("Ryan", "Peek", email="rapeek@ucdavis.edu", role="aut"),
+    person("Alyssa", "Obester", email="anobester@ucdavis.edu", role="aut")
+  )
 Description: A client for the Python-based functional flows calculator API hosted
     at eflows.ucdavis.edu. Also handles data processing and analaysis related to the
-    California Environmental Flows Framework (CEFF).
-    
-    Requires a token from the eflows.ucdavis.edu website to operate.
+    California Environmental Flows Framework (CEFF). Requires a token from the
+    eflows.ucdavis.edu website to operate.
 License: MIT
 Encoding: UTF-8
 LazyData: true

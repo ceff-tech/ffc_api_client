@@ -116,7 +116,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>percentiles</th>
-      <td><p>dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90</p></td>
+      <td><p>dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90</p></td>
     </tr>
     <tr>
       <th>predictions</th>
@@ -147,8 +147,8 @@ likely_altered otherwise without additional checks described in the CEFF guidanc
 
     <p>Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
-data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
+data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
 "status", "alteration_type", and "comid".</p>
 <p>The <code>comid</code> will be the same for all rows, and will match what you provide
 as an input, but allows for merging of these results into larger tables.</p>
@@ -172,7 +172,7 @@ it will provide "none_found" and for metrics with insufficient data, it will pro
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>.</p>
+  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>, <a href='https://ryanpeek.github.io/'>Ryan Peek</a>, Alyssa Obester.</p>
 </div>
 
 <div class="pkgdown">

@@ -8,8 +8,8 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #'
 #' Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 #' alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-#' the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
-#' data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+#' the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
+#' data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
 #' "status", "alteration_type", and "comid".
 #'
 #' The \code{comid} will be the same for all rows, and will match what you provide
@@ -21,7 +21,7 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
 #' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
 #'
-#' @param percentiles dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90
+#' @param percentiles dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90
 #' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
 #' @param ffc_values dataframe of the raw results from the online FFC, as returned by \code{evaluate_gage_alteration} or \code{get_results_as_df}
 #' @param comid integer comid of the stream segment the previous parameters are for
@@ -39,7 +39,10 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid, annua
     annual <- FALSE
   }
 
+  # reduce the percentiles we're considering to the ones we have matching predictions for - can't assess the others
   percentiles <- percentiles[percentiles$Metric %in% as.character(predictions$Metric), ]
+
+  # assess alteration on a metric by metric basis, bind back to data frame, and attach a comid
   alteration_list <- apply(percentiles, MARGIN = 1, FUN = single_metric_alteration, predictions, ffc_values, annual)
   alteration_df <- do.call("rbind", alteration_list)
   alteration_df$comid <- comid
@@ -229,7 +232,7 @@ determine_status <- function(median, predictions, assessed_observations, metric,
     }
   }
 
-  return(data.frame("Metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, stringsAsFactors = FALSE))
+  return(data.frame("metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, stringsAsFactors = FALSE))
 }
 
 

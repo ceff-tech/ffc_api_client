@@ -220,6 +220,11 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
   ffc_results <- get_ffc_results_for_df(timeseries_data, comid)
   results_df <- get_results_as_df(ffc_results)
   percentiles <- get_percentiles(results_df)
+  alteration <- assess_alteration(percentiles = percentiles,
+                                  predictions = predictions_df,
+                                  ffc_values = results_df,
+                                  comid = comid,
+                                  annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
   if(plot_results){
     plot_drh(ffc_results, output_path = drh_output_path)
     plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
@@ -228,7 +233,8 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
     "ffc_results" = results_df,
     "ffc_percentiles" = percentiles,
     "drh_data" = get_drh(ffc_results),
-    "predicted_percentiles" = predictions_df
+    "predicted_percentiles" = predictions_df,
+    "alteration" = alteration
   ))
 }
 

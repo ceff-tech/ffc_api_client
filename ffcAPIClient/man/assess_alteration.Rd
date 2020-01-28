@@ -7,7 +7,7 @@
 assess_alteration(percentiles, predictions, ffc_values, comid, annual)
 }
 \arguments{
-\item{percentiles}{dataframe of calculated FFC results percentiles, including the Metric column and columns for p10,p25,p50,p75, and p90}
+\item{percentiles}{dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90}
 
 \item{predictions}{dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.}
 
@@ -30,8 +30,8 @@ Returns a data frame with an alteration status assessment for every flow metric.
 \details{
 Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
-the data under the rules. Returns a data frame with columns "Metric" (note capitalization, consistent with other
-data frames with a flow metric, even if not consistent with otherwise lowercase names here, sorry), "status_code",
+the data under the rules. Returns a data frame with columns "metric" (note capitalization, currently it's inconsistent with other
+data frames with a flow metric, but consistent with otherwise lowercase names here, sorry), "status_code",
 "status", "alteration_type", and "comid".
 
 The \code{comid} will be the same for all rows, and will match what you provide
