@@ -36,7 +36,8 @@
 
 
 <meta property="og:title" content="Generate FFC Results and Plots for Timeseries Data — evaluate_alteration" />
-<meta property="og:description" content="Generate FFC Results and Plots for Timeseries Data" />
+<meta property="og:description" content="Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
+predicted metric values, flow alteration, and drh data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -69,7 +70,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.7</span>
       </span>
     </div>
 
@@ -106,7 +107,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Generate FFC Results and Plots for Timeseries Data</p>
+    <p>Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
+predicted metric values, flow alteration, and drh data.</p>
     </div>
 
     <pre class="usage"><span class='fu'>evaluate_alteration</span>(
@@ -116,15 +118,62 @@
   <span class='no'>longitude</span>,
   <span class='no'>latitude</span>,
   <span class='no'>plot_output_folder</span>,
+  <span class='no'>plot_results</span>,
   <span class='no'>date_format_string</span>
 )</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>timeseries_df</th>
+      <td><p>A timeseries dataframe that includes fields named "flow" and "date" for each record. Date should either
+be in MM/DD/YYYY format, or parameter <code>date_format_string</code> must be specified. The data frame may include other fields,
+which will be automatically dropped when sent to the FFC.</p></td>
+    </tr>
+    <tr>
+      <th>token</th>
+      <td><p>The token used to access the online FFC - see the Github repository's README under Setup for how to get this.</p></td>
+    </tr>
+    <tr>
+      <th>comid</th>
+      <td><p>The stream segment COMID where the gage is located. You may also have the package look this information up automatically
+based on longitude and latitude, but we discovered that our method for looking gage COMIDs up is error prone,
+and there is no authoritative dataset that relates gages to COMIDs correctly. It will be most accurate if you
+provide the comid yourself by looking it up (don't use nhdPlusTools with the latitude and longitude
+that's what we did that was error prone).</p></td>
+    </tr>
+    <tr>
+      <th>longitude</th>
+      <td><p>the longitude of the location the flow data were collected at.</p></td>
+    </tr>
+    <tr>
+      <th>latitude</th>
+      <td><p>the latitude of the location the flow data were collected at. If both longitude and latitude are defined, then
+and parameter comid is missing, then the COMID will be looked up. See notes on parameter comid for cautions and limitations.</p></td>
+    </tr>
+    <tr>
+      <th>plot_output_folder</th>
+      <td><p>Optional - when not provided, plots are displayed interactively only. When provided, they are
+displayed interactively and saved as files named by the functional flow componenent into the provided folder</p></td>
+    </tr>
+    <tr>
+      <th>plot_results</th>
+      <td><p>boolean, default <code>TRUE</code> - when <code>TRUE</code>, results are plotted to the screen and any folder provided. When
+FALSE, does no plotting.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>See the documentation for <code>evaluate_gage_alteration</code> for complete details on the processing and what is returned.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>
@@ -133,7 +182,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>, <a href='https://ryanpeek.github.io/'>Ryan Peek</a>, <a href='https://watershed.ucdavis.edu/people/aobester'>Alyssa Obester</a>.</p>
+  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>, <a href='https://ryanpeek.github.io/'>Ryan Peek</a>, <a href='https://watershed.ucdavis.edu/people/alyssa-obester'>Alyssa Obester</a>.</p>
 </div>
 
 <div class="pkgdown">
