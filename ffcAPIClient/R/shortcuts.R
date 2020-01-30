@@ -82,8 +82,30 @@ evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, 
 
 #' Generate FFC Results and Plots for Timeseries Data
 #'
+#' Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
+#' predicted metric values, flow alteration, and drh data.
+#'
+#' See the documentation for \code{evaluate_gage_alteration} for complete details on the processing and what is returned.
+#'
+#' @param timeseries_df A timeseries dataframe that includes fields named "flow" and "date" for each record. Date should either
+#'        be in MM/DD/YYYY format, or parameter \code{date_format_string} must be specified. The data frame may include other fields,
+#'        which will be automatically dropped when sent to the FFC.
+#' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.
+#' @param comid The stream segment COMID where the gage is located. You may also have the package look this information up automatically
+#'        based on longitude and latitude, but we discovered that our method for looking gage COMIDs up is error prone,
+#'        and there is no authoritative dataset that relates gages to COMIDs correctly. It will be most accurate if you
+#'        provide the comid yourself by looking it up (don't use nhdPlusTools with the latitude and longitude
+#'        that's what we did that was error prone).
+#' @param longitude the longitude of the location the flow data were collected at.
+#' @param latitude the latitude of the location the flow data were collected at. If both longitude and latitude are defined, then
+#'        and parameter comid is missing, then the COMID will be looked up. See notes on parameter comid for cautions and limitations.
+#' @param plot_output_folder Optional - when not provided, plots are displayed interactively only. When provided, they are
+#'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
+#' @param plot_results boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
+#'        FALSE, does no plotting.
+#'
 #' @export
-evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, date_format_string){
+evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, plot_results, date_format_string){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
   }
@@ -97,6 +119,10 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
     comid <- get_comid_for_lon_lat(longitude, latitude)
   }  # and if comid isn't null, then we already have it to proceed
 
+  if(missing(plot_results)){
+    plot_results <- TRUE
+  }
+
   if(missing(date_format_string)){
     print("Using default date format string of %m/%d/%Y")
     date_format_string <- "%m/%d/%Y"
@@ -104,7 +130,7 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
 
   set_token(token)
   predicted_flow_metrics <- get_predicted_flow_metrics(comid)
-  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, predicted_flow_metrics, plot_output_folder, date_format_string)
+  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, predicted_flow_metrics, plot_output_folder, date_format_string, plot_results = plot_results)
   return(results_list)
 }
 

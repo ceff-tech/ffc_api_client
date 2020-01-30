@@ -129,6 +129,10 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.7
+* [Enhancement] `evaluate_alteration` now supports parameter to control plotting (similar to `evaluate_gage_alteration`) and
+  documentation has been added for the function.
+
 ### Version 0.9.5.6
 * [Enhancement] Added the ability to pull predicted metrics from TNC's predicted metrics API instead of from internal data. To 
   use it, set `online=TRUE` when calling `get_predicted_flow_metrics`. It includes one small difference - in the source field,

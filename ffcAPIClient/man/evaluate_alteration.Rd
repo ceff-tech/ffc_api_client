@@ -11,9 +11,38 @@ evaluate_alteration(
   longitude,
   latitude,
   plot_output_folder,
+  plot_results,
   date_format_string
 )
 }
+\arguments{
+\item{timeseries_df}{A timeseries dataframe that includes fields named "flow" and "date" for each record. Date should either
+be in MM/DD/YYYY format, or parameter \code{date_format_string} must be specified. The data frame may include other fields,
+which will be automatically dropped when sent to the FFC.}
+
+\item{token}{The token used to access the online FFC - see the Github repository's README under Setup for how to get this.}
+
+\item{comid}{The stream segment COMID where the gage is located. You may also have the package look this information up automatically
+based on longitude and latitude, but we discovered that our method for looking gage COMIDs up is error prone,
+and there is no authoritative dataset that relates gages to COMIDs correctly. It will be most accurate if you
+provide the comid yourself by looking it up (don't use nhdPlusTools with the latitude and longitude
+that's what we did that was error prone).}
+
+\item{longitude}{the longitude of the location the flow data were collected at.}
+
+\item{latitude}{the latitude of the location the flow data were collected at. If both longitude and latitude are defined, then
+and parameter comid is missing, then the COMID will be looked up. See notes on parameter comid for cautions and limitations.}
+
+\item{plot_output_folder}{Optional - when not provided, plots are displayed interactively only. When provided, they are
+displayed interactively and saved as files named by the functional flow componenent into the provided folder}
+
+\item{plot_results}{boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
+FALSE, does no plotting.}
+}
 \description{
-Generate FFC Results and Plots for Timeseries Data
+Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
+predicted metric values, flow alteration, and drh data.
+}
+\details{
+See the documentation for \code{evaluate_gage_alteration} for complete details on the processing and what is returned.
 }
