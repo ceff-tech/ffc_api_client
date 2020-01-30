@@ -6,7 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Assess the alteration of a single flow metric — single_metric_alteration • ffcAPIClient</title>
+<title>Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error — gage_comids • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,11 +37,12 @@
 
 
 
-<meta property="og:title" content="Assess the alteration of a single flow metric — single_metric_alteration" />
-<meta property="og:description" content="Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
-whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
-an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
-in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)" />
+<meta property="og:title" content="Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error — gage_comids" />
+<meta property="og:description" content="Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,54 +106,31 @@ in if it's indeterminate or likely altered (values are low/high or early/late fo
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Assess the alteration of a single flow metric</h1>
+    <h1>Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error</h1>
     
-    <div class="hidden name"><code>single_metric_alteration.Rd</code></div>
+    <div class="hidden name"><code>gage_comids.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
-whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
-an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
-in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)</p>
+    <p>Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error</p>
     </div>
 
-    <pre class="usage"><span class='fu'>single_metric_alteration</span>(
-  <span class='no'>percentiles</span>,
-  <span class='no'>predictions</span>,
-  <span class='no'>ffc_values</span>,
-  <span class='no'>days_in_water_year</span>,
-  <span class='no'>annual</span>
-)</pre>
+    <pre class="usage"><span class='no'>gage_comids</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>percentiles</th>
-      <td><p>data frame row - should have a named value "p50" that can be accessed, at the very least and a column
-metric with the flow metric in it. These are calculated percentile values from the FFC.</p></td>
-    </tr>
-    <tr>
-      <th>predictions</th>
-      <td><p>data frame (or other named field item) the predicted flow metric values for the segment and metric</p></td>
-    </tr>
-    <tr>
-      <th>ffc_values</th>
-      <td><p>vector of raw observed metric values (FFC output) for this metric</p></td>
-    </tr>
-    <tr>
-      <th>days_in_water_year</th>
-      <td><p>numeric of how many days in the water year (defaults to 365, but could be 366).</p></td>
-    </tr>
-    </table>
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>An object of class <code>list</code> of length 1.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#format">Format</a></li>
     </ul>
 
   </div>

@@ -15,3 +15,13 @@ test_that("Gage COMID behaves", {
   gage$get_comid()
   expect_equal(gage$comid, 3953273)
 })
+
+test_that("Gage COMID Override behaves", {
+  gage_id <- 11417500  # this gage is Jones Bar - the normal lookup gives the wrong COMID, but we have an override list for it
+  gage <- USGSGage$new()
+  gage$id <- gage_id
+
+  gage$get_data()
+  gage$get_comid()
+  expect_equal(gage$comid, 8060893)
+})

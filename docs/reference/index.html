@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.5</span>
       </span>
     </div>
 
@@ -168,13 +168,15 @@ flows calculator</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="get_comid_for_lon_lat.html">get_comid_for_lon_lat()</a></code> </p>
+          <p><code><a href="gage_comids.html">gage_comids</a></code> </p>
         </td>
-        <td><p>Retrieves COMID for a given USGS gage which collects daily data.</p></td>
+        <td><p>Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+gages to make sure every one is correct, but as we find them, this will help improve results and reduce error</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="get_comid_for_usgs_gage.html">get_comid_for_usgs_gage()</a></code> </p>
+          <p><code><a href="get_comid_for_lon_lat.html">get_comid_for_lon_lat()</a></code> </p>
         </td>
         <td><p>Retrieves COMID for a given USGS gage which collects daily data.</p></td>
       </tr><tr>

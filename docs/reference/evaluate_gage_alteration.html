@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.5</span>
       </span>
     </div>
 
@@ -109,7 +109,14 @@
     <p>This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>evaluate_gage_alteration</span>(<span class='no'>gage_id</span>, <span class='no'>token</span>, <span class='no'>plot_output_folder</span>, <span class='no'>plot_results</span>)</pre>
+    <pre class="usage"><span class='fu'>evaluate_gage_alteration</span>(
+  <span class='no'>gage_id</span>,
+  <span class='no'>token</span>,
+  <span class='no'>comid</span>,
+  <span class='no'>plot_output_folder</span>,
+  <span class='no'>plot_results</span>,
+  <span class='no'>force_comid_lookup</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -123,14 +130,31 @@
       <td><p>The token used to access the online FFC - see the Github repository's README under Setup for how to get this.</p></td>
     </tr>
     <tr>
+      <th>comid</th>
+      <td><p>The stream segment COMID where the gage is located. In the past, the package looked this information up automatically
+but we discovered that our method for looking gage COMIDs up was error prone, and there is no authoritative dataset
+that relates gages to COMIDs. It will be most accurate if you provide the comid yourself by looking it up (don't
+use nhdPlusTools with the latitude and longitude - that's what we did that was error prone). You can re-enable
+the lookup behavior setting the <code>force_comid_lookup</code> parameter to <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
       <th>plot_output_folder</th>
       <td><p>Optional - when not provided, plots are displayed interactively only. When provided, they are
 displayed interactively and saved as files named by the functional flow componenent into the provided folder</p></td>
     </tr>
     <tr>
       <th>plot_results</th>
-      <td><p>boolean, default TRUE - when TRUE, results are plotted to the screen and any folder provided. When
+      <td><p>boolean, default <code>TRUE</code> - when <code>TRUE</code>, results are plotted to the screen and any folder provided. When
 FALSE, does no plotting.</p></td>
+    </tr>
+    <tr>
+      <th>force_comid_lookup</th>
+      <td><p>default <code>FALSE</code>. When <code>TRUE</code>, the COMID for the segment will be automatically
+looked up based on the latitude and longitude. This method is error prone and it is advised you leave it off.
+Where an error is known, the package corrects the COMID based on an internal list of gage/comid pairs (eg:
+Jones Bar on the Yuba River). It is recommended you leave this as FALSE and look up the comid yourself to
+ensure that you choose the correct mainstem or tributary near stream junctions, but if you need to bulk
+process data, this parameter is available to retrieve COMIDs.</p></td>
     </tr>
     </table>
 

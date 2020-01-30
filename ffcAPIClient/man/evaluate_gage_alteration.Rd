@@ -4,18 +4,38 @@
 \alias{evaluate_gage_alteration}
 \title{Generate FFC Results and Plots for Gage Data}
 \usage{
-evaluate_gage_alteration(gage_id, token, plot_output_folder, plot_results)
+evaluate_gage_alteration(
+  gage_id,
+  token,
+  comid,
+  plot_output_folder,
+  plot_results,
+  force_comid_lookup
+)
 }
 \arguments{
 \item{gage_id}{The USGS gage ID to pull timeseries data from}
 
 \item{token}{The token used to access the online FFC - see the Github repository's README under Setup for how to get this.}
 
+\item{comid}{The stream segment COMID where the gage is located. In the past, the package looked this information up automatically
+but we discovered that our method for looking gage COMIDs up was error prone, and there is no authoritative dataset
+that relates gages to COMIDs. It will be most accurate if you provide the comid yourself by looking it up (don't
+use nhdPlusTools with the latitude and longitude - that's what we did that was error prone). You can re-enable
+the lookup behavior setting the \code{force_comid_lookup} parameter to \code{TRUE}.}
+
 \item{plot_output_folder}{Optional - when not provided, plots are displayed interactively only. When provided, they are
 displayed interactively and saved as files named by the functional flow componenent into the provided folder}
 
-\item{plot_results}{boolean, default TRUE - when TRUE, results are plotted to the screen and any folder provided. When
+\item{plot_results}{boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
 FALSE, does no plotting.}
+
+\item{force_comid_lookup}{default \code{FALSE}. When \code{TRUE}, the COMID for the segment will be automatically
+looked up based on the latitude and longitude. This method is error prone and it is advised you leave it off.
+Where an error is known, the package corrects the COMID based on an internal list of gage/comid pairs (eg:
+Jones Bar on the Yuba River). It is recommended you leave this as FALSE and look up the comid yourself to
+ensure that you choose the correct mainstem or tributary near stream junctions, but if you need to bulk
+process data, this parameter is available to retrieve COMIDs.}
 }
 \description{
 This is a shortcut function that does most of the heavy lifting for you. Runs data through the FFC and transforms all results.

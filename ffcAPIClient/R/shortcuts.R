@@ -26,13 +26,24 @@
 #'
 #' @param gage_id The USGS gage ID to pull timeseries data from
 #' @param token The token used to access the online FFC - see the Github repository's README under Setup for how to get this.
+#' @param comid The stream segment COMID where the gage is located. In the past, the package looked this information up automatically
+#'        but we discovered that our method for looking gage COMIDs up was error prone, and there is no authoritative dataset
+#'        that relates gages to COMIDs. It will be most accurate if you provide the comid yourself by looking it up (don't
+#'        use nhdPlusTools with the latitude and longitude - that's what we did that was error prone). You can re-enable
+#'        the lookup behavior setting the \code{force_comid_lookup} parameter to \code{TRUE}.
 #' @param plot_output_folder Optional - when not provided, plots are displayed interactively only. When provided, they are
 #'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
-#' @param plot_results boolean, default TRUE - when TRUE, results are plotted to the screen and any folder provided. When
+#' @param plot_results boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
 #'        FALSE, does no plotting.
+#' @param force_comid_lookup default \code{FALSE}. When \code{TRUE}, the COMID for the segment will be automatically
+#'        looked up based on the latitude and longitude. This method is error prone and it is advised you leave it off.
+#'        Where an error is known, the package corrects the COMID based on an internal list of gage/comid pairs (eg:
+#'        Jones Bar on the Yuba River). It is recommended you leave this as FALSE and look up the comid yourself to
+#'        ensure that you choose the correct mainstem or tributary near stream junctions, but if you need to bulk
+#'        process data, this parameter is available to retrieve COMIDs.
 #'
 #' @export
-evaluate_gage_alteration<- function (gage_id, token, plot_output_folder, plot_results){
+evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, plot_results, force_comid_lookup){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
   }
@@ -41,11 +52,23 @@ evaluate_gage_alteration<- function (gage_id, token, plot_output_folder, plot_re
     plot_results <- TRUE
   }
 
+  if(missing(force_comid_lookup)){
+    force_comid_lookup <- FALSE
+  }
+
+  if(missing(comid)){
+    if(!force_comid_lookup){
+      stop("Must provide parameter comid or enable comid lookup (see documentation for issues first!) with force_comid_lookup.")
+    }
+    comid <- NA
+  }
+
   set_token(token)
   gage <- USGSGage$new()
   gage$id <- gage_id
   gage$get_data()
-  predictions_df <- gage$get_predicted_metrics()
+  gage$comid <- comid
+  predictions_df <- gage$get_predicted_metrics(force_comid_lookup = force_comid_lookup)
 
   results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, predictions_df, plot_output_folder = plot_output_folder, plot_results = plot_results)
 

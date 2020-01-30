@@ -110,21 +110,39 @@ USGSGage <- R6::R6Class("USGSGage", list(
   #' This method looks up the COMID for the gage and sets the comid attribute. It does not return
   #' the COMID. It returns this object for chaining. The gage's id, latitude, and longitude
   #' attributes must be set before running this. latitude and longitude can be set manually,
-  #' or by running get_data().
+  #' or by running get_data(). Can be error prone near stream junctions. If you have the means
+  #' to get a reliable COMID for a gage, do so - in this method, we look up the stream
+  #' segment by long/lat using nhdPlusTools.
   #'
   get_comid = function(){
-    self$validate(latlong=TRUE)
+    # in some cases, lat/long produce the wrong COMID. We have a list where we store corrected values - if this gage
+    # ID is in the list, just return that value, otherwise, continue below.
+    overridden_gage_id <- gage_comids[[as.character(self$id)]]
+    if(!is.null(overridden_gage_id)){
+      print(paste("Using overridden comid for gage of", overridden_gage_id))
+      self$comid = overridden_gage_id
 
-    self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
+    }else{
+
+      self$validate(latlong=TRUE)
+      self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
+
+    }
+
     invisible(self)  # return itself invisibly, but after setting the COMID
   },
 
-  get_predicted_metrics = function(){
-    if(is.na(self$comid)){
+  get_predicted_metrics = function(force_comid_lookup){
+    if(missing(force_comid_lookup)){
+      force_comid_lookup <- FALSE
+    }
+
+    if(is.na(self$comid) && force_comid_lookup){
       self$get_comid()
     }
+
     if(is.na(self$comid)){
-      stop("Unable to get COMID for gage. Set gage$comid manually before running")
+      stop("Unable to get COMID for gage. Set gage$comid manually before running or set force_comid_lookup to TRUE - it can give inaccurate data for gages near stream junctions though, so it is FALSE by default.")
     }
     return(get_predicted_flow_metrics(self$comid))
   }
@@ -145,3 +163,10 @@ get_usgs_gage_data <- function(gage_id){
   gage$get_data()
   return(gage$timeseries_data)
 }
+
+#' Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
+#' or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
+#' gages to make sure every one is correct, but as we find them, this will help improve results and reduce error
+gage_comids <- list(
+  '11417500' = 8060893
+)

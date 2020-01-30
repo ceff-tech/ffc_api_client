@@ -80,7 +80,7 @@ This class retrieves data for a USGS gage.
 \if{html}{\out{<a id="method-get_predicted_metrics"></a>}}
 \subsection{Method \code{get_predicted_metrics()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_predicted_metrics()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_predicted_metrics(force_comid_lookup)}\if{html}{\out{</div>}}
 }
 
 }

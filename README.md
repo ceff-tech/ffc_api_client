@@ -127,6 +127,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.5
+* [Change] No longer look up gage COMIDs by default due to error-prone nature of lookup near stream junctions. Use
+  `force_comid_lookup` parameter to `evaluate_gage_alteration` to enable previous lookup behavior.
+* [Enhancement] Added an automatic lookup that corrects bad data from comid lookups and returns the correct COMID. Only
+  used for Jones Bar gage right now, but structure is there for if others are found.
+
 ### Version 0.9.5.4
 * [Breaking Change] Where found, column names have been fully lowercased for consistency, including Metric -> metric and COMID -> comid
 * [Breaking Change] Parameter `com_id` to `get_predicted_flow_metrics` was renamed `comid`
