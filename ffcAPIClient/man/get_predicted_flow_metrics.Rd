@@ -4,10 +4,15 @@
 \alias{get_predicted_flow_metrics}
 \title{Retrieves flow predicted flow metric values for a stream segment}
 \usage{
-get_predicted_flow_metrics(comid)
+get_predicted_flow_metrics(comid, online)
 }
 \arguments{
-\item{com_id}{character. A string of a NHD COMID to retrieve metrics for.}
+\item{comid}{character. A string of a NHD COMID to retrieve metrics for.}
+
+\item{online}{boolean. Default FALSE. When TRUE, retrieves data from TNC's experimental predicted flow metrics API.
+When FALSE, uses internal data to pull flow metrics. Both are reasonably fast, but offline is good for reliability,
+but may end up using older data. Online should pull the most current data if there are updates. FALSE is the default
+largely because the API is still unstable.}
 }
 \description{
 This function returns the 10th, 25th, 50th, 75th, and 90th percentile

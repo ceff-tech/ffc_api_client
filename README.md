@@ -129,6 +129,11 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.6
+* [Enhancement] Added the ability to pull predicted metrics from TNC's predicted metrics API instead of from internal data. To 
+  use it, set `online=TRUE` when calling `get_predicted_flow_metrics`. It includes one small difference - in the source field,
+  values marked as `obs` in the offline data show up as `inferred`.
+
 ### Version 0.9.5.5
 * [Change] No longer look up gage COMIDs by default due to error-prone nature of lookup near stream junctions. Use
   `force_comid_lookup` parameter to `evaluate_gage_alteration` to enable previous lookup behavior.

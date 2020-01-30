@@ -74,7 +74,7 @@ for each percentile." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.6</span>
       </span>
     </div>
 
@@ -119,14 +119,21 @@ percentiles are available as fields such as <code>pct_10</code>, <code>pct_25</c
 for each percentile.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_predicted_flow_metrics</span>(<span class='no'>comid</span>)</pre>
+    <pre class="usage"><span class='fu'>get_predicted_flow_metrics</span>(<span class='no'>comid</span>, <span class='no'>online</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>com_id</th>
+      <th>comid</th>
       <td><p>character. A string of a NHD COMID to retrieve metrics for.</p></td>
+    </tr>
+    <tr>
+      <th>online</th>
+      <td><p>boolean. Default FALSE. When TRUE, retrieves data from TNC's experimental predicted flow metrics API.
+When FALSE, uses internal data to pull flow metrics. Both are reasonably fast, but offline is good for reliability,
+but may end up using older data. Online should pull the most current data if there are updates. FALSE is the default
+largely because the API is still unstable.</p></td>
     </tr>
     </table>
 
@@ -144,7 +151,7 @@ for each percentile.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>, <a href='https://ryanpeek.github.io/'>Ryan Peek</a>, Alyssa Obester.</p>
+  <p>Developed by <a href='https://nicksantos.com'>Nick Santos</a>, <a href='https://ryanpeek.github.io/'>Ryan Peek</a>, <a href='https://watershed.ucdavis.edu/people/aobester'>Alyssa Obester</a>.</p>
 </div>
 
 <div class="pkgdown">

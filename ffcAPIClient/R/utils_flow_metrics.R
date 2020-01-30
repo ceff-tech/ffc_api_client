@@ -24,13 +24,42 @@ get_dataset <- function(dataset_name){
 #' for each percentile.
 #'
 #'
-#' @param com_id character. A string of a NHD COMID to retrieve metrics for.
+#' @param comid character. A string of a NHD COMID to retrieve metrics for.
+#' @param online boolean. Default FALSE. When TRUE, retrieves data from TNC's experimental predicted flow metrics API.
+#'        When FALSE, uses internal data to pull flow metrics. Both are reasonably fast, but offline is good for reliability,
+#'        but may end up using older data. Online should pull the most current data if there are updates. FALSE is the default
+#'        largely because the API is still unstable.
 #'
 #' @export
-get_predicted_flow_metrics <- function(comid){
+get_predicted_flow_metrics <- function(comid, online){
+  if(missing(online)){
+    online <- FALSE
+  }
+
+  if(online){
+    return(get_predicted_flow_metrics_online(comid))
+  } else {
+    return(get_predicted_flow_metrics_offline(comid))
+  }
+}
+
+
+get_predicted_flow_metrics_offline <- function(comid){
   flow_metrics <- get_dataset("flow_metrics")
   flow_metrics["result_type"] <- "predicted"
   return(flow_metrics[flow_metrics$comid == comid, ])
+}
+
+get_predicted_flow_metrics_online <- function(comid, wyt){
+  if(missing(wyt)){
+    wyt = "all"
+  }
+
+  metrics_full <- read.csv(paste("https://flow-api.codefornature.org/v2/ffm/?comids=", comid, sep=""))
+  metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
+  metrics_filtered["result_type"] <- "predicted"
+  return(replace_ffm_column(metrics_filtered))  # rename the "ffm" column to "metric"
+
 }
 
 
@@ -47,4 +76,43 @@ get_predicted_flow_metrics <- function(comid){
 get_comid_for_lon_lat <- function(longitude, latitude){
   start_point <- sf::st_sfc(sf::st_point(c(longitude, latitude)), crs = 4269)
   return(nhdplusTools::discover_nhdplus_id(start_point))
+}
+
+replace_ffm_column <- function(df){
+
+  ffms = as.data.frame(t(data.frame(
+    list(
+      "ds_mag_50" = "DS_Mag_50",
+      "ds_mag_90" = "DS_Mag_90",
+      "ds_dur_ws" = "DS_Dur_WS",
+      "ds_tim" = "DS_Tim",
+      "fa_tim" = "FA_Tim",
+      "fa_dur" = "FA_Dur",
+      "fa_mag" = "FA_Mag",
+      "peak_10" = "Peak_10",
+      "peak_2" = "Peak_2",
+      "peak_5" = "Peak_5",
+      "peak_dur_10" = "Peak_Dur_10",
+      "peak_dur_2" = "Peak_Dur_2",
+      "peak_dur_5" = "Peak_Dur_5",
+      "peak_fre_10" = "Peak_Fre_10",
+      "peak_fre_2" = "Peak_Fre_2",
+      "peak_fre_5" = "Peak_Fre_5",
+      "sp_dur" = "SP_Du",
+      "sp_mag" = "SP_Mag",
+      "sp_tim" = "SP_Tim",
+      "sp_roc" = "SP_ROC",
+      "wet_bfl_dur" = "Wet_BFL_Dur",
+      "wet_bfl_mag_10" = "Wet_BFL_Mag_10",
+      "wet_bfl_mag_50" = "Wet_BFL_Mag_50",
+      "wet_tim" = "Wet_Tim"
+    ),
+    stringsAsFactors = FALSE
+  )))
+
+  ffms$ffm <- rownames(ffms)
+  colnames(ffms) <- c("metric", "ffm")
+
+  metrics <- merge(df, ffms)  # attach the new metric column
+  return(metrics[!names(metrics) %in% c("ffm", "unit", "wyt")])  # now drop the ffm column
 }
