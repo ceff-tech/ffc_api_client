@@ -40,8 +40,10 @@ code to work correctly!
 ### Easy-mode examples
 ```r
 # If you have a gage and a token, you can get all results simply by running
-ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", comid = segment_comid, plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
 # output_folder is optional. When provided, it will save plots there. It will show plots regardless.
+# in the past, we looked up the comid for you, but it's error prone - see function documentation for details
+# and how to optionally re-enable the lookup.
 
 # If you have a data frame with flow and date fields that isn't a gage, you can run
 ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token", plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration", comid=yoursegmentcomid)
