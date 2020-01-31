@@ -55,10 +55,15 @@ ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token",
 Both of these functions plot results immediately and optionally save the plots to the output folder. They
 also return a list with keys `ffc_results_df`, `percentiles`, and `drh`, so you can access the transformed
 data directly for additional calculations.
-* `ffc_results_df` includes the raw data from the functional flows calculator for each flow metric by 
+* `ffc_results` includes the raw data from the functional flows calculator for each flow metric by 
    day of water year. 
-* `percentiles` includes the calculated 10th, 25th, 50th, 75th, and 90th percentiles for each metric
-* `drh` contains the raw DRH data with columns for percentiles and rows for days of water year.
+* `ffc_percentiles` includes the calculated 10th, 25th, 50th, 75th, and 90th percentiles for each metric
+* `alteration` data frame includes the assessed alteration of each metric using CEFF Appendix F Rules.
+* `predicted_percentiles` includes the same percentiles as predicted for each metric for assessing the observed ffc
+    results against predicted unaltered flow.
+* `drh_data` contains the raw DRH data with columns for percentiles and rows for days of water year.
+
+See the [documentation](#documentation) for more information on these results.
 
 ### Examples Using the DRH Only
 
