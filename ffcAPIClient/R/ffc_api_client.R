@@ -71,14 +71,12 @@ make_json <- function(data_json, start_date, token, extra){
 }
 
 
-#' Send flow data for processing
-#'
-#' In most cases, you won't need to use this function! If you're wondering what to do, use
-#' get_ffc_results_for_df instead.
-#'
-#' Sends flow timeseries data off to the functional flows calculator. Does not retrieve results!
-#'
-#' @export
+# Send flow data for processing
+#
+# In most cases, you won't need to use this function! If you're wondering what to do, use
+# get_ffc_results_for_df instead.
+# Sends flow timeseries data off to the functional flows calculator. Does not retrieve results!
+#
 process_data <- function(flows_df, params, flow_field, date_field, start_date, name){
   creation_params <- paste(',"name":"', name, '","params":', params, sep="")
   data_json <- make_flow_json(flows_df, flow_field, date_field)
@@ -92,16 +90,15 @@ process_data <- function(flows_df, params, flow_field, date_field, start_date, n
   return(flows_json)
 }
 
-#' Retrieve processed results from FFC.
-#'
-#' Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
-#' by the caller.
-#'
-#' @param name the name of the run to retrieve from the online FFC
-#' @param autodelete when TRUE, deletes the run in the online FFC, if found. When FALSE, leaves run in FFC online for later
-#'        retrieval.
-#'
-#' @export
+# Retrieve processed results from FFC.
+#
+# Gets the results for the given named run of the FFC. Returns the nested list - all other processing must be handled
+# by the caller.
+#
+# @param name the name of the run to retrieve from the online FFC
+# @param autodelete when TRUE, deletes the run in the online FFC, if found. When FALSE, leaves run in FFC online for later
+#        retrieval.
+#
 get_results_for_name <- function(name, autodelete){
 
   if(missing(autodelete)){
@@ -136,38 +133,36 @@ delete_ffc_run_by_id <- function(id){
 }
 
 
-#' Run Data Frame Through Functional Flows Calculator
-#'
-#' This is primarily an internal function used to run data through the functional flows
-#' calculator online, but is also available for those that wish to run the data themselves
-#' and then do any other handling and transformation for postprocessing on their own.
-#'
-#' Most people will want to use \code{\link{evaluate_alteration}} (for timeseries dataframes)
-#' or \code{\link{evaluate_gage_alteration}} (for USGS gages) instead.
-#'
-#' Internally, this is the primary function to use from the API client itself to obtain
-#' raw FFC results. It will generate a unique ID, run the data frame through
-#' the FFC, and then delete the results for that ID from the website so as not
-#' to clutter up the user's account, or store too much data on the server side.
-#'
-#' @param flows_df DataFrame. A time series data frame with flow and date columns
-#' @param comid character. The COMID of the stream segment
-#' @param flow_field character, default "flow". The name of the field in \code{df} that contains
-#'         flow values.
-#' @param date_field character, default "date". The name of the field in \code{df} that contains
-#'         date values for each flow. The date field must be in MM/DD/YYYY format
-#'         as either factor or character values - true dates likely will not work
-#'         based on the API we're using. If you need to convert date values, add
-#'         a field to your existing data frame with the values in MM/DD/YYYY format
-#'         before providing it to this function.
-#' @param start_date character, default "10/1". What month and day should the water
-#'         year start on? Neither month nor day needs to be zero-padded here, so
-#'         March first could just be 3/1, while December 12th can be 12/12.
-#' @return list of results from the functional flows calculator. More information will be
-#'         forthcoming as we inspect the structure of what is returned.
-#'
-#' @export
-#'
+# Run Data Frame Through Functional Flows Calculator
+#
+# This is primarily an internal function used to run data through the functional flows
+# calculator online, but is also available for those that wish to run the data themselves
+# and then do any other handling and transformation for postprocessing on their own.
+#
+# Most people will want to use \code{\link{evaluate_alteration}} (for timeseries dataframes)
+# or \code{\link{evaluate_gage_alteration}} (for USGS gages) instead.
+#
+# Internally, this is the primary function to use from the API client itself to obtain
+# raw FFC results. It will generate a unique ID, run the data frame through
+# the FFC, and then delete the results for that ID from the website so as not
+# to clutter up the user's account, or store too much data on the server side.
+#
+# @param flows_df DataFrame. A time series data frame with flow and date columns
+# @param comid character. The COMID of the stream segment
+# @param flow_field character, default "flow". The name of the field in \code{df} that contains
+#         flow values.
+# @param date_field character, default "date". The name of the field in \code{df} that contains
+#         date values for each flow. The date field must be in MM/DD/YYYY format
+#         as either factor or character values - true dates likely will not work
+#         based on the API we're using. If you need to convert date values, add
+#         a field to your existing data frame with the values in MM/DD/YYYY format
+#         before providing it to this function.
+# @param start_date character, default "10/1". What month and day should the water
+#         year start on? Neither month nor day needs to be zero-padded here, so
+#         March first could just be 3/1, while December 12th can be 12/12.
+# @return list of results from the functional flows calculator. More information will be
+#         forthcoming as we inspect the structure of what is returned.
+#
 get_ffc_results_for_df <- function(flows_df, comid, flow_field, date_field, start_date){
   if(missing(flow_field)){
     flow_field = "flow"  # this value is compatible with what you'd upload to the web interface
@@ -274,6 +269,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
+  SERVER_URL = 'https://eflows.ucdavis.edu/api/',
 
   setup = function(gage_id, timeseries, comid, token){
     if(missing(gage_id) && missing(timeseries)){
