@@ -259,24 +259,75 @@ convert_dates <- function(timeseries_data, date_format_string){
 #'
 #' @export
 FFCProcessor <- R6::R6Class("FFCProcessor", list(
-  token = NA,
-  start_date = NA,
+  token = NA, ##
+  start_date = "10/1", ##
   stream_class = NA,
   params = NA,
   comid = NA,
   timeseries = NA,
-  gage = NA,
+  gage = NA,  ##
   ffc_results = NA,
   percentiles = NA,
   predictions = NA,
+  prediction_percentiles_type = "offline",
   drh_data = NA,
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
 
+  setup = function(gage_id, timeseries, comid, token){
+    if(missing(gage_id) && missing(timeseries)){
+      stop("Need either a gage ID or a timeseries of data to proceed")
+    } else if(missing(gage_id)){
+      gage_id <- NA
+    } else if(missing(timeseries)){
+      timeseries <- NA
+    }
+
+    if(missing(comid) && is.na(gage_id)){
+      stop("Must provide a comid when running a non-gage timeseries.")
+    }
+
+    if(missing(token)){
+      stop("Can't run data through the FFC online without a token")
+    }
+
+    self$gage <- USGSGage$new()
+    self$gage$id <- gage_id
+    self$gage$comid <- comid
+
+    self$timeseries <- timeseries
+    self$token <- token
+
+  },
+
+  # we'll have it actually run everything, then for the steps, it'll just return derived outputs like plots, tables, save csvs, etc
+  run = function(){
+
+  },
+
+  # CEFF step 1
+  generate_functional_flow_results = function(){
+
+  },
+
+  # CEFF step 2
+  explore_ecological_flow_criteria = function(){
+
+  },
+
+  # CEFF step 3
+  assess_alteration = function(){
+
+  },
+
   get_ffc_results = function(){
+    if(is.na(self$token)){
+      stop("Token not provided - can't proceed. Set the token on the class before proceeding")
+    }
+
     # TODO - check to make sure we have everything we need first
-    set_token(token)
+    set_token(self$token)
     results <- evaluate_timeseries_alteration(timeseries_data = timeseries, predictions_df = predictions)
     self$drh_data <- results$drh_data
     self$perecentiles <- results$percentiles
