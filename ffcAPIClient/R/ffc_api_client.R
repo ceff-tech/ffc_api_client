@@ -208,28 +208,21 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
     plot_results <- TRUE
   }
 
-  timeseries_data <- convert_dates(timeseries_data, date_format_string)  # standardize the dates based on the format string
-  timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
-  timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
+  processor <- FFCProcessor$new()
+  processor$set_up(timeseries = timeseries_data, comid = comid, token = get_token())
+  processor$date_format_string = date_format_string
+  processor$run()
 
-  ffc_results <- get_ffc_results_for_df(timeseries_data, comid)
-  results_df <- get_results_as_df(ffc_results)
-  percentiles <- get_percentiles(results_df, comid = comid)
-  alteration <- assess_alteration(percentiles = percentiles,
-                                  predictions = predictions_df,
-                                  ffc_values = results_df,
-                                  comid = comid,
-                                  annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
   if(plot_results){
-    plot_drh(ffc_results, output_path = drh_output_path)
-    plot_comparison_boxes(percentiles, predictions_df, output_folder = plot_output_folder)
+    plot_drh(processor$raw_ffc_results, output_path = drh_output_path)
+    plot_comparison_boxes(processor$observed_percentiles, predictions_df, output_folder = plot_output_folder)
   }
   return(list(
-    "ffc_results" = results_df,
-    "ffc_percentiles" = percentiles,
-    "drh_data" = get_drh(ffc_results),
+    "ffc_results" = processor$ffc_results,
+    "ffc_percentiles" = processor$percentiles,
+    "drh_data" = get_drh(processor$raw_ffc_results),
     "predicted_percentiles" = predictions_df,
-    "alteration" = alteration
+    "alteration" = processor$alteration
   ))
 }
 
@@ -257,21 +250,23 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   token = NA, ##
   start_date = "10/1", ##
   stream_class = NA,
+  date_format_string = "%m/%d/%Y",
   params = NA,
   comid = NA,
   timeseries = NA,
   gage = NA,  ##
+  raw_ffc_results = NA,
   ffc_results = NA,
-  percentiles = NA,
-  predictions = NA,
-  prediction_percentiles_type = "offline",
+  observed_percentiles = NA,
+  predicted_percentiles = NA,
+  predicted_percentiles_online = FALSE,  # should we get predicted flow metrics from the online API, or with our offline data?
   drh_data = NA,
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
   SERVER_URL = 'https://eflows.ucdavis.edu/api/',
 
-  setup = function(gage_id, timeseries, comid, token){
+  set_up = function(gage_id, timeseries, comid, token){
     if(missing(gage_id) && missing(timeseries)){
       stop("Need either a gage ID or a timeseries of data to proceed")
     } else if(missing(gage_id)){
@@ -291,6 +286,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     self$gage <- USGSGage$new()
     self$gage$id <- gage_id
     self$gage$comid <- comid
+    self$comid <- comid
 
     self$timeseries <- timeseries
     self$token <- token
@@ -299,7 +295,20 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
   # we'll have it actually run everything, then for the steps, it'll just return derived outputs like plots, tables, save csvs, etc
   run = function(){
+    self$predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online)
 
+    timeseries_data <- convert_dates(self$timeseries, self$date_format_string)  # standardize the dates based on the format string
+    timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
+    timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
+
+    self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid)
+    self$ffc_results <- get_results_as_df(self$raw_ffc_results)
+    self$observed_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
+    self$alteration <- assess_alteration(percentiles = self$observed_percentiles,
+                                    predictions = self$predicted_percentiles,
+                                    ffc_values = self$ffc_results,
+                                    comid = self$comid,
+                                    annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
   },
 
   # CEFF step 1
