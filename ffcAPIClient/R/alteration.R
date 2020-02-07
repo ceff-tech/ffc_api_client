@@ -9,16 +9,19 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 #' alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
 #' the data under the rules. Returns a data frame with columns "metric" , "status_code",
-#' "status", "alteration_type", and "comid".
+#' "status", "alteration_type", "median_in_iqr", and "comid".
 #'
 #' The \code{comid} will be the same for all rows, and will match what you provide
 #' as an input, but allows for merging of these results into larger tables.
 #'
 #' \code{status_code} will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
 #' \code{status} will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
-#' \code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+#' \code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics - the direction
+#' of alteration is determined by comparing the median value to the 25th and 7th percentiles of the predicted metrics. It will
 #' provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
-#' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
+#' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.". Also includes a boolean field
+# \code{median_in_iqr} indicating whether the median is in the interquartile range.
+#
 #'
 #' @param percentiles dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90
 #' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
@@ -49,19 +52,19 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid, annua
 }
 
 
-#' Assess the alteration of a single flow metric
-#'
-#' Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
-#' whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
-#' an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
-#' in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)
-#'
-#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
-#'                     metric with the flow metric in it. These are calculated percentile values from the FFC.
-#' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
-#' @param ffc_values vector of raw observed metric values (FFC output) for this metric
-#' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
-#' @export
+# Assess the alteration of a single flow metric
+#
+# Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
+# whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
+# an integer code (1=likely unaltered, 0=indeterminate, -1=likely altered), as well as for which direction alteration is (or may be)
+# in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics). Also includes a boolean field
+# \code{median_in_iqr} indicating whether the median is in the interquartile range.
+#
+# @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
+#                     metric with the flow metric in it. These are calculated percentile values from the FFC.
+# @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
+# @param ffc_values vector of raw observed metric values (FFC output) for this metric
+# @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
 single_metric_alteration <- function(percentiles, predictions, ffc_values, days_in_water_year, annual){
   if(missing(days_in_water_year)){
     days_in_water_year <- 365
@@ -116,19 +119,18 @@ assess_observations <- function(ffc_values, predictions){
 }
 
 
-#' Calculate the alteration status of a flow metric
-#'
-#' This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,
-#' a lower and upper bound, and a set of observations that have already been assessed for whether they're within that lower
-#' or upper bound so that they are -1 for low/early, 0 for within range, and 1 for high/late. They need to already be assessed
-#' because some metrics (*ahem* timing) need their own ways to assess low/high, or early/late
-#'
-#' @param median The calculated median value from the observed data
-#' @param predictions The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values
-#' @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
-#'                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
-#' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
-#' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
+# Calculate the alteration status of a flow metric
+#
+# This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,
+# a lower and upper bound, and a set of observations that have already been assessed for whether they're within that lower
+# or upper bound so that they are -1 for low/early, 0 for within range, and 1 for high/late.
+#
+# @param median The calculated median value from the observed data
+# @param predictions The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values
+# @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
+#                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
+# @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
+# @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
 determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year, annual){
   if(missing(annual)){
     annual <- FALSE
