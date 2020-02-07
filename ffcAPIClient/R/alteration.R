@@ -82,7 +82,7 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
     assessed_observations = assess_observations(ffc_values, predictions)
 
     if (is.null(assessed_observations)) {  # assess_observations returns NULL if there's not enough data
-      return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
+      return(data.frame("metric" = metric, "status_code" = NA, "status" = "not_enough_data", "alteration_type" = "undeterminable", "median_in_iqr" = "unknown", stringsAsFactors = FALSE))
     }
     median = as.double(percentiles[["p50"]])
   }else{
