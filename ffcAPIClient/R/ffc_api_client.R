@@ -200,7 +200,6 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
   }
 
   if(missing(date_format_string)){
-    print("Using default date format string of %m/%d/%Y")
     date_format_string <- "%m/%d/%Y"
   }
 
@@ -290,11 +289,12 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$timeseries <- timeseries
     self$token <- token
-
   },
 
   # we'll have it actually run everything, then for the steps, it'll just return derived outputs like plots, tables, save csvs, etc
   run = function(){
+    print(paste("Using date format string", self$date_format_string))
+
     self$predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online)
 
     timeseries_data <- convert_dates(self$timeseries, self$date_format_string)  # standardize the dates based on the format string
