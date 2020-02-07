@@ -139,88 +139,43 @@ determine_status <- function(median, predictions, assessed_observations, metric,
   status <- "indeterminate"
   alteration_type <- "unknown"
 
-  # Aiming at Type 1 unaltered here - median in bounds
-  if (median_in_range_strict(median, predictions[["p25"]], predictions[["p75"]])) {
-    status_code = LIKELY_UNALTERED_STATUS_CODE
-    status = "likely_unaltered"
-    alteration_type = "none_found"
-  } else if (annual){
-    status_code = LIKELY_ALTERED_STATUS_CODE
-    status = "likely_altered"
-    alteration_type = "unknown"
-  } else {  # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
-    # set the direction here
-    if (median < predictions[["p25"]]){
-      if (grepl("_Tim", metric)){
-        alteration_type <- "early"
-      } else {
-        alteration_type <- "low"
-      }
+  # set the direction here
+  if (median < predictions[["p25"]]){
+    if (grepl("_Tim", metric)){
+      alteration_type <- "early"
+    } else {
+      alteration_type <- "low"
     }
-    if(median > predictions[["p75"]]){
-      if(grepl("_Tim", metric)){
-        alteration_type <- "late"
-      } else {
-      alteration_type <- "high"
-      }
-    }
-    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
-    #  if(timing_alteration_value == -1){
-    #    alteration_type <- "early"
-    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
-    #    alteration_type <- "late"
-    #  }
-    # we used to have separate logic for timing because it could wrap around. But now we don't because apparently all the
-    # other FFC/predictions code assumes nothing except duration metrics crosses water years. Sarah Yarnell says that early/
-    # late are also just a function of earlier in the water year or later in the water year. Something early won't ever
-    # cross the water year boundary to appear late (which lots of the commented out code handles)
-    #if(grepl("_Tim", metric)){
-    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
-    #  if(timing_alteration_value == -1){
-    #    alteration_type <- "early"
-    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
-    #    alteration_type <- "late"
-    #  }
-
-    #  window_size <- predictions$p75 - predictions$p25
-    #  if(!((1 + 2*prediction_proportion) * window_size >= days_in_water_year)){  # if we expand the window and it's bigger than the days in the water year, we're indeterminate
-    #    # in here, the expanded window would have fewer days than the water year, but which days, who knows!
-    #    high_bound_expanded <- (predictions$p75 + predicted_proportion * window_size) %% days_in_water_year
-    #    low_bound_expanded <- (predictions$p25 - predicted_proportion * window_size) %% days_in_water_year
-    #  }
-    #  if (high_bound_expanded > low_bound_expanded){
-    #    # Since we already checked that expansion wasn't going to make the window bigger than a year, then if high bound
-    #    # is greater than the low bound, we know we don't cross water years. Values b/t low and high are indeterminate, outside
-    #    # of that range, likely altered
-    #    if(median > high_bound_expanded || median < low_bound_expanded){
-    #      status_code <- LIKELY_ALTERED_STATUS_CODE
-    #      status <- "likely altered"
-    #    }
-    #  }else {
-    #    # in here, high_bound_expanded < low_bound_expanded - aka, we crossed the water year boundary on one end. That means
-    #    # that the values *between* them are likely altered, and outside them are indeterminate
-    #
-    #    if(median < high_bound_expanded || median > low_bound_expanded){
-    #      status_code <- LIKELY_ALTERED_STATUS_CODE
-    #      status <- "likely_altered"
-    #    }
-    #  }
-    #}
-    if (median >= predictions[["p10"]] && median <= predictions[["p90"]]){
-      # for regular metrics, if we're in here, then we have a chance at being unaltered if
-      # 50% of observations are in range
-      if(observations_in_range(assessed_observations = assessed_observations)){
-        status_code = LIKELY_UNALTERED_STATUS_CODE
-        status = "likely_unaltered"
-        alteration_type = "none_found"
-      } # otherwise we leave it alone because it's indeterminate
-    } else { # otherwise, we're altered
-      status_code = LIKELY_ALTERED_STATUS_CODE
-      status = "likely_altered"
+  }
+  if(median > predictions[["p75"]]){
+    if(grepl("_Tim", metric)){
+      alteration_type <- "late"
+    } else {
+    alteration_type <- "high"
     }
   }
 
-  return(data.frame("metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, stringsAsFactors = FALSE))
+  # Ted wants to know if values are in the IQR still, so we'll include that separately, even if there's no logic for how it impacts alteration assessment
+  if(median_in_range_strict(median, predictions[["p25"]], predictions[["p75"]])) {
+    median_in_iqr = TRUE
+  }else{
+    median_in_iqr = FALSE
+  }
+
+  if (median >= predictions[["p10"]] && median <= predictions[["p90"]]){
+    # for regular metrics, if we're in here, then we have a chance at being unaltered if
+    # 50% of observations are in range
+    if(annual || observations_in_range(assessed_observations = assessed_observations)){  # if the annual flag is passed, skip the observations check
+      status_code = LIKELY_UNALTERED_STATUS_CODE
+      status = "likely_unaltered"
+      alteration_type = "none_found"
+    } # otherwise if we're in this block we leave it alone because it's indeterminate
+  } else { # otherwise, we're altered
+    status_code = LIKELY_ALTERED_STATUS_CODE
+    status = "likely_altered"
+  }
+
+  return(data.frame("metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, "median_in_iqr" = median_in_iqr, stringsAsFactors = FALSE))
 }
 
 
