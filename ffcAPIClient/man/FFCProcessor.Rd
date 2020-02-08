@@ -17,10 +17,55 @@ and \code{\link{evaluate_gage_alteration}}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
+\item \href{#method-setup}{\code{FFCProcessor$setup()}}
+\item \href{#method-run}{\code{FFCProcessor$run()}}
+\item \href{#method-generate_functional_flow_results}{\code{FFCProcessor$generate_functional_flow_results()}}
+\item \href{#method-explore_ecological_flow_criteria}{\code{FFCProcessor$explore_ecological_flow_criteria()}}
+\item \href{#method-assess_alteration}{\code{FFCProcessor$assess_alteration()}}
 \item \href{#method-get_ffc_results}{\code{FFCProcessor$get_ffc_results()}}
 \item \href{#method-evaluate_alteration}{\code{FFCProcessor$evaluate_alteration()}}
 \item \href{#method-clone}{\code{FFCProcessor$clone()}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-setup"></a>}}
+\subsection{Method \code{setup()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$setup(gage_id, timeseries, comid, token)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-run"></a>}}
+\subsection{Method \code{run()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$run()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-generate_functional_flow_results"></a>}}
+\subsection{Method \code{generate_functional_flow_results()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$generate_functional_flow_results()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-explore_ecological_flow_criteria"></a>}}
+\subsection{Method \code{explore_ecological_flow_criteria()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$explore_ecological_flow_criteria()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-assess_alteration"></a>}}
+\subsection{Method \code{assess_alteration()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$assess_alteration()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_ffc_results"></a>}}

@@ -134,6 +134,10 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.5.8
+* [Change] Updated the rules used to determine alteration to match new rules for CEFF Appendix F - specifically, we now 
+      *always* check that >=50% of observations are within the i80r before declaring something unaltered.
+
 ### Version 0.9.5.7
 * [Enhancement] `evaluate_alteration` now supports parameter to control plotting (similar to `evaluate_gage_alteration`) and
   documentation has been added for the function.
