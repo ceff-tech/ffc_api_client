@@ -31,14 +31,16 @@ Returns a data frame with an alteration status assessment for every flow metric.
 Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
 the data under the rules. Returns a data frame with columns "metric" , "status_code",
-"status", "alteration_type", and "comid".
+"status", "alteration_type", "median_in_iqr", and "comid".
 
 The \code{comid} will be the same for all rows, and will match what you provide
 as an input, but allows for merging of these results into larger tables.
 
 \code{status_code} will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
 \code{status} will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
-\code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+\code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics - the direction
+of alteration is determined by comparing the median value to the 25th and 7th percentiles of the predicted metrics. It will
 provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
-it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
+it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.". Also includes a boolean field
+\code{median_in_iqr} indicating whether the median is in the interquartile range.
 }

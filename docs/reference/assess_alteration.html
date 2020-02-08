@@ -148,14 +148,16 @@ likely_altered otherwise without additional checks described in the CEFF guidanc
     <p>Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
 the data under the rules. Returns a data frame with columns "metric" , "status_code",
-"status", "alteration_type", and "comid".</p>
+"status", "alteration_type", "median_in_iqr", and "comid".</p>
 <p>The <code>comid</code> will be the same for all rows, and will match what you provide
 as an input, but allows for merging of these results into larger tables.</p>
 <p><code>status_code</code> will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
 <code>status</code> will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
-<code>alteration_type</code> will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+<code>alteration_type</code> will tell you the direction of potential alteration for likely altered and indeterminate metrics - the direction
+of alteration is determined by comparing the median value to the 25th and 7th percentiles of the predicted metrics. It will
 provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
-it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".</p>
+it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.". Also includes a boolean field
+<code>median_in_iqr</code> indicating whether the median is in the interquartile range.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

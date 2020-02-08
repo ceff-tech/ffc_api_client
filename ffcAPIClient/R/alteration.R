@@ -20,8 +20,8 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' of alteration is determined by comparing the median value to the 25th and 7th percentiles of the predicted metrics. It will
 #' provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
 #' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.". Also includes a boolean field
-# \code{median_in_iqr} indicating whether the median is in the interquartile range.
-#
+#' \code{median_in_iqr} indicating whether the median is in the interquartile range.
+#'
 #'
 #' @param percentiles dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90
 #' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
