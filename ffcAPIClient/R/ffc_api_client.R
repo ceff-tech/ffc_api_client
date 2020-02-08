@@ -191,7 +191,7 @@ get_ffc_results_for_df <- function(flows_df, comid, flow_field, date_field, star
 
 # Does the bulk of the processing, but not a public function - both other evaluate_alteration functions use this under
 # the hood after doing some other checks, etc.
-evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_df, plot_output_folder, date_format_string, plot_results){
+evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_folder, date_format_string, plot_results){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
     drh_output_path <- NULL
@@ -218,9 +218,9 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, predictions_
   }
   return(list(
     "ffc_results" = processor$ffc_results,
-    "ffc_percentiles" = processor$percentiles,
+    "ffc_percentiles" = processor$ffc_percentiles,
     "drh_data" = get_drh(processor$raw_ffc_results),
-    "predicted_percentiles" = predictions_df,
+    "predicted_percentiles" = processor$predicted_percentiles,
     "alteration" = processor$alteration
   ))
 }
@@ -256,7 +256,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   gage = NA,  ##
   raw_ffc_results = NA,
   ffc_results = NA,
-  observed_percentiles = NA,
+  ffc_percentiles = NA,
   predicted_percentiles = NA,
   predicted_percentiles_online = FALSE,  # should we get predicted flow metrics from the online API, or with our offline data?
   drh_data = NA,
@@ -303,12 +303,13 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid)
     self$ffc_results <- get_results_as_df(self$raw_ffc_results)
-    self$observed_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
+    self$ffc_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
     self$alteration <- assess_alteration(percentiles = self$observed_percentiles,
                                     predictions = self$predicted_percentiles,
                                     ffc_values = self$ffc_results,
                                     comid = self$comid,
                                     annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
+    self$drh_data <- get_drh(self$raw_ffc_results)
   },
 
   # CEFF step 1
