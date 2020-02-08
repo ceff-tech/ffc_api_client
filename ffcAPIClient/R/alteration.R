@@ -9,16 +9,19 @@ LIKELY_UNALTERED_STATUS_CODE = 1
 #' Generates an alteration status assessment for every flow metric based on the rules developed under CEFF for flow
 #' alteration. This function pairs well with the boxplots for visualizing alteration, but only this function assesses
 #' the data under the rules. Returns a data frame with columns "metric" , "status_code",
-#' "status", "alteration_type", and "comid".
+#' "status", "alteration_type", "median_in_iqr", and "comid".
 #'
 #' The \code{comid} will be the same for all rows, and will match what you provide
 #' as an input, but allows for merging of these results into larger tables.
 #'
 #' \code{status_code} will be -1 (likely altered), 0 (indeterminate), 1 (likely unaltered), or NA (insufficient data to determine).
 #' \code{status} will be a text description of the status code (-1=likely_altered, 0=indeterminate, 1=likely_unaltered, NA=Not_enough_data).
-#' \code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics. It will
+#' \code{alteration_type} will tell you the direction of potential alteration for likely altered and indeterminate metrics - the direction
+#' of alteration is determined by comparing the median value to the 25th and 7th percentiles of the predicted metrics. It will
 #' provide "low" or "high" values for most metrics and "early" or "late" values for timing metrics. For likely_unaltered metrics,
-#' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.".
+#' it will provide "none_found" and for metrics with insufficient data, it will provide "undeterminable.". Also includes a boolean field
+# \code{median_in_iqr} indicating whether the median is in the interquartile range.
+#
 #'
 #' @param percentiles dataframe of calculated FFC results percentiles, including the metric column and columns for p10,p25,p50,p75, and p90
 #' @param predictions dataframe of predicted flow metrics, as returned from \code{get_predicted_flow_metrics}.
@@ -49,19 +52,19 @@ assess_alteration <- function(percentiles, predictions, ffc_values, comid, annua
 }
 
 
-#' Assess the alteration of a single flow metric
-#'
-#' Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
-#' whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
-#' an integer code (1=likely unaltered, 2=indeterminate, 3=likely altered), as well as for which direction alteration is (or may be)
-#' in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics)
-#'
-#' @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
-#'                     metric with the flow metric in it. These are calculated percentile values from the FFC.
-#' @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
-#' @param ffc_values vector of raw observed metric values (FFC output) for this metric
-#' @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
-#' @export
+# Assess the alteration of a single flow metric
+#
+# Given a metric's calculated percentiles, raw FFC output values, and predictions, returns a row of information indicating
+# whether or not that metric is likely altered, indeterminate, or likely unaltered. Includes fields with a text status,
+# an integer code (1=likely unaltered, 0=indeterminate, -1=likely altered), as well as for which direction alteration is (or may be)
+# in if it's indeterminate or likely altered (values are low/high or early/late for timing metrics). Also includes a boolean field
+# \code{median_in_iqr} indicating whether the median is in the interquartile range.
+#
+# @param percentiles data frame row - should have a named value "p50" that can be accessed, at the very least and a column
+#                     metric with the flow metric in it. These are calculated percentile values from the FFC.
+# @param predictions data frame (or other named field item) the predicted flow metric values for the segment and metric
+# @param ffc_values vector of raw observed metric values (FFC output) for this metric
+# @param days_in_water_year numeric of how many days in the water year (defaults to 365, but could be 366).
 single_metric_alteration <- function(percentiles, predictions, ffc_values, days_in_water_year, annual){
   if(missing(days_in_water_year)){
     days_in_water_year <- 365
@@ -79,7 +82,7 @@ single_metric_alteration <- function(percentiles, predictions, ffc_values, days_
     assessed_observations = assess_observations(ffc_values, predictions)
 
     if (is.null(assessed_observations)) {  # assess_observations returns NULL if there's not enough data
-      return(data.frame("metric" = metric, "status_code" = NA, "status" = "Not_enough_data", "alteration_type" = "undeterminable", stringsAsFactors = FALSE))
+      return(data.frame("metric" = metric, "status_code" = NA, "status" = "not_enough_data", "alteration_type" = "undeterminable", "median_in_iqr" = "unknown", stringsAsFactors = FALSE))
     }
     median = as.double(percentiles[["p50"]])
   }else{
@@ -116,19 +119,18 @@ assess_observations <- function(ffc_values, predictions){
 }
 
 
-#' Calculate the alteration status of a flow metric
-#'
-#' This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,
-#' a lower and upper bound, and a set of observations that have already been assessed for whether they're within that lower
-#' or upper bound so that they are -1 for low/early, 0 for within range, and 1 for high/late. They need to already be assessed
-#' because some metrics (*ahem* timing) need their own ways to assess low/high, or early/late
-#'
-#' @param median The calculated median value from the observed data
-#' @param predictions The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values
-#' @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
-#'                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
-#' @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
-#' @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
+# Calculate the alteration status of a flow metric
+#
+# This method returns an alteration status record for a specific flow metric, but requires the calculated FFC percentiles,
+# a lower and upper bound, and a set of observations that have already been assessed for whether they're within that lower
+# or upper bound so that they are -1 for low/early, 0 for within range, and 1 for high/late.
+#
+# @param median The calculated median value from the observed data
+# @param predictions The predicted metric values for this specific metric - should have p10, p25, p50, p75, p90 values
+# @param assessed_observations vector of raw observed metric values (FFC output) that has already been assessed for whether it is in range
+#                     so that records that are low/early are -1, records that are in range are 0, and records that are high/late are 1
+# @param metric character name of the metric - case sensitive. Currently only used for timing metrics, which must have "_Tim" in the name
+# @param days_in_water_year numeric of how many days in the water year (typically 365, but could be 366).
 determine_status <- function(median, predictions, assessed_observations, metric, days_in_water_year, annual){
   if(missing(annual)){
     annual <- FALSE
@@ -139,88 +141,43 @@ determine_status <- function(median, predictions, assessed_observations, metric,
   status <- "indeterminate"
   alteration_type <- "unknown"
 
-  # Aiming at Type 1 unaltered here - median in bounds
-  if (median_in_range_strict(median, predictions[["p25"]], predictions[["p75"]])) {
-    status_code = LIKELY_UNALTERED_STATUS_CODE
-    status = "likely_unaltered"
-    alteration_type = "none_found"
-  } else if (annual){
-    status_code = LIKELY_ALTERED_STATUS_CODE
-    status = "likely_altered"
-    alteration_type = "unknown"
-  } else {  # we're not unaltered, but we're not yet sure we're altered - median is off, but let's check how far
-    # set the direction here
-    if (median < predictions[["p25"]]){
-      if (grepl("_Tim", metric)){
-        alteration_type <- "early"
-      } else {
-        alteration_type <- "low"
-      }
+  # set the direction here
+  if (median < predictions[["p25"]]){
+    if (grepl("_Tim", metric)){
+      alteration_type <- "early"
+    } else {
+      alteration_type <- "low"
     }
-    if(median > predictions[["p75"]]){
-      if(grepl("_Tim", metric)){
-        alteration_type <- "late"
-      } else {
-      alteration_type <- "high"
-      }
-    }
-    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
-    #  if(timing_alteration_value == -1){
-    #    alteration_type <- "early"
-    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
-    #    alteration_type <- "late"
-    #  }
-    # we used to have separate logic for timing because it could wrap around. But now we don't because apparently all the
-    # other FFC/predictions code assumes nothing except duration metrics crosses water years. Sarah Yarnell says that early/
-    # late are also just a function of earlier in the water year or later in the water year. Something early won't ever
-    # cross the water year boundary to appear late (which lots of the commented out code handles)
-    #if(grepl("_Tim", metric)){
-    #  timing_alteration_value <- early_or_late_simple(median, predictions$p25, predictions$p75, days_in_water_year)
-    #  if(timing_alteration_value == -1){
-    #    alteration_type <- "early"
-    #  }else{  # it shouldn't come back 0 here because we're outside the timing window already, so safe to assume late now.
-    #    alteration_type <- "late"
-    #  }
-
-    #  window_size <- predictions$p75 - predictions$p25
-    #  if(!((1 + 2*prediction_proportion) * window_size >= days_in_water_year)){  # if we expand the window and it's bigger than the days in the water year, we're indeterminate
-    #    # in here, the expanded window would have fewer days than the water year, but which days, who knows!
-    #    high_bound_expanded <- (predictions$p75 + predicted_proportion * window_size) %% days_in_water_year
-    #    low_bound_expanded <- (predictions$p25 - predicted_proportion * window_size) %% days_in_water_year
-    #  }
-    #  if (high_bound_expanded > low_bound_expanded){
-    #    # Since we already checked that expansion wasn't going to make the window bigger than a year, then if high bound
-    #    # is greater than the low bound, we know we don't cross water years. Values b/t low and high are indeterminate, outside
-    #    # of that range, likely altered
-    #    if(median > high_bound_expanded || median < low_bound_expanded){
-    #      status_code <- LIKELY_ALTERED_STATUS_CODE
-    #      status <- "likely altered"
-    #    }
-    #  }else {
-    #    # in here, high_bound_expanded < low_bound_expanded - aka, we crossed the water year boundary on one end. That means
-    #    # that the values *between* them are likely altered, and outside them are indeterminate
-    #
-    #    if(median < high_bound_expanded || median > low_bound_expanded){
-    #      status_code <- LIKELY_ALTERED_STATUS_CODE
-    #      status <- "likely_altered"
-    #    }
-    #  }
-    #}
-    if (median >= predictions[["p10"]] && median <= predictions[["p90"]]){
-      # for regular metrics, if we're in here, then we have a chance at being unaltered if
-      # 50% of observations are in range
-      if(observations_in_range(assessed_observations = assessed_observations)){
-        status_code = LIKELY_UNALTERED_STATUS_CODE
-        status = "likely_unaltered"
-        alteration_type = "none_found"
-      } # otherwise we leave it alone because it's indeterminate
-    } else { # otherwise, we're altered
-      status_code = LIKELY_ALTERED_STATUS_CODE
-      status = "likely_altered"
+  }
+  if(median > predictions[["p75"]]){
+    if(grepl("_Tim", metric)){
+      alteration_type <- "late"
+    } else {
+    alteration_type <- "high"
     }
   }
 
-  return(data.frame("metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, stringsAsFactors = FALSE))
+  # Ted wants to know if values are in the IQR still, so we'll include that separately, even if there's no logic for how it impacts alteration assessment
+  if(median_in_range_strict(median, predictions[["p25"]], predictions[["p75"]])) {
+    median_in_iqr = TRUE
+  }else{
+    median_in_iqr = FALSE
+  }
+
+  if (median >= predictions[["p10"]] && median <= predictions[["p90"]]){
+    # for regular metrics, if we're in here, then we have a chance at being unaltered if
+    # 50% of observations are in range
+    if(annual || observations_in_range(assessed_observations = assessed_observations)){  # if the annual flag is passed, skip the observations check
+      status_code = LIKELY_UNALTERED_STATUS_CODE
+      status = "likely_unaltered"
+      alteration_type = "none_found"
+    } # otherwise if we're in this block we leave it alone because it's indeterminate
+  } else { # otherwise, we're altered
+    status_code = LIKELY_ALTERED_STATUS_CODE
+    status = "likely_altered"
+  }
+
+  return(data.frame("metric" = metric, "status_code" = status_code, "status" = status, "alteration_type" = alteration_type, "median_in_iqr" = median_in_iqr, stringsAsFactors = FALSE))
 }
 
 

@@ -12,7 +12,7 @@ context("simple alteration status checks")
 test_that("registers unaltered correctly", {
   basic_check <- determine_status(median = 8,
                                   predictions = test_predictions,
-                                  assessed_observations = assessed_observations_lt_50,
+                                  assessed_observations = assessed_observations_gt_50,
                                   metric = "Metric_With_Tim",
                                   days_in_water_year = 365)
   expect_equal(LIKELY_UNALTERED_STATUS_CODE, 1)
@@ -22,10 +22,10 @@ test_that("registers unaltered correctly", {
 
 })
 
-test_that("interquartile edges are unaltered", {
+test_that("iqr edges are unaltered", {
   basic_check <- determine_status(median = 7,
                                   predictions = test_predictions,
-                                  assessed_observations = assessed_observations_lt_50,
+                                  assessed_observations = assessed_observations_gt_50,
                                   metric = "Metric_With_Tim",
                                   days_in_water_year = 365)
   expect_equal(basic_check$status_code, LIKELY_UNALTERED_STATUS_CODE)
@@ -34,7 +34,7 @@ test_that("interquartile edges are unaltered", {
 
   basic_check <- determine_status(median = 13,
                                   predictions = test_predictions,
-                                  assessed_observations = assessed_observations_lt_50,
+                                  assessed_observations = assessed_observations_gt_50,
                                   metric = "Metric_With_Tim",
                                   days_in_water_year = 365)
   expect_equal(basic_check$status_code, LIKELY_UNALTERED_STATUS_CODE)
@@ -80,7 +80,16 @@ test_that("i80r unaltered", {
   expect_equal(basic_check$alteration_type, "none_found")
 })
 
-test_that("i80r indeterminate", {
+test_that("indeterminate", {
+  basic_check <- determine_status(median = 10,
+                                  predictions = test_predictions,
+                                  assessed_observations = assessed_observations_lt_50,
+                                  metric = "Metric_Tim",
+                                  days_in_water_year = 365)
+  expect_equal(basic_check$status_code, INDETERMINATE_STATUS_CODE)
+  expect_equal(basic_check$status, "indeterminate")
+  expect_equal(basic_check$alteration_type, "unknown")  # median isn't off, but observations are in this case, so alteration_type won't change
+
   basic_check <- determine_status(median = 6,
                                   predictions = test_predictions,
                                   assessed_observations = assessed_observations_lt_50,
