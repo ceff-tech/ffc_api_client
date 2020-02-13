@@ -29,20 +29,27 @@ get_dataset <- function(dataset_name){
 #'        When FALSE, uses internal data to pull flow metrics. Both are reasonably fast, but offline is good for reliability,
 #'        but may end up using older data. Online should pull the most current data if there are updates. FALSE is the default
 #'        largely because the API is still unstable.
+#' @param wyt character. When online = TRUE, filters the result to records with only the specifc water year type indicated.
+#'        See TNC's flow API documentation at flow-api.codefornature.org for options. If you want the records to come back
+#'        unfiltered, use "any", and for the non-WYT records, use "all" (it's a specific keyword the data uses - not our
+#'        choice - sorry for any confusion!).
 #'
 #' @export
-get_predicted_flow_metrics <- function(comid, online){
+get_predicted_flow_metrics <- function(comid, online, wyt){
   if(missing(online)){
     online <- FALSE
   }
 
+  if(missing(wyt)){
+    wyt <- "all"
+  }
+
   if(online){
-    return(get_predicted_flow_metrics_online(comid))
+    return(get_predicted_flow_metrics_online(comid, wyt = wyt))
   } else {
     return(get_predicted_flow_metrics_offline(comid))
   }
 }
-
 
 get_predicted_flow_metrics_offline <- function(comid){
   flow_metrics <- get_dataset("flow_metrics")
@@ -56,7 +63,12 @@ get_predicted_flow_metrics_online <- function(comid, wyt){
   }
 
   metrics_full <- read.csv(paste("https://flow-api.codefornature.org/v2/ffm/?comids=", comid, sep=""))
-  metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
+  if(wyt != "any"){
+    metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
+    metrics_filtered <- metrics_filtered[!names(metrics_filtered) %in% c("wyt")]  # now drop the wyt column, but only when we are filtering!
+  } else {
+    metrics_filtered <- metrics_full
+  }
   metrics_filtered["result_type"] <- "predicted"
   return(replace_ffm_column(metrics_filtered))  # rename the "ffm" column to "metric"
 
@@ -114,5 +126,5 @@ replace_ffm_column <- function(df){
   colnames(ffms) <- c("metric", "ffm")
 
   metrics <- merge(df, ffms)  # attach the new metric column
-  return(metrics[!names(metrics) %in% c("ffm", "unit", "wyt")])  # now drop the ffm column
+  return(metrics[!names(metrics) %in% c("ffm", "unit")])  # now drop the ffm column
 }

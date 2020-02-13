@@ -214,13 +214,14 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_
 
   if(plot_results){
     plot_drh(processor$raw_ffc_results, output_path = drh_output_path)
-    plot_comparison_boxes(processor$observed_percentiles, predictions_df, output_folder = plot_output_folder)
+    plot_comparison_boxes(processor$ffc_percentiles, processor$predicted_percentiles, output_folder = plot_output_folder)
   }
   return(list(
     "ffc_results" = processor$ffc_results,
     "ffc_percentiles" = processor$ffc_percentiles,
     "drh_data" = get_drh(processor$raw_ffc_results),
     "predicted_percentiles" = processor$predicted_percentiles,
+    "predicted_wyt_percentiles" = processor$predicted_wyt_percentiles,
     "alteration" = processor$alteration
   ))
 }
@@ -258,7 +259,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   ffc_results = NA,
   ffc_percentiles = NA,
   predicted_percentiles = NA,
-  predicted_percentiles_online = FALSE,  # should we get predicted flow metrics from the online API, or with our offline data?
+  predicted_wyt_percentiles = NA,
+  predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
   drh_data = NA,
   plots = NA,
   plot_output_folder = NA,
@@ -271,23 +273,42 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     } else if(missing(gage_id)){
       gage_id <- NA
     } else if(missing(timeseries)){
-      timeseries <- NA
+      timeseries <- NULL
     }
 
     if(missing(comid) && is.na(gage_id)){
       stop("Must provide a comid when running a non-gage timeseries.")
     }
 
+    if(missing(comid)){
+      comid <- NA
+    }
+
     if(missing(token)){
       stop("Can't run data through the FFC online without a token")
     }
 
-    self$gage <- USGSGage$new()
-    self$gage$id <- gage_id
-    self$gage$comid <- comid
-    self$comid <- comid
+    if(!is.na(gage_id)){
+      self$gage <- USGSGage$new()
+      self$gage$id <- gage_id
+      self$gage$get_data()  # this could be extra if someone provided gage ID and timeseries - that seems weird though - not adding another conditional - not needed
 
-    self$timeseries <- timeseries
+      if(is.na(comid)){
+        self$gage$get_comid()
+      } else {
+        self$gage$comid <- comid
+      }
+      self$comid <- self$gage$comid
+    } else {
+      self$comid <- comid
+    }
+
+    if(is.null(timeseries)){
+      # means we want to make the gage get it - if it's missing, we must have a gage
+      self$timeseries <- self$gage$timeseries_data
+    } else {
+      self$timeseries <- timeseries
+    }
     self$token <- token
   },
 
@@ -295,7 +316,14 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   run = function(){
     print(paste("Using date format string", self$date_format_string))
 
-    self$predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online)
+    predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online, wyt = "any")
+    if(self$predicted_percentiles_online){  # split them out so that we have the normal predicted percentiles with old-school behavior, and then one with just the WYT records
+      self$predicted_percentiles <- predicted_percentiles[predicted_percentiles$wyt == "all",]
+      self$predicted_wyt_percentiles <- predicted_percentiles[predicted_percentiles$wyt != "all",]
+      self$predicted_percentiles <- self$predicted_percentiles[!names(predicted_percentiles) %in% c("wyt")]  # now drop the ffm column
+    } else {
+      self$predicted_percentiles <- predicted_percentiles
+    }
 
     timeseries_data <- convert_dates(self$timeseries, self$date_format_string)  # standardize the dates based on the format string
     timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
@@ -304,7 +332,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid)
     self$ffc_results <- get_results_as_df(self$raw_ffc_results)
     self$ffc_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
-    self$alteration <- assess_alteration(percentiles = self$observed_percentiles,
+    self$alteration <- assess_alteration(percentiles = self$ffc_percentiles,
                                     predictions = self$predicted_percentiles,
                                     ffc_values = self$ffc_results,
                                     comid = self$comid,
@@ -322,7 +350,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
   },
 
-  # CEFF step 3
+  # CEFF step 3/
   assess_alteration = function(){
 
   },
