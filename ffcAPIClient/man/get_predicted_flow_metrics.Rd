@@ -4,7 +4,7 @@
 \alias{get_predicted_flow_metrics}
 \title{Retrieves flow predicted flow metric values for a stream segment}
 \usage{
-get_predicted_flow_metrics(comid, online)
+get_predicted_flow_metrics(comid, online, wyt)
 }
 \arguments{
 \item{comid}{character. A string of a NHD COMID to retrieve metrics for.}
@@ -13,6 +13,11 @@ get_predicted_flow_metrics(comid, online)
 When FALSE, uses internal data to pull flow metrics. Both are reasonably fast, but offline is good for reliability,
 but may end up using older data. Online should pull the most current data if there are updates. FALSE is the default
 largely because the API is still unstable.}
+
+\item{wyt}{character. When online = TRUE, filters the result to records with only the specifc water year type indicated.
+See TNC's flow API documentation at flow-api.codefornature.org for options. If you want the records to come back
+unfiltered, use "any", and for the non-WYT records, use "all" (it's a specific keyword the data uses - not our
+choice - sorry for any confusion!).}
 }
 \description{
 This function returns the 10th, 25th, 50th, 75th, and 90th percentile

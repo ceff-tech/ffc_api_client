@@ -134,6 +134,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.6.0
+* [Enhancement] `evaluate_alteration` family of functions now also returns `predicted_wyt_percentiles` in addition to the `predicted_percentiles`.
+                The WYT form includes a `wyt` column that includes the water year type of the prediction
+* [Change] Using TNC's online API to pull predicted flow metrics instead of internal data by default
+* [Change] Under the hood, the code behaves differently - most processing is now being handled in the FFCProcessor class, but more will be moved there
+
 ### Version 0.9.5.8
 * [Change] Updated the rules used to determine alteration to match new rules for CEFF Appendix F - specifically, we now 
       *always* check that >=50% of observations are within the i80r before declaring something unaltered.

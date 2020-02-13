@@ -17,7 +17,7 @@ and \code{\link{evaluate_gage_alteration}}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-setup}{\code{FFCProcessor$setup()}}
+\item \href{#method-set_up}{\code{FFCProcessor$set_up()}}
 \item \href{#method-run}{\code{FFCProcessor$run()}}
 \item \href{#method-generate_functional_flow_results}{\code{FFCProcessor$generate_functional_flow_results()}}
 \item \href{#method-explore_ecological_flow_criteria}{\code{FFCProcessor$explore_ecological_flow_criteria()}}
@@ -28,10 +28,10 @@ and \code{\link{evaluate_gage_alteration}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setup"></a>}}
-\subsection{Method \code{setup()}}{
+\if{html}{\out{<a id="method-set_up"></a>}}
+\subsection{Method \code{set_up()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$setup(gage_id, timeseries, comid, token)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$set_up(gage_id, timeseries, comid, token)}\if{html}{\out{</div>}}
 }
 
 }
