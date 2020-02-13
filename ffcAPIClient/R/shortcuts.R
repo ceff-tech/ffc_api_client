@@ -67,10 +67,13 @@ evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, 
   gage <- USGSGage$new()
   gage$id <- gage_id
   gage$get_data()
-  gage$comid <- comid
-  predictions_df <- gage$get_predicted_metrics(force_comid_lookup = force_comid_lookup)
+  if(force_comid_lookup){
+    gage$get_comid()
+  }else{
+    gage$comid <- comid
+  }
 
-  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, predictions_df, plot_output_folder = plot_output_folder, plot_results = plot_results)
+  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, plot_output_folder = plot_output_folder, plot_results = plot_results)
 
   results_list$ffc_percentiles["gage_id"] <- gage_id
   results_list$predicted_percentiles["gage_id"] <- gage_id
@@ -129,7 +132,6 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   }
 
   set_token(token)
-  predicted_flow_metrics <- get_predicted_flow_metrics(comid)
   results_list <- evaluate_timeseries_alteration(timeseries_df, comid, predicted_flow_metrics, plot_output_folder, date_format_string, plot_results = plot_results)
   return(results_list)
 }
