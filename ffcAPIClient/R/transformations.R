@@ -79,6 +79,12 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
   }
 
   comid <- predictions_df$comid[1]  # save it so we can use it in the plot after we drop it
+  gage_id <- ffc_results_df$gage_id[1]
+
+  graph_title_suffix <- paste("Metrics for COMID", comid)
+  if(!is.null(gage_id)){
+    graph_title_suffix <- paste(graph_title_suffix, "from Gage", gage_id)
+  }
 
   groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
   group_names = list("DS_" = "Dry Season",
@@ -103,7 +109,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
   for(group in groups){
     metrics <- dplyr::filter(full_df, grepl(group, metric))
     group_plt <- ggplot2::ggplot(metrics, mapping=ggplot2::aes(x=result_type, fill=result_type))  +
-      ggplot2::ggtitle(paste(group_names[[group]], "Metrics for COMID", comid)) +
+      ggplot2::ggtitle(paste(group_names[[group]], graph_title_suffix)) +
       ggplot2::geom_boxplot(
         ggplot2::aes(ymin = p10, lower = p25, middle = p50, upper = p75, ymax = p90),
         stat = "identity"
