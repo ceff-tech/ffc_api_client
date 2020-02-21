@@ -134,6 +134,10 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.6.1
+* [Enhancement] Updated plotting to facet each metric with a free Y axis so that all boxplots can be clearly seen. Other
+                minor enhancements to plotting, like titles and X axis labels as well.
+
 ### Version 0.9.6.0
 * [Enhancement] `evaluate_alteration` family of functions now also returns `predicted_wyt_percentiles` in addition to the `predicted_percentiles`.
                 The WYT form includes a `wyt` column that includes the water year type of the prediction

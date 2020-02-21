@@ -78,7 +78,17 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
     output_folder <- NULL
   }
 
+  comid <- predictions_df$comid[1]  # save it so we can use it in the plot after we drop it
+
   groups <- c("DS_", "FA_", "Wet_", "SP_", "Peak_Tim", "Peak_Dur", "Peak_Fre", "Peak_\\d")
+  group_names = list("DS_" = "Dry Season",
+                     "FA_" = "Fall",
+                     "Wet_" = "Wet Season",
+                     "SP_" = "Spring",
+                     "Peak_Tim" = "Peak Timing",
+                     "Peak_Dur" = "Peak Duration",
+                     "Peak_Fre" = "Peak Frequency",
+                     "Peak_\\d" = "Peak Magnitude")
 
   drop_cols <- c("comid", "source")
   predictions_df <- dplyr::select(predictions_df, -dplyr::one_of(drop_cols))
@@ -92,11 +102,16 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
 
   for(group in groups){
     metrics <- dplyr::filter(full_df, grepl(group, metric))
-    group_plt <- ggplot2::ggplot(metrics, ggplot2::aes(x=metric, fill=result_type))  +
+    group_plt <- ggplot2::ggplot(metrics, mapping=ggplot2::aes(x=result_type, fill=result_type))  +
+      ggplot2::ggtitle(paste(group_names[[group]], "Metrics for COMID", comid)) +
       ggplot2::geom_boxplot(
         ggplot2::aes(ymin = p10, lower = p25, middle = p50, upper = p75, ymax = p90),
         stat = "identity"
-      )
+      ) +
+    ggplot2::facet_wrap(ggplot2::vars(metric), scales = "free_y") +
+    ggplot2::xlab("Percentile Type") +
+    ggplot2::labs(fill = "Percentile Type")
+
     show(group_plt)
     if(!is.null(output_folder)){
       group_name <- sub("_\\d", "_", group, fixed=TRUE)  # make it safe - remove the regex filter on the Peak name
