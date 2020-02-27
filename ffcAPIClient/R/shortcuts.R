@@ -132,7 +132,7 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   }
 
   set_token(token)
-  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, predicted_flow_metrics, plot_output_folder, date_format_string, plot_results = plot_results)
+  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, plot_output_folder = plot_output_folder, date_format_string = date_format_string, plot_results = plot_results)
   return(results_list)
 }
 

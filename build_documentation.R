@@ -1,4 +1,4 @@
-current_version <- "0.9.6.1"  # it'd be nice to have this just find the latest file in the folder instead
+current_version <- "0.9.6.2"  # it'd be nice to have this just find the latest file in the folder instead
 
 devtools::document()
 

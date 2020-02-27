@@ -134,6 +134,9 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.6.2
+* [Bugfix] Fixed error preventing `evaluate_alteration` from running with warnings about `date_format_string`.
+
 ### Version 0.9.6.1
 * [Enhancement] Updated plotting to facet each metric with a free Y axis so that all boxplots can be clearly seen. Other
                 minor enhancements to plotting, like titles and X axis labels as well.
