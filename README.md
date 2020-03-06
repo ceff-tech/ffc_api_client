@@ -134,6 +134,9 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Varsion 0.9.6.3
+* [Bugfix] Fixed an error where predicted Spring Duration metrics came through as SP_Du
+
 ### Version 0.9.6.2
 * [Bugfix] Fixed error preventing `evaluate_alteration` from running with warnings about `date_format_string`.
 
