@@ -110,7 +110,7 @@ replace_ffm_column <- function(df){
       "peak_fre_10" = "Peak_Fre_10",
       "peak_fre_2" = "Peak_Fre_2",
       "peak_fre_5" = "Peak_Fre_5",
-      "sp_dur" = "SP_Du",
+      "sp_dur" = "SP_Dur",
       "sp_mag" = "SP_Mag",
       "sp_tim" = "SP_Tim",
       "sp_roc" = "SP_ROC",
