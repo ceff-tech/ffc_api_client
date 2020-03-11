@@ -13,3 +13,8 @@ library(ffcAPIClient)
 #  metrics_other_offline <- get_predicted_flow_metrics(8062273)
 #  expect_false(identical(metrics_online, metrics_other_offline))
 #})
+
+
+test_that("Get Predicted Flow Metrics Warns on Duplicates", { # should raise a warning when it retrieves duplicate flow metric values
+  expect_condition(get_predicted_flow_metrics(20350539, TRUE), "contained duplicated records")
+})

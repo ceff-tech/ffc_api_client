@@ -66,11 +66,18 @@ get_predicted_flow_metrics_online <- function(comid, wyt){
   if(wyt != "any"){
     metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
     metrics_filtered <- metrics_filtered[!names(metrics_filtered) %in% c("wyt")]  # now drop the wyt column, but only when we are filtering!
+    deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm")]), ]  # deduplicate on unique comid/metric combo
   } else {
     metrics_filtered <- metrics_full
+    deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm", "wyt")]), ]
   }
-  metrics_filtered["result_type"] <- "predicted"
-  return(replace_ffm_column(metrics_filtered))  # rename the "ffm" column to "metric"
+  deduplicated["result_type"] <- "predicted"
+
+  if(nrow(deduplicated) < nrow(metrics_filtered)){
+    warning("Flow metric data from API contained duplicated records for some flow metrics that we automatically removed. This is a data quality issue in the predicted data - it can occasionally produce incorrect results - check the values of the predicted flow metrics at https://flows.codefornature.org")
+  }
+
+  return(replace_ffm_column(deduplicated))  # rename the "ffm" column to "metric"
 
 }
 

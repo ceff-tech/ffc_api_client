@@ -134,6 +134,9 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Varsion 0.9.6.4
+* [Bugfix] Handled a condition where the predicted flow metric API returns duplicate values for some metrics
+
 ### Varsion 0.9.6.3
 * [Bugfix] Fixed an error where predicted Spring Duration metrics came through as SP_Du
 
