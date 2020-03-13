@@ -43,7 +43,7 @@
 #'        process data, this parameter is available to retrieve COMIDs.
 #'
 #' @export
-evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, plot_results, force_comid_lookup){
+evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, plot_results, force_comid_lookup, return_processor){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
   }
@@ -63,6 +63,10 @@ evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, 
     comid <- NA
   }
 
+  if(missing(return_processor)){
+    return_processor <- TRUE
+  }
+
   set_token(token)
   gage <- USGSGage$new()
   gage$id <- gage_id
@@ -73,7 +77,7 @@ evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, 
     gage$comid <- comid
   }
 
-  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, plot_output_folder = plot_output_folder, plot_results = plot_results)
+  results_list <- evaluate_timeseries_alteration(gage$timeseries_data, gage$comid, plot_output_folder = plot_output_folder, plot_results = plot_results, return_processor = return_processor)
 
   results_list$ffc_percentiles["gage_id"] <- gage_id
   results_list$predicted_percentiles["gage_id"] <- gage_id
@@ -106,9 +110,10 @@ evaluate_gage_alteration<- function (gage_id, token, comid, plot_output_folder, 
 #'        displayed interactively and saved as files named by the functional flow componenent into the provided folder
 #' @param plot_results boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
 #'        FALSE, does no plotting.
+#' @param date_format_string character. Default "%m/%d/%Y". What date format string should be used in interpreting the dates in the date field?
 #'
 #' @export
-evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, plot_results, date_format_string){
+evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude, plot_output_folder, plot_results, date_format_string, return_processor){
   if(missing(plot_output_folder)){
     plot_output_folder <- NULL
   }
@@ -131,8 +136,12 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
     date_format_string <- "%m/%d/%Y"
   }
 
+  if(missing(return_processor)){
+    return_processor <- TRUE
+  }
+
   set_token(token)
-  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, plot_output_folder = plot_output_folder, date_format_string = date_format_string, plot_results = plot_results)
+  results_list <- evaluate_timeseries_alteration(timeseries_df, comid, plot_output_folder = plot_output_folder, date_format_string = date_format_string, plot_results = plot_results, return_processor = return_processor)
   return(results_list)
 }
 

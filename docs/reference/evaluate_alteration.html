@@ -36,8 +36,6 @@
 
 
 <meta property="og:title" content="Generate FFC Results and Plots for Timeseries Data — evaluate_alteration" />
-<meta property="og:description" content="Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
-predicted metric values, flow alteration, and drh data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -70,7 +68,7 @@ predicted metric values, flow alteration, and drh data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6.6</span>
       </span>
     </div>
 
@@ -107,8 +105,6 @@ predicted metric values, flow alteration, and drh data." />
     </div>
 
     <div class="ref-description">
-    <p>Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,
-predicted metric values, flow alteration, and drh data.</p>
     </div>
 
     <pre class="usage"><span class='fu'>evaluate_alteration</span>(
@@ -119,7 +115,8 @@ predicted metric values, flow alteration, and drh data.</p>
   <span class='no'>latitude</span>,
   <span class='no'>plot_output_folder</span>,
   <span class='no'>plot_results</span>,
-  <span class='no'>date_format_string</span>
+  <span class='no'>date_format_string</span>,
+  <span class='no'>return_processor</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -162,18 +159,18 @@ displayed interactively and saved as files named by the functional flow componen
       <td><p>boolean, default <code>TRUE</code> - when <code>TRUE</code>, results are plotted to the screen and any folder provided. When
 FALSE, does no plotting.</p></td>
     </tr>
+    <tr>
+      <th>date_format_string</th>
+      <td><p>character. Default "<!-- %m/%d/%Y". What date format string should be used in interpreting the dates in the date field?} --></p></td>
+    </tr>
     </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>See the documentation for <code>evaluate_gage_alteration</code> for complete details on the processing and what is returned.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>

@@ -37,7 +37,7 @@ get_dataset <- function(dataset_name){
 #' @export
 get_predicted_flow_metrics <- function(comid, online, wyt){
   if(missing(online)){
-    online <- FALSE
+    online <- TRUE
   }
 
   if(missing(wyt)){
@@ -54,6 +54,7 @@ get_predicted_flow_metrics <- function(comid, online, wyt){
 get_predicted_flow_metrics_offline <- function(comid){
   flow_metrics <- get_dataset("flow_metrics")
   flow_metrics["result_type"] <- "predicted"
+  flow_metrics$metric <- as.character(flow_metrics$metric)
   return(flow_metrics[flow_metrics$comid == comid, ])
 }
 
@@ -62,7 +63,7 @@ get_predicted_flow_metrics_online <- function(comid, wyt){
     wyt = "all"
   }
 
-  metrics_full <- read.csv(paste("https://flow-api.codefornature.org/v2/ffm/?comids=", comid, sep=""))
+  metrics_full <- read.csv(paste("https://flow-api.codefornature.org/v2/ffm/?comids=", comid, sep=""), stringsAsFactors = FALSE)
   if(wyt != "any"){
     metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
     metrics_filtered <- metrics_filtered[!names(metrics_filtered) %in% c("wyt")]  # now drop the wyt column, but only when we are filtering!
@@ -127,11 +128,12 @@ replace_ffm_column <- function(df){
       "wet_tim" = "Wet_Tim"
     ),
     stringsAsFactors = FALSE
-  )))
+  )), stringsAsFactors = FALSE)
 
   ffms$ffm <- rownames(ffms)
   colnames(ffms) <- c("metric", "ffm")
 
-  metrics <- merge(df, ffms)  # attach the new metric column
+  metrics <- merge(df, ffms)  # attach the new metric column - this turns my character columns into a factor, annoyingly.
+  metrics$metric <- as.character(metrics$metric)
   return(metrics[!names(metrics) %in% c("ffm", "unit")])  # now drop the ffm column
 }

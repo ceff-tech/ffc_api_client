@@ -26,6 +26,7 @@ NULL
 pkg.env <- new.env(parent=emptyenv())  # set up a new environment to store the token
 pkg.env$TOKEN <- NA # initialize the empty token
 pkg.env$SERVER_URL <- 'https://eflows.ucdavis.edu/api/'
+pkg.env$CONSISTENT_NAMING <- FALSE  # when TRUE, we'll update the Peak metric names to include _Mag for internal consistentcy - see https://github.com/ceff-tech/ffc_api_client/issues/44
 
 #' Set Eflows Website Access Token
 #'
@@ -47,6 +48,30 @@ set_token <-function(token_string){
 #' @export
 get_token <- function(){
   return(pkg.env$TOKEN)
+}
+
+
+#' Set Preference to Rename Metrics Consistently
+#'
+#' The Peak Magnitude flow metrics are named Peak_2, Peak_5, and Peak_10, while other flow metrics
+#' for magnitude use a Component_Mag format. Setting this preference forces all peak metrics
+#' to use the naming Peak_Mag_2, Peak_Mag_5, and Peak_Mag_10. This is inconsistent with
+#' CEFF, but internally consistent with metric names. The default behavior is not to do this.
+#'
+#' To use, run force_consistent_naming(TRUE). Then, any function that returns metrics from a
+#' FFCProcessor object (includes the FFCProcessor itself and all evaluate_alteration functions - in the
+#' future should be any exported function) will rename the peak metrics.
+#' To turn off, run force_consistent_naming(FALSE).
+#'
+#' @param force_to boolean Set to TRUE to enable metric renaming. Set to FALSE to disable it.
+#'
+#' @export
+force_consistent_naming <- function(force_to){
+  if(missing(force_to)){
+    force_to <- TRUE
+  }
+
+  pkg.env$CONSISTENT_NAMING <- force_to
 }
 
 # Makes the part of the JSON string that is just for the flow data - needs to be passed
@@ -191,7 +216,7 @@ get_ffc_results_for_df <- function(flows_df, comid, flow_field, date_field, star
 
 # Does the bulk of the processing, but not a public function - both other evaluate_alteration functions use this under
 # the hood after doing some other checks, etc.
-evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_folder, date_format_string, plot_results){
+evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_folder, date_format_string, plot_results, return_processor){
   if(missing(plot_output_folder) || is.null(plot_output_folder)){
     plot_output_folder <- NULL
     drh_output_path <- NULL
@@ -216,14 +241,19 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_
     plot_drh(processor$raw_ffc_results, output_path = drh_output_path)
     plot_comparison_boxes(processor$ffc_percentiles, processor$predicted_percentiles, output_folder = plot_output_folder)
   }
-  return(list(
-    "ffc_results" = processor$ffc_results,
-    "ffc_percentiles" = processor$ffc_percentiles,
-    "drh_data" = get_drh(processor$raw_ffc_results),
-    "predicted_percentiles" = processor$predicted_percentiles,
-    "predicted_wyt_percentiles" = processor$predicted_wyt_percentiles,
-    "alteration" = processor$alteration
-  ))
+
+  if(return_processor){
+    return(processor)
+  }else{
+    return(list(
+      "ffc_results" = processor$ffc_results,
+      "ffc_percentiles" = processor$ffc_percentiles,
+      "drh_data" = get_drh(processor$raw_ffc_results),
+      "predicted_percentiles" = processor$predicted_percentiles,
+      "predicted_wyt_percentiles" = processor$predicted_wyt_percentiles,
+      "alteration" = processor$alteration
+    ))
+  }
 }
 
 # Converts dates from the provided format string into the format used by the FFC online
@@ -232,6 +262,24 @@ convert_dates <- function(timeseries_data, date_format_string){
   timeseries_data$date <- strftime(timeseries_dates, "%m/%d/%Y")
   return(timeseries_data)
 }
+
+
+rename_inconsistent_percentile_metrics <- function(metrics_df, column, set_rownames){
+  if(missing(set_rownames)){
+    set_rownames <- FALSE
+  }
+
+  # there's a more efficient way to do this, but this is fine for such a short data frame
+  metrics_df[metrics_df[,column] == "Peak_2", column] <- "Peak_Mag_2"
+  metrics_df[metrics_df[,column] == "Peak_5", column] <- "Peak_Mag_5"
+  metrics_df[metrics_df[,column] == "Peak_10", column] <- "Peak_Mag_10"
+  if(set_rownames){
+    rownames(metrics_df) <- metrics_df[,column]
+  }
+
+  return(metrics_df)
+}
+
 
 
 #' FFCProcessor Class
@@ -338,6 +386,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$ffc_results <- self$ffc_results[, cols_to_keep]
     }
 
+    self$rename_inconsistent_metrics()  # checks if it needs to do things on its own to keep a consistent interface
+
     self$ffc_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
     self$alteration <- assess_alteration(percentiles = self$ffc_percentiles,
                                     predictions = self$predicted_percentiles,
@@ -345,6 +395,21 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
                                     comid = self$comid,
                                     annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
     self$drh_data <- get_drh(self$raw_ffc_results)
+  },
+
+  rename_inconsistent_metrics = function(){
+    if(!pkg.env$CONSISTENT_NAMING){  # if the preference to rename metrics is FALSE, just end this function
+      return()
+    }
+    names(self$ffc_results)[names(self$ffc_results) == 'Peak_2'] <- 'Peak_Mag_2'
+    names(self$ffc_results)[names(self$ffc_results) == 'Peak_5'] <- 'Peak_Mag_5'
+    names(self$ffc_results)[names(self$ffc_results) == 'Peak_10'] <- 'Peak_Mag_10'
+
+    self$predicted_percentiles <- rename_inconsistent_percentile_metrics(self$predicted_percentiles, "metric", set_rownames = TRUE)
+    if(self$predicted_percentiles_online){
+      self$predicted_wyt_percentiles <- rename_inconsistent_percentile_metrics(self$predicted_wyt_percentiles, "metric", set_rownames = FALSE)
+    }
+
   },
 
   # CEFF step 1

@@ -94,7 +94,8 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
                      "Peak_Tim" = "Peak Timing",
                      "Peak_Dur" = "Peak Duration",
                      "Peak_Fre" = "Peak Frequency",
-                     "Peak_\\d" = "Peak Magnitude")
+                     "Peak_\\d" = "Peak Magnitude",
+                     "Peak_Mag" = "Peak Magnitude")  # Peak magnitude could be either one
 
   drop_cols <- c("comid", "source")
   predictions_df <- dplyr::select(predictions_df, -dplyr::one_of(drop_cols))

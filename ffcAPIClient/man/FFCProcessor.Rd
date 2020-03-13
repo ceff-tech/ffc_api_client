@@ -19,6 +19,7 @@ and \code{\link{evaluate_gage_alteration}}
 \itemize{
 \item \href{#method-set_up}{\code{FFCProcessor$set_up()}}
 \item \href{#method-run}{\code{FFCProcessor$run()}}
+\item \href{#method-rename_inconsistent_metrics}{\code{FFCProcessor$rename_inconsistent_metrics()}}
 \item \href{#method-generate_functional_flow_results}{\code{FFCProcessor$generate_functional_flow_results()}}
 \item \href{#method-explore_ecological_flow_criteria}{\code{FFCProcessor$explore_ecological_flow_criteria()}}
 \item \href{#method-assess_alteration}{\code{FFCProcessor$assess_alteration()}}
@@ -40,6 +41,14 @@ and \code{\link{evaluate_gage_alteration}}
 \subsection{Method \code{run()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$run()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-rename_inconsistent_metrics"></a>}}
+\subsection{Method \code{rename_inconsistent_metrics()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$rename_inconsistent_metrics()}\if{html}{\out{</div>}}
 }
 
 }

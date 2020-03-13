@@ -12,7 +12,8 @@ evaluate_alteration(
   latitude,
   plot_output_folder,
   plot_results,
-  date_format_string
+  date_format_string,
+  return_processor
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ displayed interactively and saved as files named by the functional flow componen
 
 \item{plot_results}{boolean, default \code{TRUE} - when \code{TRUE}, results are plotted to the screen and any folder provided. When
 FALSE, does no plotting.}
+
+\item{date_format_string}{character. Default "%m/%d/%Y". What date format string should be used in interpreting the dates in the date field?}
 }
 \description{
 Processes timeseries data using the functional flows calculator and returns results for metric percentiles, annual metric values,

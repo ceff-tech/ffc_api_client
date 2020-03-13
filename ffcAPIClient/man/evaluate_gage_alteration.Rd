@@ -10,7 +10,8 @@ evaluate_gage_alteration(
   comid,
   plot_output_folder,
   plot_results,
-  force_comid_lookup
+  force_comid_lookup,
+  return_processor
 )
 }
 \arguments{

@@ -134,13 +134,20 @@ segment on the North Yuba:
 
 ## Change Log
 
-### Varsion 0.9.6.5
+### Version 0.9.6.6
+* [Enhancement] New function `force_consistent_naming` sets option to convert peak magnitude metrics to use
+  same name format as other magnitude metrics. `Peak_2` becomes `Peak_Mag_2`, etc. Defaults to off to remain
+  aligned with CEFF, but if you need metric names to follow a pattern, that will help. See documentation
+  for usage.
+* [Change] Predicted flow metrics now use a character instead of a factor in the `metric` column.
+
+### Version 0.9.6.5
 * [Enhancement] ffc_results dataframe now filters out non-metrics (things starting with __ or ending with _Julian)
 
-### Varsion 0.9.6.4
+### Version 0.9.6.4
 * [Bugfix] Handled a condition where the predicted flow metric API returns duplicate values for some metrics
 
-### Varsion 0.9.6.3
+### Version 0.9.6.3
 * [Bugfix] Fixed an error where predicted Spring Duration metrics came through as SP_Du
 
 ### Version 0.9.6.2

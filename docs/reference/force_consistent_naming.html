@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieve Previously Set Token — get_token • ffcAPIClient</title>
+<title>Set Preference to Rename Metrics Consistently — force_consistent_naming • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,11 @@
 
 
 
-<meta property="og:title" content="Retrieve Previously Set Token — get_token" />
-<meta property="og:description" content="Retrieves the authorization token previously set by set_token in the same R session." />
+<meta property="og:title" content="Set Preference to Rename Metrics Consistently — force_consistent_naming" />
+<meta property="og:description" content="The Peak Magnitude flow metrics are named Peak_2, Peak_5, and Peak_10, while other flow metrics
+for magnitude use a Component_Mag format. Setting this preference forces all peak metrics
+to use the naming Peak_Mag_2, Peak_Mag_5, and Peak_Mag_10. This is inconsistent with
+CEFF, but internally consistent with metric names. The default behavior is not to do this." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,23 +103,42 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieve Previously Set Token</h1>
+    <h1>Set Preference to Rename Metrics Consistently</h1>
     
-    <div class="hidden name"><code>get_token.Rd</code></div>
+    <div class="hidden name"><code>force_consistent_naming.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Retrieves the authorization token previously set by set_token in the same R session.</p>
+    <p>The Peak Magnitude flow metrics are named Peak_2, Peak_5, and Peak_10, while other flow metrics
+for magnitude use a Component_Mag format. Setting this preference forces all peak metrics
+to use the naming Peak_Mag_2, Peak_Mag_5, and Peak_Mag_10. This is inconsistent with
+CEFF, but internally consistent with metric names. The default behavior is not to do this.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_token</span>()</pre>
+    <pre class="usage"><span class='fu'>force_consistent_naming</span>(<span class='no'>force_to</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>force_to</th>
+      <td><p>boolean Set to TRUE to enable metric renaming. Set to FALSE to disable it.</p></td>
+    </tr>
+    </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>To use, run force_consistent_naming(TRUE). Then, any function that returns metrics from a
+FFCProcessor object (includes the FFCProcessor itself and all evaluate_alteration functions - in the
+future should be any exported function) will rename the peak metrics.
+To turn off, run force_consistent_naming(FALSE).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>
