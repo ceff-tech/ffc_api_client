@@ -134,6 +134,9 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Varsion 0.9.6.5
+* [Enhancement] ffc_results dataframe now filters out non-metrics (things starting with __ or ending with _Julian)
+
 ### Varsion 0.9.6.4
 * [Bugfix] Handled a condition where the predicted flow metric API returns duplicate values for some metrics
 

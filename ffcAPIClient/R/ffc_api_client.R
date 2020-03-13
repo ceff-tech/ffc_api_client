@@ -256,6 +256,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   timeseries = NA,
   gage = NA,  ##
   raw_ffc_results = NA,
+  filter_ffc_results = TRUE,  # indicates whether we want to remove anything that's not a flow metric automatically (Julian day results, some diagnostics)
   ffc_results = NA,
   ffc_percentiles = NA,
   predicted_percentiles = NA,
@@ -331,6 +332,12 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid)
     self$ffc_results <- get_results_as_df(self$raw_ffc_results)
+    if(self$filter_ffc_results){  # if we want to filter the results, then remove anything that's not a true flow metric
+      columns <- colnames(self$ffc_results)
+      cols_to_keep <- !grepl("_Julian|__", columns)
+      self$ffc_results <- self$ffc_results[, cols_to_keep]
+    }
+
     self$ffc_percentiles <- get_percentiles(self$ffc_results, comid = self$comid)
     self$alteration <- assess_alteration(percentiles = self$ffc_percentiles,
                                     predictions = self$predicted_percentiles,
@@ -364,7 +371,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     set_token(self$token)
     results <- evaluate_timeseries_alteration(timeseries_data = timeseries, predictions_df = predictions)
     self$drh_data <- results$drh_data
-    self$perecentiles <- results$percentiles
+    self$percentiles <- results$percentiles
     ffc_results <- results$ffc_results_df
 
     invisible(self)
