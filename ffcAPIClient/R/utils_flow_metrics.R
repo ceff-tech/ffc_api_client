@@ -72,7 +72,8 @@ get_predicted_flow_metrics_online <- function(comid, wyt){
     metrics_filtered <- metrics_full
     deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm", "wyt")]), ]
   }
-  deduplicated["result_type"] <- "predicted"
+  deduplicated["result_type"] <- "predicted"  # add a field indicating this is a prediction for later when DFs are merged
+  deduplicated <- deduplicated[!names(deduplicated) %in% c("gage_id", "observed_years", "alteration")]  # Drop extra columns from the API
 
   if(nrow(deduplicated) < nrow(metrics_filtered)){
     warning("Flow metric data from API contained duplicated records for some flow metrics that we automatically removed. This is a data quality issue in the predicted data - it can occasionally produce incorrect results - check the values of the predicted flow metrics at https://flows.codefornature.org")

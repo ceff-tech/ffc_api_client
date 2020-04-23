@@ -310,22 +310,23 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   predicted_percentiles = NA,
   predicted_wyt_percentiles = NA,
   predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
-  drh_data = NA,
+  doh_data = NA,
+  doh_plot = NA,
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
   SERVER_URL = 'https://eflows.ucdavis.edu/api/',
 
   set_up = function(gage_id, timeseries, comid, token){
-    if(missing(gage_id) && missing(timeseries)){
+    if((missing(gage_id) || is.null(gage_id)) && (missing(timeseries) || is.null(timeseries))){
       stop("Need either a gage ID or a timeseries of data to proceed")
-    } else if(missing(gage_id)){
+    } else if(missing(gage_id) || is.null(gage_id)){
       gage_id <- NA
     } else if(missing(timeseries)){
       timeseries <- NULL
     }
 
-    if(missing(comid) && is.na(gage_id)){
+    if((missing(comid) || is.na(comid)) && is.na(gage_id)){
       stop("Must provide a comid when running a non-gage timeseries.")
     }
 
@@ -333,7 +334,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       comid <- NA
     }
 
-    if(missing(token)){
+    if(missing(token) || is.null(token)){
       stop("Can't run data through the FFC online without a token")
     }
 
@@ -394,7 +395,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
                                     ffc_values = self$ffc_results,
                                     comid = self$comid,
                                     annual = FALSE)  # right now, hard code that annual is FALSE - will probably want to change it later
-    self$drh_data <- get_drh(self$raw_ffc_results)
+    self$doh_data <- get_drh(self$raw_ffc_results)
   },
 
   rename_inconsistent_metrics = function(){
@@ -413,8 +414,47 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   },
 
   # CEFF step 1
-  generate_functional_flow_results = function(){
+  step_one_functional_flow_results = function(gage_id, timeseries, comid, token, output_folder){
+    if(missing(gage_id) && missing(timeseries)){
+      stop("Must provide either a gage_id or a timeseries data frame to proceed.")
+    }
 
+    if(missing(comid)){  # this will get tested properly when we run set_up
+      comid <- NA
+    }
+
+    if(missing(output_folder)){
+      output_folder <- NA
+    }else{
+      if(!dir.exists(output_folder)){
+        dir.create(output_folder)
+      }
+    }
+
+    set_token(token)
+
+    self$plot_output_folder <- output_folder
+
+    print("Retrieving results, please wait...")
+    self$set_up(gage_id, timeseries, comid, token)
+    self$run()
+    print("Results ready.")
+    print(paste("Writing FFC results as CSVs to ", output_folder, sep=""))
+    write.csv(self$ffc_percentiles, paste(output_folder, "/", self$comid, "_", "ffc_percentiles.csv", sep=""))
+    write.csv(self$ffc_results, paste(output_folder, "/", self$comid, "_", "ffc_results.csv", sep=""))
+    write.csv(self$doh_data, paste(output_folder, "/", self$comid, "_", "doh_data.csv", sep=""))
+
+    print(paste("Writing plots to ", output_folder, sep=""))
+    self$doh_plot <- plot_drh(self$raw_ffc_results, paste(output_folder, "/", self$comid, "_", "DOH.png", sep=""))
+    show(self$doh_plot)
+    gage_id <- tryCatch(ffc$gage$id, error = function (cond){return(NA)})  # try to access the gage's ID property - if we get an error, we're not using a gage and don't have an ID
+
+    plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, output_folder, gage_id = gage_id, name_suffix = "observed_only", use_dfs="observed")
+
+    print("Printing FFC Percentiles. You can also access attributes $ffc_results for the annual values for each metric, $ffc_percentiles for calculated percentile values, and $doh_data for the Dimensionless Observed Hydrograph data.")
+    print(self$ffc_percentiles)
+
+    print("Step 1 complete")
   },
 
   # CEFF step 2

@@ -134,6 +134,10 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.6.7
+* [Bugfix] Adjusted to change in FFM API from flows.codefornature.org
+* [Enhancement] Code available to support first step of CEFF process
+
 ### Version 0.9.6.6
 * [Enhancement] New function `force_consistent_naming` sets option to convert peak magnitude metrics to use
   same name format as other magnitude metrics. `Peak_2` becomes `Peak_Mag_2`, etc. Defaults to off to remain

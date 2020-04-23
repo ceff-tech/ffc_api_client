@@ -16,18 +16,14 @@ get_drh <- function(results){
 #' Given a set of results data from get_ffc_results_for_df or get_ffc_results_for_usgs_gage,
 #' processes the DRH data and returns a plot object.
 #'
-#' Credit to Ryan Peek for the code in this function.
+#' Credit to Ryan Peek for the plotting code in this function.
 #'
 #' @param results list.
 #' @param output_path, default NULL. Optional. When set, saves the DRH plot to the output
 #'   file path provided.
 #'
 #' @export
-plot_drh <- function(results, output_path){
-  if(missing(output_path)){
-    output_path = NULL
-  }
-
+plot_drh <- function(results, output_path = NULL){
   drh_data <- get_drh(results)
 
   drh_plot <- ggplot2::ggplot() +
@@ -40,7 +36,6 @@ plot_drh <- function(results, output_path){
                   caption="Daily median flow with 10/90 percentiles (light blue), and 25/75 percentiles in purple")
 
   if(!is.null(output_path)){
-    print(paste("Saving DRH to", output_path))
     ggplot2::ggsave(filename = output_path, width = 7, height = 5, units = "in", dpi=300)
   }
 
@@ -73,16 +68,28 @@ get_results_as_df <- function (results, drop_fields){
 }
 
 #' @export
-plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder){
+plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder, gage_id, name_suffix, use_dfs){
   if(missing(output_folder)){
     output_folder <- NULL
   }
 
+  if(missing(name_suffix)){
+    name_suffix <- ""
+  }
+
+  if(missing(use_dfs)){
+    use_dfs <- NA
+  }
+
   comid <- predictions_df$comid[1]  # save it so we can use it in the plot after we drop it
-  gage_id <- ffc_results_df$gage_id[1]
+  # get the gage ID if we have one
+  if(missing(gage_id)){
+    gage_id <- ffc_results_df$gage_id[1]
+  }
 
   graph_title_suffix <- paste("Metrics for COMID", comid)
-  if(!is.null(gage_id)){
+
+  if(!is.null(gage_id)){ # If we used a gage, add it to the title
     graph_title_suffix <- paste(graph_title_suffix, "from Gage", gage_id)
   }
 
@@ -102,7 +109,15 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
   drop_cols <- c("comid")
   ffc_results_df <- dplyr::select(ffc_results_df, -dplyr::one_of(drop_cols))
 
-  full_df <- rbind(ffc_results_df, predictions_df)
+  if(is.na(use_dfs)){
+    full_df <- rbind(ffc_results_df, predictions_df)
+  }else{
+    if(use_dfs == "observed"){
+      full_df <- ffc_results_df
+    }else{
+      full_df <- predictions_df
+    }
+  }
 
   full_df <- dplyr::filter(full_df, !grepl("_Julian", metric))
   full_df <- dplyr::filter(full_df, !grepl("X__", metric))
@@ -122,7 +137,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder)
     show(group_plt)
     if(!is.null(output_folder)){
       group_name <- sub("_\\d", "_", group, fixed=TRUE)  # make it safe - remove the regex filter on the Peak name
-      output_path <- paste(output_folder, "/", group_name, ".png", sep="")
+      output_path <- paste(output_folder, "/", comid, "_", group_name, "_", name_suffix, ".png", sep="")
       print(paste("Writing", output_path))
       ggplot2::ggsave(output_path, plot=group_plt, width = 7, height = 5, units = "in", dpi=300)
     }
