@@ -20,9 +20,10 @@ and \code{\link{evaluate_gage_alteration}}
 \item \href{#method-set_up}{\code{FFCProcessor$set_up()}}
 \item \href{#method-run}{\code{FFCProcessor$run()}}
 \item \href{#method-rename_inconsistent_metrics}{\code{FFCProcessor$rename_inconsistent_metrics()}}
-\item \href{#method-generate_functional_flow_results}{\code{FFCProcessor$generate_functional_flow_results()}}
-\item \href{#method-explore_ecological_flow_criteria}{\code{FFCProcessor$explore_ecological_flow_criteria()}}
-\item \href{#method-assess_alteration}{\code{FFCProcessor$assess_alteration()}}
+\item \href{#method-get_gage_id}{\code{FFCProcessor$get_gage_id()}}
+\item \href{#method-step_one_functional_flow_results}{\code{FFCProcessor$step_one_functional_flow_results()}}
+\item \href{#method-step_two_explore_ecological_flow_criteria}{\code{FFCProcessor$step_two_explore_ecological_flow_criteria()}}
+\item \href{#method-step_three_assess_alteration}{\code{FFCProcessor$step_three_assess_alteration()}}
 \item \href{#method-get_ffc_results}{\code{FFCProcessor$get_ffc_results()}}
 \item \href{#method-evaluate_alteration}{\code{FFCProcessor$evaluate_alteration()}}
 \item \href{#method-clone}{\code{FFCProcessor$clone()}}
@@ -53,26 +54,40 @@ and \code{\link{evaluate_gage_alteration}}
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-generate_functional_flow_results"></a>}}
-\subsection{Method \code{generate_functional_flow_results()}}{
+\if{html}{\out{<a id="method-get_gage_id"></a>}}
+\subsection{Method \code{get_gage_id()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$generate_functional_flow_results()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$get_gage_id()}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-explore_ecological_flow_criteria"></a>}}
-\subsection{Method \code{explore_ecological_flow_criteria()}}{
+\if{html}{\out{<a id="method-step_one_functional_flow_results"></a>}}
+\subsection{Method \code{step_one_functional_flow_results()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$explore_ecological_flow_criteria()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_one_functional_flow_results(
+  gage_id,
+  timeseries,
+  comid,
+  token,
+  output_folder
+)}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-assess_alteration"></a>}}
-\subsection{Method \code{assess_alteration()}}{
+\if{html}{\out{<a id="method-step_two_explore_ecological_flow_criteria"></a>}}
+\subsection{Method \code{step_two_explore_ecological_flow_criteria()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$assess_alteration()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_two_explore_ecological_flow_criteria()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-step_three_assess_alteration"></a>}}
+\subsection{Method \code{step_three_assess_alteration()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_three_assess_alteration()}\if{html}{\out{</div>}}
 }
 
 }

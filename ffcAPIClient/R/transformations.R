@@ -124,6 +124,11 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder,
 
   for(group in groups){
     metrics <- dplyr::filter(full_df, grepl(group, metric))
+    if(nrow(metrics) == 0){  # if we don't have metrics, skip output
+      print(paste("Skipping plot for ", group, ". No data", sep=""))
+      next
+    }
+
     group_plt <- ggplot2::ggplot(metrics, mapping=ggplot2::aes(x=result_type, fill=result_type))  +
       ggplot2::ggtitle(paste(group_names[[group]], graph_title_suffix)) +
       ggplot2::geom_boxplot(
@@ -137,7 +142,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder,
     show(group_plt)
     if(!is.null(output_folder)){
       group_name <- sub("_\\d", "_", group, fixed=TRUE)  # make it safe - remove the regex filter on the Peak name
-      output_path <- paste(output_folder, "/", comid, "_", group_name, "_", name_suffix, ".png", sep="")
+      output_path <- paste(output_folder, "/", comid, "_", group_name, name_suffix, ".png", sep="")
       print(paste("Writing", output_path))
       ggplot2::ggsave(output_path, plot=group_plt, width = 7, height = 5, units = "in", dpi=300)
     }

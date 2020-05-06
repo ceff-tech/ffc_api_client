@@ -4,7 +4,7 @@
 \alias{plot_drh}
 \title{Plots the Dimensionless Reference Hydrograph}
 \usage{
-plot_drh(results, output_path)
+plot_drh(results, output_path = NULL)
 }
 \arguments{
 \item{results}{list.}
@@ -17,5 +17,5 @@ Given a set of results data from get_ffc_results_for_df or get_ffc_results_for_u
 processes the DRH data and returns a plot object.
 }
 \details{
-Credit to Ryan Peek for the code in this function.
+Credit to Ryan Peek for the plotting code in this function.
 }

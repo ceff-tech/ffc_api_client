@@ -73,7 +73,7 @@ creating this class behind the scenes and returning an instance of this object."
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6.8</span>
       </span>
     </div>
 
@@ -132,9 +132,10 @@ and <code><a href='evaluate_gage_alteration.html'>evaluate_gage_alteration</a></
 <li><p><a href='#method-set_up'><code>FFCProcessor$set_up()</code></a></p></li>
 <li><p><a href='#method-run'><code>FFCProcessor$run()</code></a></p></li>
 <li><p><a href='#method-rename_inconsistent_metrics'><code>FFCProcessor$rename_inconsistent_metrics()</code></a></p></li>
-<li><p><a href='#method-generate_functional_flow_results'><code>FFCProcessor$generate_functional_flow_results()</code></a></p></li>
-<li><p><a href='#method-explore_ecological_flow_criteria'><code>FFCProcessor$explore_ecological_flow_criteria()</code></a></p></li>
-<li><p><a href='#method-assess_alteration'><code>FFCProcessor$assess_alteration()</code></a></p></li>
+<li><p><a href='#method-get_gage_id'><code>FFCProcessor$get_gage_id()</code></a></p></li>
+<li><p><a href='#method-step_one_functional_flow_results'><code>FFCProcessor$step_one_functional_flow_results()</code></a></p></li>
+<li><p><a href='#method-step_two_explore_ecological_flow_criteria'><code>FFCProcessor$step_two_explore_ecological_flow_criteria()</code></a></p></li>
+<li><p><a href='#method-step_three_assess_alteration'><code>FFCProcessor$step_three_assess_alteration()</code></a></p></li>
 <li><p><a href='#method-get_ffc_results'><code>FFCProcessor$get_ffc_results()</code></a></p></li>
 <li><p><a href='#method-evaluate_alteration'><code>FFCProcessor$evaluate_alteration()</code></a></p></li>
 <li><p><a href='#method-clone'><code>FFCProcessor$clone()</code></a></p></li>
@@ -158,22 +159,34 @@ and <code><a href='evaluate_gage_alteration.html'>evaluate_gage_alteration</a></
 <p><div class="r"></p><pre>FFCProcessor$rename_inconsistent_metrics()</pre><p></div></p>
 
 <p><hr>
-<a id="method-generate_functional_flow_results"></a></p><h3>Method <code>generate_functional_flow_results()</code></h3>
+<a id="method-get_gage_id"></a></p><h3>Method <code>get_gage_id()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$generate_functional_flow_results()</pre><p></div></p>
+<p><div class="r"></p><pre>FFCProcessor$get_gage_id()</pre><p></div></p>
 
 <p><hr>
-<a id="method-explore_ecological_flow_criteria"></a></p><h3>Method <code>explore_ecological_flow_criteria()</code></h3>
+<a id="method-step_one_functional_flow_results"></a></p><h3>Method <code>step_one_functional_flow_results()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$explore_ecological_flow_criteria()</pre><p></div></p>
+<p><div class="r"></p><pre>FFCProcessor$step_one_functional_flow_results(
+  gage_id,
+  timeseries,
+  comid,
+  token,
+  output_folder
+)</pre><p></div></p>
 
 <p><hr>
-<a id="method-assess_alteration"></a></p><h3>Method <code><a href='assess_alteration.html'>assess_alteration()</a></code></h3>
+<a id="method-step_two_explore_ecological_flow_criteria"></a></p><h3>Method <code>step_two_explore_ecological_flow_criteria()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$assess_alteration()</pre><p></div></p>
+<p><div class="r"></p><pre>FFCProcessor$step_two_explore_ecological_flow_criteria()</pre><p></div></p>
+
+<p><hr>
+<a id="method-step_three_assess_alteration"></a></p><h3>Method <code>step_three_assess_alteration()</code></h3>
+
+<h3>Usage</h3>
+<p><div class="r"></p><pre>FFCProcessor$step_three_assess_alteration()</pre><p></div></p>
 
 <p><hr>
 <a id="method-get_ffc_results"></a></p><h3>Method <code>get_ffc_results()</code></h3>

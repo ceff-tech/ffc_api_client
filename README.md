@@ -32,8 +32,7 @@ in your R console, or install the package any way you prefer.
 instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
 5. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private - if other people knew the value, they could use it to access your account on eflows.ucdavis.edu!
 
-That's it. You can now run data through the ffc using the online calculator. Make sure to give each run a unique name for this
-code to work correctly!
+That's it. You can now run data through the online FFC using this package and process the results.
 
 ## Usage Examples
 
@@ -133,6 +132,9 @@ segment on the North Yuba:
 ```
 
 ## Change Log
+
+### Version 0.9.6.8
+* [Enhancement] Code available for three steps of CEFF process - working on documentation for it still
 
 ### Version 0.9.6.7
 * [Bugfix] Adjusted to change in FFM API from flows.codefornature.org

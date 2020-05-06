@@ -413,6 +413,14 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
   },
 
+  #' Get Gage ID for FFCProcessor
+  #'
+  #' We may not always have a gage ID, but may want to just get one if it exists - this function gets a gage ID if we're using a gage
+  #' or returns NA otherwise
+  get_gage_id = function(){
+    return(tryCatch(self$gage$id, error = function (cond){return(NA)}))
+  },
+
   # CEFF step 1
   step_one_functional_flow_results = function(gage_id, timeseries, comid, token, output_folder){
     if(missing(gage_id) && missing(timeseries)){
@@ -435,6 +443,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$plot_output_folder <- output_folder
 
+    print("### Step 1 - Get Functional Flow Results ###")
+
     print("Retrieving results, please wait...")
     self$set_up(gage_id, timeseries, comid, token)
     self$run()
@@ -444,27 +454,51 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     write.csv(self$ffc_results, paste(output_folder, "/", self$comid, "_", "ffc_results.csv", sep=""))
     write.csv(self$doh_data, paste(output_folder, "/", self$comid, "_", "doh_data.csv", sep=""))
 
-    print(paste("Writing plots to ", output_folder, sep=""))
+    print(paste("Writing observed plots to ", output_folder, sep=""))
     self$doh_plot <- plot_drh(self$raw_ffc_results, paste(output_folder, "/", self$comid, "_", "DOH.png", sep=""))
     show(self$doh_plot)
-    gage_id <- tryCatch(ffc$gage$id, error = function (cond){return(NA)})  # try to access the gage's ID property - if we get an error, we're not using a gage and don't have an ID
+    gage_id <- self$get_gage_id()
 
-    plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, output_folder, gage_id = gage_id, name_suffix = "observed_only", use_dfs="observed")
+    plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, output_folder, gage_id = gage_id, name_suffix = "_observed_only", use_dfs="observed")
 
-    print("Printing FFC Percentiles. You can also access attributes $ffc_results for the annual values for each metric, $ffc_percentiles for calculated percentile values, and $doh_data for the Dimensionless Observed Hydrograph data.")
+    print("Printing Observed/FFC Percentiles. You can also access attributes $ffc_results on this object for the annual values for each metric, $ffc_percentiles for calculated percentile values, and $doh_data for the Dimensionless Observed Hydrograph data.")
     print(self$ffc_percentiles)
 
     print("Step 1 complete")
   },
 
   # CEFF step 2
-  explore_ecological_flow_criteria = function(){
+  step_two_explore_ecological_flow_criteria = function(){
+    print("### Step 2 - Explore Ecological Flow Criteria ###")
+    gage_id <- self$get_gage_id()
 
+    print("Printing Predicted Percentiles. You can also access attributes $predicted_percentiles on this object for these data.")
+    print(self$predicted_percentiles)
+
+    print(paste("Writing Predicted Percentiles as CSV to ", self$plot_output_folder, sep=""))
+    write.csv(self$predicted_percentiles, paste(self$plot_output_folder, "/", self$comid, "_", "predicted_percentiles.csv", sep=""))
+
+    print(paste("Writing predicted metric plots to ", self$plot_output_folder, sep=""))
+    plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, self$plot_output_folder, gage_id = gage_id, name_suffix = "_predicted_only", use_dfs="predicted")
+
+    print("Step 2 complete")
   },
 
   # CEFF step 3/
-  assess_alteration = function(){
+  step_three_assess_alteration = function(){
+    print("### Step 3 - Assess Alteration ###")
+    gage_id <- self$get_gage_id()
 
+    print("Printing alteration assessment data. You can also access attributes $alteration on this object for these data")
+    print(self$alteration)
+
+    print(paste("Writing alteration assessment as CSV to ", self$plot_output_folder, sep=""))
+    write.csv(self$alteration, paste(self$plot_output_folder, "/", self$comid, "_", "alteration.csv", sep=""))
+
+    print(paste("Writing comparison plots to ", self$plot_output_folder, sep=""))
+    plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, self$plot_output_folder, gage_id = gage_id)
+
+    print("Step 3 complete")
   },
 
   get_ffc_results = function(){
