@@ -13,6 +13,20 @@ creating this class behind the scenes and returning an instance of this object.
 \details{
 More details to come, and more examples. For now, still use the general functions \code{\link{evaluate_alteration}}
 and \code{\link{evaluate_gage_alteration}}
+
+
+
+
+
+Get Gage ID for FFCProcessor
+
+We may not always have a gage ID, but may want to just get one if it exists - this function gets a gage ID if we're using a gage
+or returns NA otherwise
+
+
+Provides alteration scores
+
+Checks the results against the predictions and returns the appropriate alteration score
 }
 \section{Methods}{
 \subsection{Public methods}{

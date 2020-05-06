@@ -2,6 +2,9 @@
 #'
 #' This class retrieves data for a USGS gage.
 #'
+#' @details
+#'
+#' @examples
 #' #library(ffcAPIClient)
 #' #gageid <- 11427000
 #' #gage <- USGSGage$new()
@@ -46,6 +49,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
   latitude = NA,
   longitude = NA,
 
+  #' @details
   #' Validates that gage is ready to run requests
   #'
   #' Internal method. Checks parameters to make sure they're ready for other methods on the object.
@@ -105,6 +109,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
     invisible(self)
   },
 
+  #' @details
   #' Looks up the COMID for this gage
   #'
   #' This method looks up the COMID for the gage and sets the comid attribute. It does not return

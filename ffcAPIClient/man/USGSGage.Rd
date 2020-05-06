@@ -7,6 +7,9 @@
 This class retrieves data for a USGS gage.
 }
 \details{
+
+}
+\examples{
 #library(ffcAPIClient)
 #gageid <- 11427000
 #gage <- USGSGage$new()
@@ -41,6 +44,7 @@ This class retrieves data for a USGS gage.
 2459762 Wet_BFL_Mag_10 14996611 1.519943e+02 1.960031e+02   278.2581 4.384614e+02 5.489183e+02  model
 2600008 Wet_BFL_Mag_50 14996611 4.148992e+02 5.902507e+02   924.1728 1.175461e+03 1.426576e+03  model
 2740254        Wet_Tim 14996611 4.937500e+01 5.905000e+01    73.0000 8.835625e+01 1.035083e+02  model
+
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -60,6 +64,12 @@ This class retrieves data for a USGS gage.
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$validate(latlong)}\if{html}{\out{</div>}}
 }
 
+\subsection{Details}{
+Validates that gage is ready to run requests
+
+Internal method. Checks parameters to make sure they're ready for other methods on the object.
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_data"></a>}}
@@ -76,6 +86,17 @@ This class retrieves data for a USGS gage.
 \subsection{Method \code{get_comid()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid()}\if{html}{\out{</div>}}
+}
+
+\subsection{Details}{
+Looks up the COMID for this gage
+
+This method looks up the COMID for the gage and sets the comid attribute. It does not return
+the COMID. It returns this object for chaining. The gage's id, latitude, and longitude
+attributes must be set before running this. latitude and longitude can be set manually,
+or by running get_data(). Can be error prone near stream junctions. If you have the means
+to get a reliable COMID for a gage, do so - in this method, we look up the stream
+segment by long/lat using nhdPlusTools.
 }
 
 }

@@ -134,6 +134,10 @@ segment on the North Yuba:
 ## Change Log
 
 ### Version 0.9.6.8
+* [Bugfix] Fixed issue preventing export of R6 Classes - FFCProcessor and USGSGage should now be available
+  for use as the documentation describes
+
+### Version 0.9.6.8
 * [Enhancement] Code available for three steps of CEFF process - working on documentation for it still
 
 ### Version 0.9.6.7

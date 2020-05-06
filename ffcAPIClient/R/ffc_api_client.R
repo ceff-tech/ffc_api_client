@@ -293,6 +293,8 @@ rename_inconsistent_percentile_metrics <- function(metrics_df, column, set_rowna
 #' More details to come, and more examples. For now, still use the general functions \code{\link{evaluate_alteration}}
 #' and \code{\link{evaluate_gage_alteration}}
 #'
+#' @details
+#'
 #' @export
 FFCProcessor <- R6::R6Class("FFCProcessor", list(
   token = NA, ##
@@ -413,6 +415,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
   },
 
+  #' @details
   #' Get Gage ID for FFCProcessor
   #'
   #' We may not always have a gage ID, but may want to just get one if it exists - this function gets a gage ID if we're using a gage
@@ -516,6 +519,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     invisible(self)
   },
 
+  #' @details
   #' Provides alteration scores
   #'
   #' Checks the results against the predictions and returns the appropriate alteration score

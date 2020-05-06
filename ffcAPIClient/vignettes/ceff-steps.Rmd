@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(ffcAPIClient)
 ```
 
 ## Step One
 ```r
+library(ffcAPIClient)
 
 ffc <- FFCProcessor$new()  # make a new object we can use to run the commands
 
