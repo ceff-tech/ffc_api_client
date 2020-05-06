@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -41,7 +45,6 @@ in other parts of the package so that data can be integrated into a single class
 set of tasks. Other functions are likely to be supported for a while (and this may even rely on them),
 but long run, much of the code in this file might move into this class, with the shortcut functions
 creating this class behind the scenes and returning an instance of this object." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -59,7 +62,7 @@ creating this class behind the scenes and returning an instance of this object."
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -87,6 +90,18 @@ creating this class behind the scenes and returning an instance of this object."
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/ceff-steps.html">Use ffcAPIClient to Follow CEFF Steps</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -144,69 +159,69 @@ and <code><a href='evaluate_gage_alteration.html'>evaluate_gage_alteration</a></
 <a id="method-set_up"></a></p><h3>Method <code>set_up()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$set_up(gage_id, timeseries, comid, token)</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>set_up</span>(<span class='no'>gage_id</span>, <span class='no'>timeseries</span>, <span class='no'>comid</span>, <span class='no'>token</span>)</pre><p></div></p>
 
 <p><hr>
 <a id="method-run"></a></p><h3>Method <code>run()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$run()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>run</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-rename_inconsistent_metrics"></a></p><h3>Method <code>rename_inconsistent_metrics()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$rename_inconsistent_metrics()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>rename_inconsistent_metrics</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-get_gage_id"></a></p><h3>Method <code>get_gage_id()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$get_gage_id()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>get_gage_id</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-step_one_functional_flow_results"></a></p><h3>Method <code>step_one_functional_flow_results()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$step_one_functional_flow_results(
-  gage_id,
-  timeseries,
-  comid,
-  token,
-  output_folder
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>step_one_functional_flow_results</span>(
+  <span class='no'>gage_id</span>,
+  <span class='no'>timeseries</span>,
+  <span class='no'>comid</span>,
+  <span class='no'>token</span>,
+  <span class='no'>output_folder</span>
 )</pre><p></div></p>
 
 <p><hr>
 <a id="method-step_two_explore_ecological_flow_criteria"></a></p><h3>Method <code>step_two_explore_ecological_flow_criteria()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$step_two_explore_ecological_flow_criteria()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>step_two_explore_ecological_flow_criteria</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-step_three_assess_alteration"></a></p><h3>Method <code>step_three_assess_alteration()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$step_three_assess_alteration()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>step_three_assess_alteration</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-get_ffc_results"></a></p><h3>Method <code>get_ffc_results()</code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$get_ffc_results()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>get_ffc_results</span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-evaluate_alteration"></a></p><h3>Method <code><a href='evaluate_alteration.html'>evaluate_alteration()</a></code></h3>
 
 <h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$evaluate_alteration()</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'><a href='evaluate_alteration.html'>evaluate_alteration</a></span>()</pre><p></div></p>
 
 <p><hr>
 <a id="method-clone"></a></p><h3>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h3>Usage</h3>
-<p><div class="r"></p><pre>FFCProcessor$clone(deep = FALSE)</pre><p></div></p>
+<p><div class="r"></p><pre><span class='no'>FFCProcessor</span>$<span class='fu'>clone</span>(<span class='kw'>deep</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre><p></div></p>
 
 <h3>Arguments</h3>
-<p><div class="arguments"></p><dl class='dl-horizontal'>
+<p><div class="arguments"></p><dl'>
 <dt><code>deep</code></dt><dd><p>Whether to make a deep clone.</p></dd>
 
 </dl><p></div></p>
@@ -214,13 +229,10 @@ and <code><a href='evaluate_gage_alteration.html'>evaluate_gage_alteration</a></
 
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#details">Details</a></li>
-      <li><a href="#methods">Methods</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -231,7 +243,7 @@ and <code><a href='evaluate_gage_alteration.html'>evaluate_gage_alteration</a></
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

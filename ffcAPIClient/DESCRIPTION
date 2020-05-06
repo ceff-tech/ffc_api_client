@@ -28,5 +28,8 @@ Imports:
     tidyr,
     data.table (>= 1.12.8)
 Suggests:
-    testthat (>= 2.1.0)
-RoxygenNote: 7.0.2
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr

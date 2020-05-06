@@ -54,6 +54,7 @@ This class retrieves data for a USGS gage.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-validate"></a>}}
+\if{latex}{\out{\hypertarget{method-validate}{}}}
 \subsection{Method \code{validate()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$validate(latlong)}\if{html}{\out{</div>}}
@@ -62,6 +63,7 @@ This class retrieves data for a USGS gage.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_data"></a>}}
+\if{latex}{\out{\hypertarget{method-get_data}{}}}
 \subsection{Method \code{get_data()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_data()}\if{html}{\out{</div>}}
@@ -70,6 +72,7 @@ This class retrieves data for a USGS gage.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_comid"></a>}}
+\if{latex}{\out{\hypertarget{method-get_comid}{}}}
 \subsection{Method \code{get_comid()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid()}\if{html}{\out{</div>}}
@@ -78,6 +81,7 @@ This class retrieves data for a USGS gage.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_predicted_metrics"></a>}}
+\if{latex}{\out{\hypertarget{method-get_predicted_metrics}{}}}
 \subsection{Method \code{get_predicted_metrics()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_predicted_metrics(force_comid_lookup)}\if{html}{\out{</div>}}
@@ -86,6 +90,7 @@ This class retrieves data for a USGS gage.
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

@@ -31,6 +31,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-set_up"></a>}}
+\if{latex}{\out{\hypertarget{method-set_up}{}}}
 \subsection{Method \code{set_up()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$set_up(gage_id, timeseries, comid, token)}\if{html}{\out{</div>}}
@@ -39,6 +40,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-run"></a>}}
+\if{latex}{\out{\hypertarget{method-run}{}}}
 \subsection{Method \code{run()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$run()}\if{html}{\out{</div>}}
@@ -47,6 +49,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-rename_inconsistent_metrics"></a>}}
+\if{latex}{\out{\hypertarget{method-rename_inconsistent_metrics}{}}}
 \subsection{Method \code{rename_inconsistent_metrics()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$rename_inconsistent_metrics()}\if{html}{\out{</div>}}
@@ -55,6 +58,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_gage_id"></a>}}
+\if{latex}{\out{\hypertarget{method-get_gage_id}{}}}
 \subsection{Method \code{get_gage_id()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$get_gage_id()}\if{html}{\out{</div>}}
@@ -63,6 +67,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-step_one_functional_flow_results"></a>}}
+\if{latex}{\out{\hypertarget{method-step_one_functional_flow_results}{}}}
 \subsection{Method \code{step_one_functional_flow_results()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_one_functional_flow_results(
@@ -77,6 +82,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-step_two_explore_ecological_flow_criteria"></a>}}
+\if{latex}{\out{\hypertarget{method-step_two_explore_ecological_flow_criteria}{}}}
 \subsection{Method \code{step_two_explore_ecological_flow_criteria()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_two_explore_ecological_flow_criteria()}\if{html}{\out{</div>}}
@@ -85,6 +91,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-step_three_assess_alteration"></a>}}
+\if{latex}{\out{\hypertarget{method-step_three_assess_alteration}{}}}
 \subsection{Method \code{step_three_assess_alteration()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$step_three_assess_alteration()}\if{html}{\out{</div>}}
@@ -93,6 +100,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-get_ffc_results"></a>}}
+\if{latex}{\out{\hypertarget{method-get_ffc_results}{}}}
 \subsection{Method \code{get_ffc_results()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$get_ffc_results()}\if{html}{\out{</div>}}
@@ -101,6 +109,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-evaluate_alteration"></a>}}
+\if{latex}{\out{\hypertarget{method-evaluate_alteration}{}}}
 \subsection{Method \code{evaluate_alteration()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{FFCProcessor$evaluate_alteration()}\if{html}{\out{</div>}}
@@ -109,6 +118,7 @@ and \code{\link{evaluate_gage_alteration}}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

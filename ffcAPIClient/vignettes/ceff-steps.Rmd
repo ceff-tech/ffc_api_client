@@ -1,0 +1,47 @@
+---
+title: "Use ffcAPIClient to Follow CEFF Steps"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Use ffcAPIClient to Follow CEFF Steps"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ffcAPIClient)
+```
+
+## Step One
+```r
+
+ffc <- FFCProcessor$new()  # make a new object we can use to run the commands
+
+# configure the object and run CEFF step 1 plus outputs
+
+ffc$step_one_functional_flow_results(gage_id=11336000,
+     token=token,
+     output_folder = "C:/Users/myusername/Downloads/test")
+```
+That command will output DOH data + image, observed annual data, observed percentiles, and observed plots to the specified folder. It will output the percentiles to the console as well.
+
+It also makes that data available for further analysis on the object `ffc`, so you can now access the FFC results by year as `ffc$ffc_results`, the processed percentiles as `ffc$ffc_percentiles`, and the underlying DOH data as `ffc$doh_data` if you want to view them again in R or feed them into other code and visualizations.
+
+## Step Two
+For step 2, we now run simply `ffc$step_two_explore_ecological_flow_criteria()` and it continues where we left off. In fact, *everything* is run in step 1, and we just control what is output with these functions. This outputs the predicted metric percentile data as a CSV and to the console, and plots the predicted values on their own.
+
+Now we can access `ffc$predicted_percentiles` if we want to feed that into other processing or visualizations too.
+
+## Step Three
+For step 3, same thing. Run `ffc$step_three_assess_alteration()` and get the alteration data frame saved as a CSV and printed to the console. Full comparison plots of predicted vs. observed percentiles are output now to the screen and to the folder specified in step 1 (where everything is saved). 
+
+And now we get one more thing we can access - `ffc$alteration` contains the alteration assessment results. In fact everything is accessible after step 1, but conceptually, this is the data frame that corresponds with this step.
+
+There's also more that's available as part of the `ffc` object, but we'll document that elsewhere.
+

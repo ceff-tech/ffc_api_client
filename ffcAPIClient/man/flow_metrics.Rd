@@ -4,13 +4,15 @@
 \name{flow_metrics}
 \alias{flow_metrics}
 \title{Modeled flow metric predictions for all stream segments}
-\format{A data frame :
+\format{
+A data frame :
 \describe{
   \item{name}{text}
   \item{name}{text}
   ...
 }
-\url{https://github.com/ceff-tech/}}
+\url{https://github.com/ceff-tech/}
+}
 \usage{
 flow_metrics
 }

@@ -4,7 +4,8 @@
 \name{stream_class_data}
 \alias{stream_class_data}
 \title{Geomorphic Stream Classification}
-\format{A data frame :
+\format{
+A data frame :
 \describe{
   \item{CLASS}{The stream classification ID}
   \item{COMID}{The NHD COMID of the stream segment}
@@ -15,7 +16,8 @@
     HLP = High elevation, low precipitation
   }
 }
-\url{https://doi.org/10.1007/s00267-018-1077-7}}
+\url{https://doi.org/10.1007/s00267-018-1077-7}
+}
 \usage{
 stream_class_data
 }

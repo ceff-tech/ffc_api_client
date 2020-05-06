@@ -6,7 +6,9 @@
 \title{Where we know the lat/long will produce the wrong COMID for a gage (such as giving us a nearby tributary and not the mainstem,
 or vice versa), we can hardcode their COMIDs here to make sure we get the correct location. We haven't looked through all
 gages to make sure every one is correct, but as we find them, this will help improve results and reduce error}
-\format{An object of class \code{list} of length 1.}
+\format{
+An object of class \code{list} of length 1.
+}
 \usage{
 gage_comids
 }
