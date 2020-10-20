@@ -23,7 +23,7 @@ Imports:
     dataRetrieval,
     lubridate,
     R6,
-    nhdplusTools,
+    nhdplusTools (>=0.3.15),
     units,
     tidyr,
     data.table (>= 1.12.8)
