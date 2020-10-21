@@ -301,6 +301,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   start_date = "10/1", ##
   stream_class = NA,
   date_format_string = "%m/%d/%Y",
+  date_field = "date",
+  flow_field = "flow",
   params = NA,
   comid = NA,
   timeseries = NA,
@@ -317,6 +319,9 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
+  timeseries_max_missing_days = 7,
+  timeseries_max_consecutive_missing_days = 1,
+  timeseries_fill_gaps = "no",
   SERVER_URL = 'https://eflows.ucdavis.edu/api/',
 
   set_up = function(gage_id, timeseries, comid, token){
@@ -361,6 +366,15 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     } else {
       self$timeseries <- timeseries
     }
+
+    self$timeseries <- filter_timeseries(self$timeseries,
+                                         date_field = self$date_field,
+                                         flow_field = self$flow_field,
+                                         date_format_string = self$date_format_string,
+                                         max_missing_days = self$timeseries_max_missing_days,
+                                         max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
+                                         fill_gaps = self$timeseries_fill_gaps)
+
     self$token <- token
   },
 
@@ -378,10 +392,10 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     }
 
     timeseries_data <- convert_dates(self$timeseries, self$date_format_string)  # standardize the dates based on the format string
-    timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c("date", "flow"))]  # subset to only these fields so we can run complete cases
+    timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c(self$date_field, self$flow_field))]  # subset to only these fields so we can run complete cases
     timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
 
-    self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid)
+    self$raw_ffc_results <- get_ffc_results_for_df(timeseries_data, self$comid, flow_field = self$flow_field, date_field = self$date_field, start_date = self$start_date)
     self$ffc_results <- get_results_as_df(self$raw_ffc_results)
     if(self$filter_ffc_results){  # if we want to filter the results, then remove anything that's not a true flow metric
       columns <- colnames(self$ffc_results)

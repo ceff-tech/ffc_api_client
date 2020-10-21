@@ -16,7 +16,8 @@
 #' before sending to the FFC.
 #'
 #' The functions in this file should accept a timeseries data frame, and assess/filter
-#' it according to these rules, then return a new timeseries to the caller
+#' it according to these rules, then return a new timeseries to the caller. The timeseries
+#' should already be *daily* data.
 #'
 filter_timeseries <- function(timeseries,
                               date_field,
@@ -28,6 +29,11 @@ filter_timeseries <- function(timeseries,
                                                   # "linear" for linear interpolation,
                                                   # or "previous" to use the previous day
 
+  # First, let's get rid of any NA or NULL values in the flow field - the rest of the logic is looking for
+  # cases where a date or observation is entirely missing, so we should remove records that don't have
+  # flow data up front.
+  timeseries <- timeseries[!is.na(timeseries[[flow_field]]), ]
+
   # we need the data to be in order so we can check for gaps, but we can't guarantee
   # the current date field is in a sortable format - add a posix time field so we can
   # sort it
@@ -37,7 +43,7 @@ filter_timeseries <- function(timeseries,
   timeseries <- attach_water_year_data(timeseries, date_field = "posix_time")
 
   # now sort it - will sort ascending by default (great!)
-  timeseries_sorted <- timeseries[order(timeseries$posix_time),]
+  timeseries_sorted <- timeseries[order(timeseries$posix_time), ]
 
   # now get some metadata - we want to know the count of entries for each year - we can quickly remove any
   # year with n_days_in_year - max_missing_days values, and we can quickly keep any year with 365 or more
@@ -45,14 +51,16 @@ filter_timeseries <- function(timeseries,
   # to fill it later). It's the ones in between that we need to check to see if they have gaps larger
   # than max_consecutive_missing_days (in which case we'll drop them), otherwise we'll potentially
   # attempt to fill gaps
-  year_counts <- as.data.frame(table(timeseries_sorted$water_year))
+  year_counts <- as.data.frame(table(timeseries_sorted$water_year), stringsAsFactors = FALSE)
+  year_counts$year <- as.numeric(year_counts$Var1)
 
   # for now, we'll just pretend leap years don't exist (in a way that's safe for leap year breakages still)
   # figure out the minimum
   incomplete_year_length <- 365 - max_missing_days
-  keep_years <- year_counts[year_counts$Freq > incomplete_year_length, "Var1"]  # get the list of years that have enough data
+  keep_years <- year_counts[year_counts$Freq > incomplete_year_length, "year"]  # get the list of years that have enough data
   complete_years <- timeseries_sorted[timeseries_sorted$water_year %in% keep_years,]  # filter the data to only the complete years
 
+  # initialize an empty vector - we'll append years that fail the checks here, then we'll remove them
   exclude_years <- c()
   # might be able to vectorize this, but it's fine as a loop - short and simple
   # now check each water year for gaps larger than max_consecutive_missing_days
@@ -89,8 +97,8 @@ attach_water_year_data <- function(timeseries, date_field = "posix_time"){
   timeseries$calendar_day <- as.numeric(strftime(timeseries[, date_field], "%d"))
 
   # add the water year
-  timeseries[timeseries$calendar_month < 10, "water_year"] <- timeseries[timeseries$calendar_month < 10, "calendar_year"]
-  timeseries[timeseries$calendar_month > 9, "water_year"] <- timeseries[timeseries$calendar_month > 9, "calendar_year"] + 1
+  timeseries[timeseries$calendar_month < 10, "water_year"] <- as.numeric(timeseries[timeseries$calendar_month < 10, "calendar_year"])
+  timeseries[timeseries$calendar_month > 9, "water_year"] <- as.numeric(timeseries[timeseries$calendar_month > 9, "calendar_year"] + 1)
 
   return(timeseries)
 }
