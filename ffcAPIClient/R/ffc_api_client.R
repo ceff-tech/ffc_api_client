@@ -367,13 +367,13 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$timeseries <- timeseries
     }
 
-    self$timeseries <- filter_timeseries(self$timeseries,
-                                         date_field = self$date_field,
-                                         flow_field = self$flow_field,
-                                         date_format_string = self$date_format_string,
-                                         max_missing_days = self$timeseries_max_missing_days,
-                                         max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
-                                         fill_gaps = self$timeseries_fill_gaps)
+    # self$timeseries <- filter_timeseries(self$timeseries,
+    #                                     date_field = self$date_field,
+    #                                     flow_field = self$flow_field,
+    #                                     date_format_string = self$date_format_string,
+    #                                     max_missing_days = self$timeseries_max_missing_days,
+    #                                     max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
+    #                                     fill_gaps = self$timeseries_fill_gaps)
 
     self$token <- token
   },
