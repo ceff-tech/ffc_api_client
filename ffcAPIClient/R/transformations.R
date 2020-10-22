@@ -125,7 +125,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder,
   for(group in groups){
     metrics <- dplyr::filter(full_df, grepl(group, metric))
     if(nrow(metrics) == 0){  # if we don't have metrics, skip output
-      print(paste("Skipping plot for ", group, ". No data", sep=""))
+      futile.logger::flog.info(paste("Skipping plot for ", group, ". No data", sep=""))
       next
     }
 
@@ -143,7 +143,7 @@ plot_comparison_boxes <- function(ffc_results_df, predictions_df, output_folder,
     if(!is.null(output_folder)){
       group_name <- sub("_\\d", "_", group, fixed=TRUE)  # make it safe - remove the regex filter on the Peak name
       output_path <- paste(output_folder, "/", comid, "_", group_name, name_suffix, ".png", sep="")
-      print(paste("Writing", output_path))
+      futile.logger::flog.info(paste("Writing", output_path))
       ggplot2::ggsave(output_path, plot=group_plt, width = 7, height = 5, units = "in", dpi=300)
     }
   }

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieves USGS timeseries gage data — get_usgs_gage_data • ffcAPIClient</title>
+<title>Filter Timeseries data — filter_timeseries • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Retrieves USGS timeseries gage data — get_usgs_gage_data" />
-<meta property="og:description" content="This is just a helper function that calls the gage constructor, gets the flows and returns them in one step.
-Useful in situations where we don't need the flexibility of the USGSGage class" />
+<meta property="og:title" content="Filter Timeseries data — filter_timeseries" />
+<meta property="og:description" content="When we send data to the FFC, it needs to meet a specific set of requirements.
+The code in this file aims to make sure input data, whether gaged or
+a manual timeseries, follows those requirements. Namely:" />
 
 
 
@@ -116,30 +117,87 @@ Useful in situations where we don't need the flexibility of the USGSGage class" 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieves USGS timeseries gage data</h1>
+    <h1>Filter Timeseries data</h1>
     
-    <div class="hidden name"><code>get_usgs_gage_data.Rd</code></div>
+    <div class="hidden name"><code>filter_timeseries.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is just a helper function that calls the gage constructor, gets the flows and returns them in one step.
-Useful in situations where we don't need the flexibility of the USGSGage class</p>
+    <p>When we send data to the FFC, it needs to meet a specific set of requirements.
+The code in this file aims to make sure input data, whether gaged or
+a manual timeseries, follows those requirements. Namely:</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_usgs_gage_data</span>(<span class='no'>gage_id</span>)</pre>
+    <pre class="usage"><span class='fu'>filter_timeseries</span>(
+  <span class='no'>timeseries</span>,
+  <span class='no'>date_field</span>,
+  <span class='no'>flow_field</span>,
+  <span class='no'>date_format_string</span>,
+  <span class='kw'>max_missing_days</span> <span class='kw'>=</span> <span class='fl'>7</span>,
+  <span class='kw'>max_consecutive_missing_days</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>fill_gaps</span> <span class='kw'>=</span> <span class='st'>"no"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>gage_id</th>
-      <td><p>integer. The USGS Gage ID value for the gage you want to return timeseries data for</p></td>
+      <th>timeseries.</th>
+      <td><p>A timeseries data frame with date and flow fields</p></td>
+    </tr>
+    <tr>
+      <th>date_field.</th>
+      <td><p>character vector/string with the name of the field that holds the dates</p></td>
+    </tr>
+    <tr>
+      <th>flow_field.</th>
+      <td><p>character vector/string with the name of the field that holds flow values</p></td>
+    </tr>
+    <tr>
+      <th>date_format_string.</th>
+      <td><p>A format string to use when parsing dates into POSIX time</p></td>
+    </tr>
+    <tr>
+      <th>max_missing_days.</th>
+      <td><p>How many days can be missing from each water year before it is
+considered too incomplete and will be dropped? The water year will need to have *more*
+missing days than this value (so, the default of 7 means that a water year with 7 missing
+values will be kept, but a water year with 8 missing values will be dropped).</p></td>
+    </tr>
+    <tr>
+      <th>max_consecutive_missing_days.</th>
+      <td><p>How many days in a row can be missing before a water year
+is dropped? This is evaluated independently from max_missing_days, so a single failure of the rule
+attached to this parameter causes the water year to be dropped. The previous parameter handles the
+total number of missing values across a water year, while this parameter only looks at each gap's length.
+A max_consecutive_missing_days value of 1 means each gap can only be a single day in length
+(so, if we had values for day 1 and 2, were missing day 3, and then had values for day 4 and 5,
+that'd be acceptable. If we were also missing day 2 or 4, that would cause the water year to be dropped).</p></td>
+    </tr>
+    <tr>
+      <th>fill_gaps.</th>
+      <td><p>Currently unimplemented, but would allow for filling remaining gaps after water the
+rules are evaluated according to the other parameters. Defaults to "no", which turns it off. In the
+future, we expect to add two other options here: "linear" to linearly inhterpolate across gaps and
+"previous" to fill gaps with the closest valid value before the gap.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>dataframe. Will include a flow field (CFS) and a date field (MM/DD/YYYY)</p>
+    <p>1. We should only send complete water years - partial water years at the beginning or end
+have an outsize influence on the calculations. This rule will actually be handled just by
+adhering to the next two rules.</p>
+<p>2. Along the same lines, we shouldn't allow any large gaps. When we find a gap
+of *2 or more days*, then we should drop the entire water year.</p>
+<p>3. We should only allow 7 total missing days, which we will fill either with
+values from the previous day, or a linear interpolation (maybe with a flag?)
+before sending to the FFC.</p>
+<p>This function accepts a timeseries data frame, assesses/filters it according to these rules,
+then returns a new timeseries to the caller. A record is considered a gap if it is missing for a date, or
+if it is present, but has a flow value of NA. The timeseries should already be *daily* data.</p>
+<p>This function is also staged to fill any remaining gaps in preparation for the online
+FFC disabling that functionality, but the code has not yet been enabled here.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

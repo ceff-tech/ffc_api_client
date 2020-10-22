@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieves USGS timeseries gage data — get_usgs_gage_data • ffcAPIClient</title>
+<title>Add calendar_year/calendar_month/calendar_day/water_year fields — attach_water_year_data • ffcAPIClient</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Retrieves USGS timeseries gage data — get_usgs_gage_data" />
-<meta property="og:description" content="This is just a helper function that calls the gage constructor, gets the flows and returns them in one step.
-Useful in situations where we don't need the flexibility of the USGSGage class" />
+<meta property="og:title" content="Add calendar_year/calendar_month/calendar_day/water_year fields — attach_water_year_data" />
+<meta property="og:description" content="Attaches fields for the year, month, day and water year to a data frame with a POSIX time field.
+Fields will be named calendar_year, calendar_month, calendar_day, and water_year." />
 
 
 
@@ -116,30 +116,32 @@ Useful in situations where we don't need the flexibility of the USGSGage class" 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieves USGS timeseries gage data</h1>
+    <h1>Add calendar_year/calendar_month/calendar_day/water_year fields</h1>
     
-    <div class="hidden name"><code>get_usgs_gage_data.Rd</code></div>
+    <div class="hidden name"><code>attach_water_year_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This is just a helper function that calls the gage constructor, gets the flows and returns them in one step.
-Useful in situations where we don't need the flexibility of the USGSGage class</p>
+    <p>Attaches fields for the year, month, day and water year to a data frame with a POSIX time field.
+Fields will be named calendar_year, calendar_month, calendar_day, and water_year.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_usgs_gage_data</span>(<span class='no'>gage_id</span>)</pre>
+    <pre class="usage"><span class='fu'>attach_water_year_data</span>(<span class='no'>timeseries</span>, <span class='kw'>date_field</span> <span class='kw'>=</span> <span class='st'>"posix_time"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>gage_id</th>
-      <td><p>integer. The USGS Gage ID value for the gage you want to return timeseries data for</p></td>
+      <th>timeseries.</th>
+      <td><p>A timeseries data frame with a date field</p></td>
+    </tr>
+    <tr>
+      <th>date_field.</th>
+      <td><p>A sortable field of date/time information - a good choice would be a field
+created by strptime or any other POSIX format time.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>dataframe. Will include a flow field (CFS) and a date field (MM/DD/YYYY)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

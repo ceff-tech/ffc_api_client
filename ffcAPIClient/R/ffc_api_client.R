@@ -319,6 +319,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
+  timeseries_enable_filtering = TRUE,  # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
   timeseries_max_missing_days = 7,
   timeseries_max_consecutive_missing_days = 1,
   timeseries_fill_gaps = "no",
@@ -367,20 +368,32 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$timeseries <- timeseries
     }
 
-    # self$timeseries <- filter_timeseries(self$timeseries,
-    #                                     date_field = self$date_field,
-    #                                     flow_field = self$flow_field,
-    #                                     date_format_string = self$date_format_string,
-    #                                     max_missing_days = self$timeseries_max_missing_days,
-    #                                     max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
-    #                                     fill_gaps = self$timeseries_fill_gaps)
+    # START LOGGING CONFIG
+    # futile.logger automatically creates a logger namespaced to this package, so we're fine to just configure the
+    # root logger if we only care about having a single logger
+    # if we have an output folder, then also dump a text file with log info
+    if(!is.na(self$plot_output_folder)){
+      futile.logger::flog.appender(futile.logger::appender.file(paste(plot_output_folder, "/ffc_api_client_log.txt")))
+    }
+
+    futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
+
+    if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
+      self$timeseries <- filter_timeseries(self$timeseries,
+                                         date_field = self$date_field,
+                                         flow_field = self$flow_field,
+                                         date_format_string = self$date_format_string,
+                                         max_missing_days = self$timeseries_max_missing_days,
+                                         max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
+                                         fill_gaps = self$timeseries_fill_gaps)
+    }
 
     self$token <- token
   },
 
   # we'll have it actually run everything, then for the steps, it'll just return derived outputs like plots, tables, save csvs, etc
   run = function(){
-    print(paste("Using date format string", self$date_format_string))
+    futile.logger::flog.info(paste("Using date format string", self$date_format_string))
 
     predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online, wyt = "any")
     if(self$predicted_percentiles_online){  # split them out so that we have the normal predicted percentiles with old-school behavior, and then one with just the WYT records
@@ -460,62 +473,62 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$plot_output_folder <- output_folder
 
-    print("### Step 1 - Get Functional Flow Results ###")
+    futile.logger::flog.info("### Step 1 - Get Functional Flow Results ###")
 
-    print("Retrieving results, please wait...")
+    futile.logger::flog.info("Retrieving results, please wait...")
     self$set_up(gage_id, timeseries, comid, token)
     self$run()
-    print("Results ready.")
-    print(paste("Writing FFC results as CSVs to ", output_folder, sep=""))
+    futile.logger::flog.info("Results ready.")
+    futile.logger::flog.info(paste("Writing FFC results as CSVs to ", output_folder, sep=""))
     write.csv(self$ffc_percentiles, paste(output_folder, "/", self$comid, "_", "ffc_percentiles.csv", sep=""))
     write.csv(self$ffc_results, paste(output_folder, "/", self$comid, "_", "ffc_results.csv", sep=""))
     write.csv(self$doh_data, paste(output_folder, "/", self$comid, "_", "doh_data.csv", sep=""))
 
-    print(paste("Writing observed plots to ", output_folder, sep=""))
+    futile.logger::flog.info(paste("Writing observed plots to ", output_folder, sep=""))
     self$doh_plot <- plot_drh(self$raw_ffc_results, paste(output_folder, "/", self$comid, "_", "DOH.png", sep=""))
     show(self$doh_plot)
     gage_id <- self$get_gage_id()
 
     plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, output_folder, gage_id = gage_id, name_suffix = "_observed_only", use_dfs="observed")
 
-    print("Printing Observed/FFC Percentiles. You can also access attributes $ffc_results on this object for the annual values for each metric, $ffc_percentiles for calculated percentile values, and $doh_data for the Dimensionless Observed Hydrograph data.")
-    print(self$ffc_percentiles)
+    futile.logger::flog.info("Printing Observed/FFC Percentiles. You can also access attributes $ffc_results on this object for the annual values for each metric, $ffc_percentiles for calculated percentile values, and $doh_data for the Dimensionless Observed Hydrograph data.")
+    futile.logger::flog.info(self$ffc_percentiles)
 
-    print("Step 1 complete")
+    futile.logger::flog.info("Step 1 complete")
   },
 
   # CEFF step 2
   step_two_explore_ecological_flow_criteria = function(){
-    print("### Step 2 - Explore Ecological Flow Criteria ###")
+    futile.logger::flog.info("### Step 2 - Explore Ecological Flow Criteria ###")
     gage_id <- self$get_gage_id()
 
-    print("Printing Predicted Percentiles. You can also access attributes $predicted_percentiles on this object for these data.")
-    print(self$predicted_percentiles)
+    futile.logger::flog.info("Printing Predicted Percentiles. You can also access attributes $predicted_percentiles on this object for these data.")
+    futile.logger::flog.info(self$predicted_percentiles)
 
-    print(paste("Writing Predicted Percentiles as CSV to ", self$plot_output_folder, sep=""))
+    futile.logger::flog.info(paste("Writing Predicted Percentiles as CSV to ", self$plot_output_folder, sep=""))
     write.csv(self$predicted_percentiles, paste(self$plot_output_folder, "/", self$comid, "_", "predicted_percentiles.csv", sep=""))
 
-    print(paste("Writing predicted metric plots to ", self$plot_output_folder, sep=""))
+    futile.logger::flog.info(paste("Writing predicted metric plots to ", self$plot_output_folder, sep=""))
     plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, self$plot_output_folder, gage_id = gage_id, name_suffix = "_predicted_only", use_dfs="predicted")
 
-    print("Step 2 complete")
+    futile.logger::flog.info("Step 2 complete")
   },
 
   # CEFF step 3/
   step_three_assess_alteration = function(){
-    print("### Step 3 - Assess Alteration ###")
+    futile.logger::flog.info("### Step 3 - Assess Alteration ###")
     gage_id <- self$get_gage_id()
 
-    print("Printing alteration assessment data. You can also access attributes $alteration on this object for these data")
-    print(self$alteration)
+    futile.logger::flog.info("Printing alteration assessment data. You can also access attributes $alteration on this object for these data")
+    futile.logger::flog.info(self$alteration)
 
-    print(paste("Writing alteration assessment as CSV to ", self$plot_output_folder, sep=""))
+    futile.logger::flog.info(paste("Writing alteration assessment as CSV to ", self$plot_output_folder, sep=""))
     write.csv(self$alteration, paste(self$plot_output_folder, "/", self$comid, "_", "alteration.csv", sep=""))
 
-    print(paste("Writing comparison plots to ", self$plot_output_folder, sep=""))
+    futile.logger::flog.info(paste("Writing comparison plots to ", self$plot_output_folder, sep=""))
     plot_comparison_boxes(self$ffc_percentiles, self$predicted_percentiles, self$plot_output_folder, gage_id = gage_id)
 
-    print("Step 3 complete")
+    futile.logger::flog.info("Step 3 complete")
   },
 
   get_ffc_results = function(){

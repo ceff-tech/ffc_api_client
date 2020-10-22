@@ -1,7 +1,7 @@
 Package: ffcAPIClient
 Type: Package
 Title: Functional Flows Calculator API Client
-Version: 0.9.6.9
+Version: 0.9.7.0
 Authors@R: c(
     person("Nick", "Santos", email="nrsantos@ucdavis.edu", role=c("aut", "cre")), 
     person("Ryan", "Peek", email="rapeek@ucdavis.edu", role="aut"),
@@ -26,7 +26,8 @@ Imports:
     nhdplusTools (>= 0.3.15),
     units,
     tidyr,
-    data.table (>= 1.12.8)
+    data.table (>= 1.12.8),
+    futile.logger
 Suggests:
     testthat (>= 2.1.0),
     knitr,

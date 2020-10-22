@@ -101,7 +101,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
                  flow_flag=X_00060_00003_cd)
         daily_df <- dplyr::mutate(daily_df_3, date=format(as.Date(date),'%m/%d/%Y'))
       }else{
-        print("Less than 10 years of data...try again")
+        futile.logger::flog.warn("Less than 10 years of data...try again")
         return(NULL)
       }
 
@@ -124,7 +124,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
     # ID is in the list, just return that value, otherwise, continue below.
     overridden_gage_id <- gage_comids[[as.character(self$id)]]
     if(!is.null(overridden_gage_id)){
-      print(paste("Using overridden comid for gage of", overridden_gage_id))
+      futile.logger::flog.info(paste("Using overridden comid for gage of", overridden_gage_id))
       self$comid = overridden_gage_id
 
     }else{
