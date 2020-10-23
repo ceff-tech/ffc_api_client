@@ -3,6 +3,10 @@ library(ffcAPIClient)
 
 token = Sys.getenv("EFLOWS_WEBSITE_TOKEN")
 
+# disable some checks on the number of years of data and timeseries filtering
+pkg.env$FILTER_TIMESERIES <- FALSE
+pkg.env$FAIL_YEARS_DATA <- 1
+
 assessed_observations_lt_50 = c(-1,-1,0,0,0,0,1,1,1,1,1,1)
 assessed_observations_gt_50 <- c(1,0,0,1,-1,1,1,-1,0,0,0,0,0,0,0)
 test_predictions = list("p10" = 5, "p25" = 7, "p50" = 10, "p75" = 13, "p90" = 15)

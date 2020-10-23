@@ -48,6 +48,8 @@ USGSGage <- R6::R6Class("USGSGage", list(
   timeseries_data = NA,
   latitude = NA,
   longitude = NA,
+  start_date = "",  # start_date and end_date are passed straight through to readNWISdv - "" means "retrieve all". Override values should be of the form YYYY-MM-DD
+  end_date = "",
 
   #' @details
   #' Validates that gage is ready to run requests
@@ -95,7 +97,10 @@ USGSGage <- R6::R6Class("USGSGage", list(
 
     # select and get flow data for station/param if over 10 years:
     if(usgs_daily$yr_total>10){
-        daily_df_1 <- dataRetrieval::readNWISdv(siteNumbers=usgs_daily$site_id, parameterCd = "00060")
+        daily_df_1 <- dataRetrieval::readNWISdv(siteNumbers=usgs_daily$site_id,
+                                                startDate = self$start_date,
+                                                endDate = self$end_date,
+                                                parameterCd = "00060")
         daily_df_2 <- dataRetrieval::addWaterYear(daily_df_1)
         daily_df_3 <- dplyr::rename(daily_df_2, flow=X_00060_00003, date=Date, gage=site_no,
                  flow_flag=X_00060_00003_cd)
@@ -130,6 +135,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
     }else{
 
       self$validate(latlong=TRUE)
+      futile.logger::flog.debug(paste("Longitude:", self$longitude, "Latitude:", self$latitude))
       self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
 
     }

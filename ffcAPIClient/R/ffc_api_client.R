@@ -27,6 +27,8 @@ pkg.env <- new.env(parent=emptyenv())  # set up a new environment to store the t
 pkg.env$TOKEN <- NA # initialize the empty token
 pkg.env$SERVER_URL <- 'https://eflows.ucdavis.edu/api/'
 pkg.env$CONSISTENT_NAMING <- FALSE  # when TRUE, we'll update the Peak metric names to include _Mag for internal consistentcy - see https://github.com/ceff-tech/ffc_api_client/issues/44
+pkg.env$FILTER_TIMESERIES <- TRUE  # should we filter timeseries - assigned to FFCProcessor - default is in here so we can disable for testing
+pkg.env$FAIL_YEARS_DATA <- 10  # how many years of data do we require to proceed? assigned to FFCProcessor - default here so we can lower it during testing
 
 #' Set Eflows Website Access Token
 #'
@@ -319,10 +321,14 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   plots = NA,
   plot_output_folder = NA,
   alteration = NA,
-  timeseries_enable_filtering = TRUE,  # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
+  fail_years_data = pkg.env$FAIL_YEARS_DATA, # we'll stop processing if we have this many years or fewer after filtering
+  warn_year_data = 15,  # we'll warn people if we have this many years or fewer after filtering
+  timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
   timeseries_max_missing_days = 7,
   timeseries_max_consecutive_missing_days = 1,
   timeseries_fill_gaps = "no",
+  gage_start_date = "", # start_date and end_date are passed straight through to readNWISdv - "" means "retrieve all". Override values should be of the form YYYY-MM-DD
+  gage_end_date = "",
   SERVER_URL = 'https://eflows.ucdavis.edu/api/',
 
   set_up = function(gage_id, timeseries, comid, token){
@@ -349,6 +355,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     if(!is.na(gage_id)){
       self$gage <- USGSGage$new()
       self$gage$id <- gage_id
+      self$gage$start_date <- self$start_date
+      self$gage$end_date <- self$end_date
       self$gage$get_data()  # this could be extra if someone provided gage ID and timeseries - that seems weird though - not adding another conditional - not needed
 
       if(is.na(comid)){
@@ -378,14 +386,26 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
 
-    if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
-      self$timeseries <- filter_timeseries(self$timeseries,
-                                         date_field = self$date_field,
-                                         flow_field = self$flow_field,
-                                         date_format_string = self$date_format_string,
-                                         max_missing_days = self$timeseries_max_missing_days,
-                                         max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
-                                         fill_gaps = self$timeseries_fill_gaps)
+    #if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
+    #  self$timeseries <- filter_timeseries(self$timeseries,
+    #                                     date_field = self$date_field,
+    #                                     flow_field = self$flow_field,
+    #                                     date_format_string = self$date_format_string,
+    #                                     max_missing_days = self$timeseries_max_missing_days,
+    #                                     max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
+    #                                     fill_gaps = self$timeseries_fill_gaps)
+    #}
+
+    # there will now be a water_year field - check how many years we have
+    number_of_years <- length(unique(self$timeseries$water_year))
+    if(number_of_years <= self$fail_years){
+      error_message <- paste("Can't proceed - too few water years (", number_of_years, ") remaining after filtering to complete years.", sep="")
+      futile.logger::flog.error(error_message)
+      stop(error_message)
+    }
+    if(number_of_years <= self$warn_years){
+      warn_message <- paste("Timeseries dataframe has a low number of water years(", number_of_years, ") - peak metrics may be unreliable", sep="")
+      futile.logger::flog.warn(warn_message)
     }
 
     self$token <- token

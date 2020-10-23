@@ -143,6 +143,12 @@ segment on the North Yuba:
           years.
 * [Enhancement] ffcAPIClient now logs both to the console and to a log file in the output folder, including the
           version of the package and any log messages (some R warnings and errors may not show up in the file yet)
+* [Change] The package now stops running if you have fewer than 10 years of data *after* the filters implemented
+          in this version have run. It warns you, but still runs if you have fewer than 15 years of data. These
+          apply whether the data source is gage data or a provided timeseries. To change this behavior,
+          change the values of `fail_years_data` and `warn_years_data` on the FFCProcessor object
+* [Enhancement] You can now pass minimum and maximum dates for gage data retrieval. Set the values of
+          `gage_start_date` and `gage_end_date` on the FFCProcessor object.
 
 ### Version 0.9.6.9
 * [Bugfix] Fixed issue preventing export of R6 Classes - FFCProcessor and USGSGage should now be available
