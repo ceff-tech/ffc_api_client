@@ -355,8 +355,8 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     if(!is.na(gage_id)){
       self$gage <- USGSGage$new()
       self$gage$id <- gage_id
-      self$gage$start_date <- self$start_date
-      self$gage$end_date <- self$end_date
+      self$gage$start_date <- self$gage_start_date
+      self$gage$end_date <- self$gage_end_date
       self$gage$get_data()  # this could be extra if someone provided gage ID and timeseries - that seems weird though - not adding another conditional - not needed
 
       if(is.na(comid)){
@@ -381,7 +381,9 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     # root logger if we only care about having a single logger
     # if we have an output folder, then also dump a text file with log info
     if(!is.na(self$plot_output_folder)){
-      futile.logger::flog.appender(futile.logger::appender.file(paste(plot_output_folder, "/ffc_api_client_log.txt")))
+      log_file <- paste(self$plot_output_folder, "/ffc_api_client_log.txt", sep="")
+      print(paste("Log file saving to", log_file))
+      futile.logger::flog.appender(futile.logger::appender.file(log_file))
     }
 
     futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
