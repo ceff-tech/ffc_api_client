@@ -15,10 +15,34 @@
 #' values from the previous day, or a linear interpolation (maybe with a flag?)
 #' before sending to the FFC.
 #'
-#' The functions in this file should accept a timeseries data frame, and assess/filter
-#' it according to these rules, then return a new timeseries to the caller. The timeseries
-#' should already be *daily* data.
+#' This function accepts a timeseries data frame, assesses/filters it according to these rules,
+#' then returns a new timeseries to the caller. A record is considered a gap if it is missing for a date, or
+#' if it is present, but has a flow value of NA. The timeseries should already be *daily* data.
 #'
+#' This function is also staged to fill any remaining gaps in preparation for the online
+#' FFC disabling that functionality, but the code has not yet been enabled here.
+#'
+#' @param timeseries. A timeseries data frame with date and flow fields
+#' @param date_field. character vector/string with the name of the field that holds the dates
+#' @param flow_field. character vector/string with the name of the field that holds flow values
+#' @param date_format_string. A format string to use when parsing dates into POSIX time
+#' @param max_missing_days. How many days can be missing from each water year before it is
+#' considered too incomplete and will be dropped? The water year will need to have *more*
+#' missing days than this value (so, the default of 7 means that a water year with 7 missing
+#' values will be kept, but a water year with 8 missing values will be dropped).
+#' @param max_consecutive_missing_days. How many days in a row can be missing before a water year
+#' is dropped? This is evaluated independently from max_missing_days, so a single failure of the rule
+#' attached to this parameter causes the water year to be dropped. The previous parameter handles the
+#' total number of missing values across a water year, while this parameter only looks at each gap's length.
+#' A max_consecutive_missing_days value of 1 means each gap can only be a single day in length
+#' (so, if we had values for day 1 and 2, were missing day 3, and then had values for day 4 and 5,
+#' that'd be acceptable. If we were also missing day 2 or 4, that would cause the water year to be dropped).
+#' @param fill_gaps. Currently unimplemented, but would allow for filling remaining gaps after water the
+#' rules are evaluated according to the other parameters. Defaults to "no", which turns it off. In the
+#' future, we expect to add two other options here: "linear" to linearly inhterpolate across gaps and
+#' "previous" to fill gaps with the closest valid value before the gap.
+#'
+#' @export
 filter_timeseries <- function(timeseries,
                               date_field,
                               flow_field,
@@ -56,8 +80,12 @@ filter_timeseries <- function(timeseries,
 
   # for now, we'll just pretend leap years don't exist (in a way that's safe for leap year breakages still)
   # figure out the minimum
-  incomplete_year_length <- 365 - max_missing_days
+  incomplete_year_length <- 365 - max_missing_days - 1  # subtract 1 more so we can just do greater-than comparisons
   keep_years <- year_counts[year_counts$Freq > incomplete_year_length, "year"]  # get the list of years that have enough data
+  discard_years <- year_counts[year_counts$Freq <= incomplete_year_length, "year"]  # get the list of years we're dropping to warn people
+  if(!is.null(discard_years)){
+    futile.logger::flog.info(paste("Excluding water years", as.character(discard_years), "for having more than", as.character(max_missing_days), "missing days of data"))
+  }
   complete_years <- timeseries_sorted[timeseries_sorted$water_year %in% keep_years,]  # filter the data to only the complete years
 
   # initialize an empty vector - we'll append years that fail the checks here, then we'll remove them
@@ -71,8 +99,13 @@ filter_timeseries <- function(timeseries,
     hour_differences <- diff(year_data$posix_time)  # get the number of hours between each observation and the next
 
     # if any time difference in observations is greater than the number of missing days + 12 hours (12 to make sure we're in between days)
-    if(any(hour_differences > ((max_consecutive_missing_days * 24) + 12))){
-      append(exclude_years, year)
+    if(any(hour_differences > ((max_consecutive_missing_days * 24) + 36))){ # a one day gap results in a 48 hour gap in the differences, so add a day so that we need two days to make a real gap - we occasionally get an hour of variation too, so add another 12 hours
+      #print(hour_differences)
+      #print(any(hour_differences > ((max_consecutive_missing_days * 24) + 12)))
+      #print(max(hour_differences))
+      #print((max_consecutive_missing_days * 24) + 12)
+      futile.logger::flog.info(paste("Excluding water year", as.character(year),"for having a data gap larger than",as.character(max_consecutive_missing_days)))
+      exclude_years <- append(exclude_years, year)
     }
   }
 
@@ -80,7 +113,7 @@ filter_timeseries <- function(timeseries,
   complete_years <- complete_years[!(complete_years$water_year %in% exclude_years), ]
 
   if(fill_gaps != "no"){
-    # if we're supposed to fill any remaining gaps
+    # if we're supposed to fill any remaining gaps, we may still need t
   }
 
   return(complete_years)
@@ -89,8 +122,15 @@ filter_timeseries <- function(timeseries,
 
 #' Add calendar_year/calendar_month/calendar_day/water_year fields
 #'
-#' Attaches fields for the year, month, day and water year to a data frame with a POSIX time field
+#' Attaches fields for the year, month, day and water year to a data frame with a POSIX time field.
+#' Fields will be named calendar_year, calendar_month, calendar_day, and water_year.
 #'
+#' @param timeseries. A timeseries data frame with a date field
+#' @param date_field. A sortable field of date/time information - a good choice would be a field
+#' created by strptime or any other POSIX format time.
+#'
+#'
+#' @export
 attach_water_year_data <- function(timeseries, date_field = "posix_time"){
   timeseries$calendar_year <- as.numeric(strftime(timeseries[, date_field], "%Y"))
   timeseries$calendar_month <- as.numeric(strftime(timeseries[, date_field], "%m"))

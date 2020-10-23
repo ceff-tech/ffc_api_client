@@ -133,7 +133,24 @@ segment on the North Yuba:
 
 ## Change Log
 
-### Version 0.9.6.8
+### Version 0.9.7.0
+* [Change] Data sent to the FFC is now filtered according to CEFF Tech Team determined rules - water years
+          are dropped if they have more than 7 missing days or more than 2 consecutive missing days (by default). 
+          See the documentation for the function `filter_timeseries` for more info. It applies
+          to both automatically retrieved gage data and user-provided timeseries. It can
+          be disabled by setting timeseries_enable_filtering to FALSe on the FFCProcessor object, but you're
+          much better off just disabling it by filling gaps in your data yourself if you need to keep all water
+          years.
+* [Enhancement] ffcAPIClient now logs both to the console and to a log file in the output folder, including the
+          version of the package and any log messages (some R warnings and errors may not show up in the file yet)
+* [Change] The package now stops running if you have fewer than 10 years of data *after* the filters implemented
+          in this version have run. It warns you, but still runs if you have fewer than 15 years of data. These
+          apply whether the data source is gage data or a provided timeseries. To change this behavior,
+          change the values of `fail_years_data` and `warn_years_data` on the FFCProcessor object
+* [Enhancement] You can now pass minimum and maximum dates for gage data retrieval. Set the values of
+          `gage_start_date` and `gage_end_date` on the FFCProcessor object.
+
+### Version 0.9.6.9
 * [Bugfix] Fixed issue preventing export of R6 Classes - FFCProcessor and USGSGage should now be available
   for use as the documentation describes
 

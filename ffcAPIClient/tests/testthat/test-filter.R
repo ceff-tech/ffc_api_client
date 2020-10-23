@@ -1,18 +1,24 @@
 context("Data Preprocessing")
 token = Sys.getenv("EFLOWS_WEBSITE_TOKEN")
 
+pkg.env$FILTER_TIMESERIES <- TRUE
+pkg.env$FAIL_YEARS_DATA <- 5
+
 all_gage_data <- ffcAPIClient::example_gagedata()
 raw_gage_data <- all_gage_data[all_gage_data$gage == 1, ]  # comes out with 10 timeseries - 1 for each of 10 gages
 
 test_that("Keeps 1 Day Gap",{
+
   timeseries <- raw_gage_data
   timeseries[25, ]$flow <- NA  # set a value to NA
-  expected_nrows <- nrow(timeseries) - 1 # subtract 1 because there's a trailing day it should remove as well
+  expected_nrows <- nrow(timeseries) - 2 # subtract 1 because it will drop the NA day (but not the year) and another
+                                         # 1 because there's a trailing day it should remove as well
   expect_equal(expected_nrows, nrow(filter_timeseries(timeseries, "date", "flow", date_format_string = "%m/%d/%Y")))
 
   # then we'll add it to a FFCProcessor object and run setup to make sure it actually gets called there
   ffc <- ffcAPIClient::FFCProcessor$new()
   ffcAPIClient::set_token(token)
+  ffc$fail_years_data <- 5  # need to lower this value or else it will stop once we drop a year
   ffc$set_up(timeseries = timeseries, comid=11111111, token = token)
   expect_equal(expected_nrows, nrow(ffc$timeseries))
 })
@@ -29,12 +35,14 @@ test_that("Discards 2 Day Gap",{
 
   # then we'll add it to a FFCProcessor object and run setup to make sure it actually gets called there
   ffc <- ffcAPIClient::FFCProcessor$new()
+  ffc$fail_years_data <- 5  # need to lower this value or else it will stop once we drop a year
   ffc$set_up(timeseries = timeseries, comid=11111111, token = token)
   expect_equal(expected_nrows, nrow(ffc$timeseries))
 })
 
 
 test_that("Discards water year with more than 7 days of missing values",{
+
   timeseries <- raw_gage_data
   timeseries[25, ]$flow <- NA  # set a value to NA
   timeseries[35, ]$flow <- NA  # set a value to NA
@@ -49,6 +57,7 @@ test_that("Discards water year with more than 7 days of missing values",{
 })
 
 test_that("Keeps water year with exactly 7 days of missing values",{
+
   timeseries <- raw_gage_data
   timeseries[35, ]$flow <- NA  # set a value to NA
   timeseries[45, ]$flow <- NA  # set a value to NA
@@ -57,7 +66,7 @@ test_that("Keeps water year with exactly 7 days of missing values",{
   timeseries[74, ]$flow <- NA  # set a value to NA
   timeseries[91, ]$flow <- NA  # set a value to NA
   timeseries[103, ]$flow <- NA  # set a value to NA
-  expected_nrows <- nrow(timeseries) - 1 # Should keep all years, but still discard the last day
+  expected_nrows <- nrow(timeseries) - 8 # Should keep all years, but still discard the 7 NA days and the trailing day in the timeseries
   expect_equal(expected_nrows, nrow(filter_timeseries(timeseries, "date", "flow", date_format_string = "%m/%d/%Y")))
 })
 

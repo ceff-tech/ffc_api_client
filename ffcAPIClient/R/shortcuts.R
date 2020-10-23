@@ -132,7 +132,7 @@ evaluate_alteration <- function(timeseries_df, token, comid, longitude, latitude
   }
 
   if(missing(date_format_string)){
-    print("Using default date format string of %m/%d/%Y")
+    futile.logger::flog.info("Using default date format string of %m/%d/%Y")
     date_format_string <- "%m/%d/%Y"
   }
 

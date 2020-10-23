@@ -48,6 +48,8 @@ USGSGage <- R6::R6Class("USGSGage", list(
   timeseries_data = NA,
   latitude = NA,
   longitude = NA,
+  start_date = "",  # start_date and end_date are passed straight through to readNWISdv - "" means "retrieve all". Override values should be of the form YYYY-MM-DD
+  end_date = "",
 
   #' @details
   #' Validates that gage is ready to run requests
@@ -95,13 +97,16 @@ USGSGage <- R6::R6Class("USGSGage", list(
 
     # select and get flow data for station/param if over 10 years:
     if(usgs_daily$yr_total>10){
-        daily_df_1 <- dataRetrieval::readNWISdv(siteNumbers=usgs_daily$site_id, parameterCd = "00060")
+        daily_df_1 <- dataRetrieval::readNWISdv(siteNumbers=usgs_daily$site_id,
+                                                startDate = self$start_date,
+                                                endDate = self$end_date,
+                                                parameterCd = "00060")
         daily_df_2 <- dataRetrieval::addWaterYear(daily_df_1)
         daily_df_3 <- dplyr::rename(daily_df_2, flow=X_00060_00003, date=Date, gage=site_no,
                  flow_flag=X_00060_00003_cd)
         daily_df <- dplyr::mutate(daily_df_3, date=format(as.Date(date),'%m/%d/%Y'))
       }else{
-        print("Less than 10 years of data...try again")
+        futile.logger::flog.warn("Less than 10 years of data...try again")
         return(NULL)
       }
 
@@ -124,12 +129,13 @@ USGSGage <- R6::R6Class("USGSGage", list(
     # ID is in the list, just return that value, otherwise, continue below.
     overridden_gage_id <- gage_comids[[as.character(self$id)]]
     if(!is.null(overridden_gage_id)){
-      print(paste("Using overridden comid for gage of", overridden_gage_id))
+      futile.logger::flog.info(paste("Using overridden comid for gage of", overridden_gage_id))
       self$comid = overridden_gage_id
 
     }else{
 
       self$validate(latlong=TRUE)
+      futile.logger::flog.debug(paste("Longitude:", self$longitude, "Latitude:", self$latitude))
       self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
 
     }

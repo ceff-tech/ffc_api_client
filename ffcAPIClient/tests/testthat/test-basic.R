@@ -1,6 +1,10 @@
 context("Package Workflows")
 token = Sys.getenv("EFLOWS_WEBSITE_TOKEN")
 
+# disable some checks on the number of years of data and timeseries filtering
+pkg.env$FILTER_TIMESERIES <- FALSE
+pkg.env$FAIL_YEARS_DATA <- 0
+
 test_that("Evaluate Gage Alteration Fails",{
   # This really only tests a generic failure - I want it to make sure the eflows website fails to run without a token
   # but what we really need is a pipeline that gets *real* gage data successfully, then tests that it doesn't run
