@@ -36,6 +36,39 @@ That's it. You can now run data through the online FFC using this package and pr
 
 ## Usage Examples
 
+### Following the CEFF Steps
+
+#### Step One
+```r
+library(ffcAPIClient)
+
+ffc <- FFCProcessor$new()  # make a new object we can use to run the commands
+
+# configure the object and run CEFF step 1 plus outputs
+
+ffc$step_one_functional_flow_results(gage_id=11336000,
+     token=token,
+     output_folder = "C:/Users/myusername/Downloads/test")
+```
+That command will output DOH data + image, observed annual data, observed percentiles, and observed plots to the specified folder. It will output the percentiles to the console as well.
+
+It also makes that data available for further analysis on the object `ffc`, so you can now access the FFC results by year as `ffc$ffc_results`, the processed percentiles as `ffc$ffc_percentiles`, and the underlying DOH data as `ffc$doh_data` if you want to view them again in R or feed them into other code and visualizations.
+
+It is highly recommended that you provide the `output_folder` parameter, as the package will also output its log file there, in addition to plots and CSV results. The log will help track the history of the results in case of future changes.
+
+#### Step Two
+For step 2, we now run simply `ffc$step_two_explore_ecological_flow_criteria()` and it continues where we left off. In fact, *everything* is run in step 1, and we just control what is output with these functions. This outputs the predicted metric percentile data as a CSV and to the console, and plots the predicted values on their own.
+
+Now we can access `ffc$predicted_percentiles` if we want to feed that into other processing or visualizations too.
+
+#### Step Three
+For step 3, same thing. Run `ffc$step_three_assess_alteration()` and get the alteration data frame saved as a CSV and printed to the console. Full comparison plots of predicted vs. observed percentiles are output now to the screen and to the folder specified in step 1 (where everything is saved). 
+
+And now we get one more thing we can access - `ffc$alteration` contains the alteration assessment results. In fact everything is accessible after step 1, but conceptually, this is the data frame that corresponds with this step.
+
+There's also more that's available as part of the `ffc` object, but we'll document that elsewhere.
+
+
 ### Easy-mode examples
 ```r
 # If you have a gage and a token, you can get all results simply by running
@@ -52,8 +85,8 @@ ffcAPIClient::evaluate_alteration(timeseries_df = your_df, token = "your_token",
 
 ```
 Both of these functions plot results immediately and optionally save the plots to the output folder. They
-also return a list with keys `ffc_results_df`, `percentiles`, and `drh`, so you can access the transformed
-data directly for additional calculations.
+also return a FFCProcessor object that has items named `ffc_results_df`, `percentiles`, and `drh`, so you can access the transformed
+data directly for additional calculations, in addition to other available data.
 * `ffc_results` includes the raw data from the functional flows calculator for each flow metric by 
    day of water year. 
 * `ffc_percentiles` includes the calculated 10th, 25th, 50th, 75th, and 90th percentiles for each metric

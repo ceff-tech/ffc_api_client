@@ -96,6 +96,7 @@
      <span class="kw">output_folder</span> <span class="kw">=</span> <span class="st">"C:/Users/myusername/Downloads/test"</span>)</pre></body></html></div>
 <p>That command will output DOH data + image, observed annual data, observed percentiles, and observed plots to the specified folder. It will output the percentiles to the console as well.</p>
 <p>It also makes that data available for further analysis on the object <code>ffc</code>, so you can now access the FFC results by year as <code>ffc$ffc_results</code>, the processed percentiles as <code>ffc$ffc_percentiles</code>, and the underlying DOH data as <code>ffc$doh_data</code> if you want to view them again in R or feed them into other code and visualizations.</p>
+<p>It is highly recommended that you provide the <code>output_folder</code> parameter, as the package will also output its log file there, in addition to plots and CSV results. The log will help track the history of the results in case of future changes.</p>
 </div>
 <div id="step-two" class="section level2">
 <h2 class="hasAnchor">

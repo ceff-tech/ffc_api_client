@@ -33,6 +33,8 @@ That command will output DOH data + image, observed annual data, observed percen
 
 It also makes that data available for further analysis on the object `ffc`, so you can now access the FFC results by year as `ffc$ffc_results`, the processed percentiles as `ffc$ffc_percentiles`, and the underlying DOH data as `ffc$doh_data` if you want to view them again in R or feed them into other code and visualizations.
 
+It is highly recommended that you provide the `output_folder` parameter, as the package will also output its log file there, in addition to plots and CSV results. The log will help track the history of the results in case of future changes.
+
 ## Step Two
 For step 2, we now run simply `ffc$step_two_explore_ecological_flow_criteria()` and it continues where we left off. In fact, *everything* is run in step 1, and we just control what is output with these functions. This outputs the predicted metric percentile data as a CSV and to the console, and plots the predicted values on their own.
 
