@@ -18,7 +18,7 @@ test_that("Keeps 1 Day Gap",{
   # then we'll add it to a FFCProcessor object and run setup to make sure it actually gets called there
   ffc <- ffcAPIClient::FFCProcessor$new()
   ffcAPIClient::set_token(token)
-  ffc$fail_years <- 5  # need to lower this value or else it will stop once we drop a year
+  ffc$fail_years_data <- 5  # need to lower this value or else it will stop once we drop a year
   ffc$set_up(timeseries = timeseries, comid=11111111, token = token)
   expect_equal(expected_nrows, nrow(ffc$timeseries))
 })
@@ -35,7 +35,7 @@ test_that("Discards 2 Day Gap",{
 
   # then we'll add it to a FFCProcessor object and run setup to make sure it actually gets called there
   ffc <- ffcAPIClient::FFCProcessor$new()
-  ffc$fail_years <- 5  # need to lower this value or else it will stop once we drop a year
+  ffc$fail_years_data <- 5  # need to lower this value or else it will stop once we drop a year
   ffc$set_up(timeseries = timeseries, comid=11111111, token = token)
   expect_equal(expected_nrows, nrow(ffc$timeseries))
 })

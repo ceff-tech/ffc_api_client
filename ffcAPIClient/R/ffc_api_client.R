@@ -322,7 +322,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   plot_output_folder = NA,
   alteration = NA,
   fail_years_data = pkg.env$FAIL_YEARS_DATA, # we'll stop processing if we have this many years or fewer after filtering
-  warn_year_data = 15,  # we'll warn people if we have this many years or fewer after filtering
+  warn_years_data = 15,  # we'll warn people if we have this many years or fewer after filtering
   timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
   timeseries_max_missing_days = 7,
   timeseries_max_consecutive_missing_days = 1,
@@ -386,26 +386,28 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
 
-    #if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
-    #  self$timeseries <- filter_timeseries(self$timeseries,
-    #                                     date_field = self$date_field,
-    #                                     flow_field = self$flow_field,
-    #                                     date_format_string = self$date_format_string,
-    #                                     max_missing_days = self$timeseries_max_missing_days,
-    #                                     max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
-    #                                     fill_gaps = self$timeseries_fill_gaps)
-    #}
+    if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
+      self$timeseries <- filter_timeseries(self$timeseries,
+                                         date_field = self$date_field,
+                                         flow_field = self$flow_field,
+                                         date_format_string = self$date_format_string,
+                                         max_missing_days = self$timeseries_max_missing_days,
+                                         max_consecutive_missing_days = self$timeseries_max_consecutive_missing_days,
+                                         fill_gaps = self$timeseries_fill_gaps)
 
-    # there will now be a water_year field - check how many years we have
-    number_of_years <- length(unique(self$timeseries$water_year))
-    if(number_of_years <= self$fail_years){
-      error_message <- paste("Can't proceed - too few water years (", number_of_years, ") remaining after filtering to complete years.", sep="")
-      futile.logger::flog.error(error_message)
-      stop(error_message)
-    }
-    if(number_of_years <= self$warn_years){
-      warn_message <- paste("Timeseries dataframe has a low number of water years(", number_of_years, ") - peak metrics may be unreliable", sep="")
-      futile.logger::flog.warn(warn_message)
+      # these stay in the conditional because they rely on the attachment of "water_year"
+      # there will now be a water_year field - check how many years we have
+      number_of_years <- length(unique(self$timeseries$water_year))
+      if(number_of_years <= self$fail_years_data){
+        error_message <- paste("Can't proceed - too few water years (", number_of_years, ") remaining after filtering to complete years.", sep="")
+        futile.logger::flog.error(error_message)
+        stop(error_message)
+      }
+      if(number_of_years <= self$warn_years_data){
+        warn_message <- paste("Timeseries dataframe has a low number of water years(", number_of_years, ") - peak metrics may be unreliable", sep="")
+        futile.logger::flog.warn(warn_message)
+      }
+
     }
 
     self$token <- token
