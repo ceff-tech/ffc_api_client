@@ -69,7 +69,9 @@ And now we get one more thing we can access - `ffc$alteration` contains the alte
 There's also more that's available as part of the `ffc` object, but we'll document that elsewhere.
 
 
-### Easy-mode examples
+### Other examples
+It's recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data
+or for timeseries data of your own.
 ```r
 # If you have a gage and a token, you can get all results simply by running
 ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", comid = segment_comid, plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
