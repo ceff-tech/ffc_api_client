@@ -112,6 +112,11 @@ get_stream_class_code_for_comid <- function(comid){
   return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS_CODE))
 }
 
+get_stream_class_id_for_comid <- function(comid){
+  stream_class_data <- get_dataset("stream_class_data")
+  return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS))
+}
+
 #' Get the parameters sent to the FFC for a stream segment
 #'
 #' Given a COMID, looks up the hydrogeomorphic stream classification, then uses that to find the default parameters that
@@ -139,6 +144,6 @@ get_ffc_parameters_for_comid_as_json <- function(comid){
   # to change it they ever have a list
   json_representation <- gsub("\\[", "", json_representation)
   json_representation <- gsub("\\]", "", json_representation)
-  json_representation <- paste(json_representation, ',"location":"ffcAPIClient","riverName":"ffcAPIClient"')
+  json_representation <- paste(json_representation, ',"location":"ffcAPIClient","riverName":"ffcAPIClient","class_num":"',get_stream_class_id_for_comid(comid),'"', sep="")
   return(json_representation)
 }

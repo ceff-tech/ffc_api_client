@@ -138,6 +138,10 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.7.2
+* [Update] Fixes for new versions of the eflows API launched recently. Everyone using this package will need
+          to upgrade to this version or newer to keep using the package.
+
 ### Version 0.9.7.1
 * Added function `clean_account` to remove all current runs from the online FFC. Helps with broken accounts
   after recent FFC update. To use, just call `clean_account(token)` after setting your token value into the

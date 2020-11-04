@@ -294,6 +294,7 @@ rename_by_metric <- list(
   "fallWinter" = list(
     "bfl_durs" = "Wet_BFL_Dur",
     "baseflows_10" = "Wet_BFL_Mag_10",
-    "baseflows_50" = "Wet_BFL_Mag_50"
+    "baseflows_50" = "Wet_BFL_Mag_50",
+    "wet_timings_water" = "Wet_Tim"
   )
 )
