@@ -112,9 +112,14 @@ get_stream_class_code_for_comid <- function(comid){
   return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS_CODE))
 }
 
+# Gets the stream class ID - the FFC online requires it. Returns "3" if we can't look up a stream class
 get_stream_class_id_for_comid <- function(comid){
   stream_class_data <- get_dataset("stream_class_data")
-  return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS))
+  class_id <- as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS)
+  if (length(class_id) == 0){
+    return("3")  # the FFC uses this as the default
+  }
+  return(class_id)
 }
 
 #' Get the parameters sent to the FFC for a stream segment
