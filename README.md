@@ -138,6 +138,11 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.7.1
+* Added function `clean_account` to remove all current runs from the online FFC. Helps with broken accounts
+  after recent FFC update. To use, just call `clean_account(token)` after setting your token value into the
+  variable named `token`
+
 ### Version 0.9.7.0
 * [Change] Data sent to the FFC is now filtered according to CEFF Tech Team determined rules - water years
           are dropped if they have more than 7 missing days or more than 2 consecutive missing days (by default). 

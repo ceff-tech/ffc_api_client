@@ -160,6 +160,31 @@ delete_ffc_run_by_id <- function(id){
 }
 
 
+#' Clean account
+#'
+#' Deletes all runs in the online FFC for the user. Helpful in cases
+#' where the website configuration changes and makes accounts broken
+#' in the online interface.
+#'
+#' @param token. A valid token for the account to clean out. See install
+#' instructions for details
+#'
+#' @export
+clean_account <- function(token){
+  set_token(token)
+  flows_json <- make_json(NULL, NULL, token = pkg.env$TOKEN, extra = "")
+
+  endpoint <- paste(pkg.env$SERVER_URL, 'user/get_user_uploads', sep="")
+  response_data <- httr::POST(endpoint, httr::content_type("application/json"), body=flows_json)
+  httr::stop_for_status(response_data)
+  results <- httr::content(response_data, "parsed", "application/json")
+
+  for (row in results$rows){
+    delete_ffc_run_by_id(row$id)  # remove the run from the FFC online so it doesn't balloon on us
+  }
+}
+
+
 # Run Data Frame Through Functional Flows Calculator
 #
 # This is primarily an internal function used to run data through the functional flows
