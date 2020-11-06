@@ -4,7 +4,7 @@
 \alias{get_predicted_flow_metrics}
 \title{Retrieves flow predicted flow metric values for a stream segment}
 \usage{
-get_predicted_flow_metrics(comid, online, wyt)
+get_predicted_flow_metrics(comid, online, wyt, fill_na_p10)
 }
 \arguments{
 \item{comid}{character. A string of a NHD COMID to retrieve metrics for.}
