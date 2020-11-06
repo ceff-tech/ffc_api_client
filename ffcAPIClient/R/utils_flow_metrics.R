@@ -35,7 +35,7 @@ get_dataset <- function(dataset_name){
 #'        choice - sorry for any confusion!).
 #'
 #' @export
-get_predicted_flow_metrics <- function(comid, online, wyt){
+get_predicted_flow_metrics <- function(comid, online, wyt, fill_na_p10){
   if(missing(online)){
     online <- TRUE
   }
@@ -44,8 +44,12 @@ get_predicted_flow_metrics <- function(comid, online, wyt){
     wyt <- "all"
   }
 
+  if(missing(fill_na_p10)){
+    fill_na_p10 <- FALSE
+  }
+
   if(online){
-    return(get_predicted_flow_metrics_online(comid, wyt = wyt))
+    return(get_predicted_flow_metrics_online(comid, wyt = wyt, fill_na_p10 = fill_na_p10))
   } else {
     return(get_predicted_flow_metrics_offline(comid))
   }
@@ -58,7 +62,7 @@ get_predicted_flow_metrics_offline <- function(comid){
   return(flow_metrics[flow_metrics$comid == comid, ])
 }
 
-get_predicted_flow_metrics_online <- function(comid, wyt){
+get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
   if(missing(wyt)){
     wyt = "all"
   }
@@ -79,8 +83,35 @@ get_predicted_flow_metrics_online <- function(comid, wyt){
     warning("Flow metric data from API contained duplicated records for some flow metrics that we automatically removed. This is a data quality issue in the predicted data - it can occasionally produce incorrect results - check the values of the predicted flow metrics at https://flows.codefornature.org")
   }
 
+  deduplicated <- fill_na_10th_percentile(deduplicated, fill_na_p10)
+
   return(replace_ffm_column(deduplicated))  # rename the "ffm" column to "metric"
 
+}
+
+
+#' Fill 10th Percentile NA values when 25th percentile value is 0
+#'
+#' Sometimes data from the predicted metrics API has NA values in the 10th percentile field due to modeling errors where these numbers
+#' were originally set to negative values and were replaced with NA in the API. This function, which needs to be enabled using
+#' the ffc$predicted_percentiles_fill_na_p10 flag on FFCProcessor objects, fills any NA values it finds in the p10 field *if*
+#' the p25 field is 0. Otherwise, it leaves them as they are. Raises a warning if it finds any NA values in the p10 field regardless
+#' of whether it fills them.
+#'
+#' This function can be used with any other data frame that containes field p10 and p25 as well, though I'm not sure the conditions
+#' you'd need to!
+#'
+#' @export
+fill_na_10th_percentile <- function(df, fill_na_p10){
+  if(any(is.na(df$p10))){  # if we have any NA values in the p10 field - sometimes these occur because of how the API processes the data
+    if(fill_na_p10){
+      df[is.na(df$p10) & df$p25 == 0,]$p10 <- 0
+      warning("Predicted flow metrics have NA values in the 10th percentile column - they have been filled with 0 values where the 25h percentile value is 0 and left as is otherwise")
+    }else{
+      warning("Predicted flow metrics have NA values in the 10th percentile column - this is a data quality issue in the predicted metrics API. You can enable ffc$predicted_percentiles_fill_na_p10 to automatically fill these values with the 25th percentile data. As is, they are likely to cause failures later in the analysis.")
+    }
+  }
+  return(df)
 }
 
 

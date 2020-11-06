@@ -341,6 +341,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   predicted_percentiles = NA,
   predicted_wyt_percentiles = NA,
   predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
+  predicted_percentiles_fill_na_p10 = TRUE,  # sometimes we get 10th percentiles that are NA - should we fill them with 0 when p25 is also 0?
   doh_data = NA,
   doh_plot = NA,
   plots = NA,
@@ -445,7 +446,11 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   run = function(){
     futile.logger::flog.info(paste("Using date format string", self$date_format_string))
 
-    predicted_percentiles <- get_predicted_flow_metrics(self$comid, online = self$predicted_percentiles_online, wyt = "any")
+    predicted_percentiles <- get_predicted_flow_metrics(self$comid,
+                                                        online = self$predicted_percentiles_online,
+                                                        wyt = "any",
+                                                        fill_na_p10 = self$predicted_percentiles_fill_na_p10)
+
     if(self$predicted_percentiles_online){  # split them out so that we have the normal predicted percentiles with old-school behavior, and then one with just the WYT records
       self$predicted_percentiles <- predicted_percentiles[predicted_percentiles$wyt == "all",]
       self$predicted_wyt_percentiles <- predicted_percentiles[predicted_percentiles$wyt != "all",]
