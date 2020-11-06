@@ -138,6 +138,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.7.3
+* [Bugfix] Previously, providing a timeseries with a date field that was not named "date" (case sensitive)
+          would fail when building the data frame to send to the FFC. This has been fixed, and any date
+          field name should be usable, so long as it is provided as a parameter, or set on the `ffc` object
+          before running `ffc$set_up`.
+
 ### Version 0.9.7.2
 * [Update] Fixes for new versions of the eflows API launched recently. Everyone using this package will need
           to upgrade to this version or newer to keep using the package.
