@@ -284,9 +284,9 @@ evaluate_timeseries_alteration <- function (timeseries_data, comid, plot_output_
 }
 
 # Converts dates from the provided format string into the format used by the FFC online
-convert_dates <- function(timeseries_data, date_format_string){
-  timeseries_dates <- strptime(as.character(timeseries_data$date), format = date_format_string)
-  timeseries_data$date <- strftime(timeseries_dates, "%m/%d/%Y")
+convert_dates <- function(timeseries_data, date_format_string, date_field){
+  timeseries_dates <- strptime(as.character(timeseries_data[[date_field]]), format = date_format_string)
+  timeseries_data[[date_field]] <- strftime(timeseries_dates, "%m/%d/%Y")
   return(timeseries_data)
 }
 
@@ -413,6 +413,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
 
+    # Filter Timeseries!
     if(self$timeseries_enable_filtering){ # this will *always* trigger by default, but is here so advanced users can turn it off if they want
       self$timeseries <- filter_timeseries(self$timeseries,
                                          date_field = self$date_field,
@@ -453,7 +454,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$predicted_percentiles <- predicted_percentiles
     }
 
-    timeseries_data <- convert_dates(self$timeseries, self$date_format_string)  # standardize the dates based on the format string
+    timeseries_data <- convert_dates(self$timeseries, self$date_format_string, self$date_field)  # standardize the dates based on the format string
     timeseries_data <- timeseries_data[, which(names(timeseries_data) %in% c(self$date_field, self$flow_field))]  # subset to only these fields so we can run complete cases
     timeseries_data <- timeseries_data[complete.cases(timeseries_data),]  # remove records where date or flows are NA
 
