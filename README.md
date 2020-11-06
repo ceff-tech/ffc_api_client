@@ -138,6 +138,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.7.4
+* [Enhancement] New code that fills NA values in the 10th percentile column of predicted metrics from the
+          TNC API if the 25th percentile column is 0. A warning will be raised if NA values are found
+          in the 10th percentile column. Can be turned off by setting `ffc$predicted_percentiles_fill_na_p10`
+          to FALSE.
+
 ### Version 0.9.7.3
 * [Bugfix] Previously, providing a timeseries with a date field that was not named "date" (case sensitive)
           would fail when building the data frame to send to the FFC. This has been fixed, and any date
