@@ -105,9 +105,9 @@ get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
 fill_na_10th_percentile <- function(df, fill_na_p10){
   if(any(is.na(df$p10))){  # if we have any NA values in the p10 field - sometimes these occur because of how the API processes the data
     if(fill_na_p10){
-      df[is.na(df$p10) & df$p25 == 0,]$p10 <- 0
+      df[is.na(df$p10) & df$p25 == 0,]$p10 <- 0  # fill only those where p10 is NA and p25 is 0
       warning("Predicted flow metrics have NA values in the 10th percentile column - they have been filled with 0 values where the 25h percentile value is 0 and left as is otherwise")
-      if(any(is.na(df$p10))){
+      if(any(is.na(df$p10))){  # if we still have NAs, then some weren't filled - warn the user
         warning("Unfilled NAs remain in the p10 column - we can't safely fill these because the p25 column is greater than 0 - this will likely break the code later in the package, so expect an error! These NA values should be addressed more broadly by the CEFF tech team.")
       }
     }else{
