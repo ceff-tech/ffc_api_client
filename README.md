@@ -138,6 +138,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.7.5
+* [Update] Included updated data for peak flow metric predictions into package data. To support this,
+          we are temporarily changing the FFCProcessor object to use offline metrics instead of data
+          from the TNC API. If you wish to use the API again, set `ffc$predicted_percentiles_online <- TRUE`.
+          We will revert it to using online data in the future once the API is updated
+
 ### Version 0.9.7.4
 * [Enhancement] New code that fills NA values in the 10th percentile column of predicted metrics from the
           TNC API if the 25th percentile column is 0. A warning will be raised if NA values are found

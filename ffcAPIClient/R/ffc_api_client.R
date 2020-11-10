@@ -340,7 +340,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   ffc_percentiles = NA,
   predicted_percentiles = NA,
   predicted_wyt_percentiles = NA,
-  predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
+  predicted_percentiles_online = FALSE,  # should we get predicted flow metrics from the online API, or with our offline data?
   predicted_percentiles_fill_na_p10 = TRUE,  # sometimes we get 10th percentiles that are NA - should we fill them with 0 when p25 is also 0?
   doh_data = NA,
   doh_plot = NA,

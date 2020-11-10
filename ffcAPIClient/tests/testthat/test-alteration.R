@@ -182,7 +182,7 @@ test_that("Jones Bar Gage has Correct Alteration Scores", {
   results <- evaluate_gage_alteration(11417500, token, comid = 8060983, plot_results = FALSE)
 
   expect_equal(results$alteration[results$alteration$metric == "DS_Dur_WS", ]$status_code, LIKELY_UNALTERED_STATUS_CODE)
-  expect_equal(results$alteration[results$alteration$metric == "FA_Mag", ]$status_code, INDETERMINATE_STATUS_CODE)  # in Alyssa's excel calc, this was likely altered because of differing percentile calculations
+  expect_equal(results$alteration[results$alteration$metric == "FA_Mag", ]$status_code, LIKELY_ALTERED_STATUS_CODE)  # in Alyssa's excel calc, this was likely altered because of differing percentile calculations
   expect_equal(results$alteration[results$alteration$metric == "SP_Mag", ]$status_code, INDETERMINATE_STATUS_CODE)
   expect_equal(results$alteration[results$alteration$metric == "Wet_BFL_Mag_10", ]$status_code, LIKELY_ALTERED_STATUS_CODE)
   expect_equal(results$alteration[results$alteration$metric == "Wet_BFL_Mag_50", ]$status_code, LIKELY_ALTERED_STATUS_CODE)

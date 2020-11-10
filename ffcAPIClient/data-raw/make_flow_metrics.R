@@ -54,9 +54,12 @@ get_all_raw_predicted_flow_metrics <- function(input_folder){
   print(filenames)
   datalist <- lapply(filenames, function (x) utils::read.csv(file=x, header=TRUE))
   results <- Reduce(function(x,y) rbind(x,y), datalist)
-  names(results)[names(results) == 'FFM'] <- 'metric'  # rename the FFM field to metric
-  names(results)[names(results) == 'COMID'] <- 'comid'  # rename the COMID field to comid for case consistency
 
+  drop_fields <- c("alteration", "gage_id", "observed_years")
+  names(results)[names(results) == 'ffm'] <- 'metric'  # rename the FFM field to metric
+  #names(results)[names(results) == 'COMID'] <- 'comid'  # rename the COMID field to comid for case consistency
+
+  results <- results[, !names(results) %in% drop_fields]  # get rid of any extraneous fields
   # remove duplicates
   results <- results[!duplicated(results[,c("metric", "comid")]), ]  # deduplicate on unique comid/metric combo
 
@@ -65,13 +68,13 @@ get_all_raw_predicted_flow_metrics <- function(input_folder){
 
 
 # This is the only function you typically need to run to update the data - it calls the get_all_predicted_flow_metrics code above
-save_all_predicted_flow_metrics <- function(output_path){
+save_all_predicted_flow_metrics <- function(input_folder, output_path){
   if(missing(output_path)){
     # we'll make it this way since only the package root is guaranteed to exist here.
     package_root <- system.file(package="ffcAPIClient")
     output_path <- paste(package_root, "data", "flow_metrics.rda", sep="/")
     print(paste("Saving Output to ", output_path))
   }
-  flow_metrics <- get_all_raw_predicted_flow_metrics(input_folder="C:/Users/dsx/Dropbox/Code/belleflopt/data/ffm_modeling/Data/NHD FFM predictions")
+  flow_metrics <- get_all_raw_predicted_flow_metrics(input_folder=input_folder)
   save(flow_metrics, file=output_path)
 }
