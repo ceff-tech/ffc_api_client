@@ -334,6 +334,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
   comid = NA,
   timeseries = NA,
   gage = NA,  ##
+  get_comid_online = TRUE,  # when looking up a comid for a gage or a lon/lat, should we use the online service, or download local data and do it ourselves. Online preferred, but it goes down sometimes
   raw_ffc_results = NA,
   filter_ffc_results = TRUE,  # indicates whether we want to remove anything that's not a flow metric automatically (Julian day results, some diagnostics)
   ffc_results = NA,
@@ -386,13 +387,17 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$gage$get_data()  # this could be extra if someone provided gage ID and timeseries - that seems weird though - not adding another conditional - not needed
 
       if(is.na(comid)){
-        self$gage$get_comid()
+        self$gage$get_comid(online=self$get_comid_online)
       } else {
         self$gage$comid <- comid
       }
       self$comid <- self$gage$comid
     } else {
       self$comid <- comid
+    }
+
+    if(length(self$comid) == 0){
+      futile.logger::flog.warn("COMID lookup appears to have failed. You'll need to set it manually *before* calling $run on this object or the following steps will fail. Just set $comid to the value of the COMID for this data or gage. If you are using the CEFF step functions, rerun the first step and provide a comid argument as a paremeter. To get the comid, you can try calling ffcAPIClient::get_comid_for_lon_lat with your longitude and latitude to manually get the COMID, but you will still need to set it here manually - a manual lookup in a GIS package or somewhere else may be your best bet though.")
     }
 
     if(is.null(timeseries)){
@@ -433,7 +438,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
         stop(error_message)
       }
       if(number_of_years <= self$warn_years_data){
-        warn_message <- paste("Timeseries dataframe has a low number of water years(", number_of_years, ") - peak metrics may be unreliable", sep="")
+        warn_message <- paste("Timeseries dataframe has a low number of water years (", number_of_years, ") - peak metrics may be unreliable", sep="")
         futile.logger::flog.warn(warn_message)
       }
 
@@ -457,6 +462,14 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
       self$predicted_percentiles <- self$predicted_percentiles[!names(predicted_percentiles) %in% c("wyt")]  # now drop the ffm column
     } else {
       self$predicted_percentiles <- predicted_percentiles
+    }
+
+    if(nrow(self$predicted_percentiles) < 24){
+      if(nrow(self$predicted_percentiles) == 0){
+        futile.logger::flog.error("Failed to get predicted percentiles. It's likely that the COMID wasn't modeled. Check that the found COMID printed by the package is correct, and if it's not, specify the COMID manually, which may resolve this issue. The package will likely fail at a future processing step.")
+      }else{
+        futile.logger::flog.warn("Received an insufficient number of predicted metric rows, which may cause failures at a later step. Check that the found COMID printed by the package is correct, and if it's not, specify the COMID manually, which may resolve this issue. You may want to report this error at https://github.com/ceff-tech/ffcapiclient/issues so we can make sure to have complete predicted metric data")
+      }
     }
 
     timeseries_data <- convert_dates(self$timeseries, self$date_format_string, self$date_field)  # standardize the dates based on the format string

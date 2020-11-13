@@ -100,10 +100,6 @@ filter_timeseries <- function(timeseries,
 
     # if any time difference in observations is greater than the number of missing days + 12 hours (12 to make sure we're in between days)
     if(any(hour_differences > ((max_consecutive_missing_days * 24) + 36))){ # a one day gap results in a 48 hour gap in the differences, so add a day so that we need two days to make a real gap - we occasionally get an hour of variation too, so add another 12 hours
-      #print(hour_differences)
-      #print(any(hour_differences > ((max_consecutive_missing_days * 24) + 12)))
-      #print(max(hour_differences))
-      #print((max_consecutive_missing_days * 24) + 12)
       futile.logger::flog.info(paste("Excluding water year", as.character(year),"for having a data gap larger than",as.character(max_consecutive_missing_days)))
       exclude_years <- append(exclude_years, year)
     }

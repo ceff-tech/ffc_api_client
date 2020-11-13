@@ -85,7 +85,7 @@ Internal method. Checks parameters to make sure they're ready for other methods 
 \if{latex}{\out{\hypertarget{method-get_comid}{}}}
 \subsection{Method \code{get_comid()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{USGSGage$get_comid(online = TRUE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Details}{

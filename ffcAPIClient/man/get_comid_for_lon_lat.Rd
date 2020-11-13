@@ -4,12 +4,20 @@
 \alias{get_comid_for_lon_lat}
 \title{Retrieves COMID for a given USGS gage which collects daily data.}
 \usage{
-get_comid_for_lon_lat(longitude, latitude)
+get_comid_for_lon_lat(longitude, latitude, online = TRUE)
 }
 \arguments{
 \item{longitude}{numeric. Longitude or X.}
 
 \item{latitude}{numeric. Longitude or Y.}
+
+\item{online}{boolean. Default TRUE. When TRUE, looks up the COMID using the nhdplustools
+package and USGS web services. Sometimes these are spotty though, so you can set offline
+to FALSE and this function will perform the lookup locally with spatial data. It will still
+download a large amount of spatial data for
+NHD segments the first time it runs with the flag set to FALSE, but then future lookups will be
+much faster. It uses the nhdR package, which is not included as a package requirement, and instead
+is installed only if you set \code{ffc$get_comid_online = FALSE}.}
 }
 \description{
 This function returns the COMID associated with a specific USGS gage.

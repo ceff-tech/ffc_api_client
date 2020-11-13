@@ -138,6 +138,19 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.8.0
+* [Enhancement] The package now checks to make sure it received a valid COMID from web services, which
+          helps when the web service is down. It prints a warning if the lookup failed.
+* [Enhancement] The package now checks to make sure it obtained at least 24 predicted metric records. If
+          it didn't but received some, then it prints a warning. If it received no records, it prints
+          an error about the COMID
+* [Enhancement] Added a new `$get_comid_online` (default TRUE) flag to FFCProcessor objects. The web service
+          that we use to look up COMIDs for gages has been spotty recently, and we returned the option to
+          do a lookup locally with spatial data. It will still download a large amount of spatial data for
+          NHD segments the first time it runs with the flag set to FALSE, but then future lookups will be
+          much faster. It uses the nhdR package, which is not included as a package requirement, and instead
+          is installed only if you set `ffc$get_comid_online = FALSE`.
+
 ### Version 0.9.7.5
 * [Update] Included updated data for peak flow metric predictions into package data. To support this,
           we are temporarily changing the FFCProcessor object to use offline metrics instead of data

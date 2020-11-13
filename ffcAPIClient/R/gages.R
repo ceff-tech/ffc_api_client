@@ -124,7 +124,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
   #' to get a reliable COMID for a gage, do so - in this method, we look up the stream
   #' segment by long/lat using nhdPlusTools.
   #'
-  get_comid = function(){
+  get_comid = function(online=TRUE){
     # in some cases, lat/long produce the wrong COMID. We have a list where we store corrected values - if this gage
     # ID is in the list, just return that value, otherwise, continue below.
     overridden_gage_id <- gage_comids[[as.character(self$id)]]
@@ -136,7 +136,7 @@ USGSGage <- R6::R6Class("USGSGage", list(
 
       self$validate(latlong=TRUE)
       futile.logger::flog.debug(paste("Longitude:", self$longitude, "Latitude:", self$latitude))
-      self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude)
+      self$comid <- get_comid_for_lon_lat(self$longitude, self$latitude, online=online)
 
     }
 

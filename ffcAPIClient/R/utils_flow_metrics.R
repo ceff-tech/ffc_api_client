@@ -126,12 +126,53 @@ fill_na_10th_percentile <- function(df, fill_na_p10){
 #'
 #' @param longitude numeric. Longitude or X.
 #' @param latitude numeric. Longitude or Y.
+#' @param online boolean. Default TRUE. When TRUE, looks up the COMID using the nhdplustools
+#' package and USGS web services. Sometimes these are spotty though, so you can set offline
+#' to FALSE and this function will perform the lookup locally with spatial data. It will still
+#' download a large amount of spatial data for
+#' NHD segments the first time it runs with the flag set to FALSE, but then future lookups will be
+#' much faster. It uses the nhdR package, which is not included as a package requirement, and instead
+#' is installed only if you set \code{ffc$get_comid_online = FALSE}.
 #'
 #' @export
-get_comid_for_lon_lat <- function(longitude, latitude){
+get_comid_for_lon_lat <- function(longitude, latitude, online=TRUE){
+  if(online){
+    return(get_comid_for_lon_lat_online(longitude, latitude))
+  }else{
+    return(get_comid_for_lon_lat_offline(longitude, latitude))
+  }
+}
+
+get_comid_for_lon_lat_online <- function(longitude, latitude){
   start_point <- sf::st_sfc(sf::st_point(c(longitude, latitude)), crs = 4269)
   return(nhdplusTools::discover_nhdplus_id(start_point))
 }
+
+
+get_comid_for_lon_lat_offline <- function(longitude, latitude){
+
+  # not going to make this a normal required package because I'm not sure we'll use it in most cases
+  if (!("nhdR" %in% installed.packages())){
+    install.packages("nhdR",dep=TRUE)
+    if(!("nhdR" %in% installed.packages())) stop("Couldn't install nhdR")
+  }
+
+  if(length(nhdR::nhd_plus_list(vpu=18)) < 20){  # checks if the NHDPlus Data has already been downloaded
+    # if there aren't at least 20 items (which is what it returns as of 2019/12/19), then the download might
+    # be incomplete and we should forcibly have nhdR correct itself.
+    nhdR::nhd_plus_get(vpu = 18, force_dl = TRUE, force_unzip = TRUE)  # downloads and caches it for use
+  }
+
+  # This does all the spatial stuff for us automatically - basically does a spatial join at this gage's
+  # latitude and longitude to find the stream segments within 100 meters. Then we'll pull the COMIDs
+  spatial_qry <- nhdR::nhd_plus_query(longitude,
+                                      latitude,
+                                      dsn = c("NHDFlowline"),
+                                      buffer_dist = units::as_units(100, "m"))
+
+  return(spatial_qry$sp$NHDFlowline[1]$COMID)  # gets the first COMID returned
+}
+
 
 replace_ffm_column <- function(df){
 
