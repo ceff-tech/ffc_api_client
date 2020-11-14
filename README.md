@@ -138,6 +138,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.8.1
+* [Bugfix] Internal stream class data occasionally had multiple records, which would cause bad parameters
+          to be sent to the FFC and a failure in the package. Now checks if there's more than one stream
+          class record and uses the first one.
+
+
 ### Version 0.9.8.0
 * [Enhancement] The package now checks to make sure it received a valid COMID from web services, which
           helps when the web service is down. It prints a warning if the lookup failed.

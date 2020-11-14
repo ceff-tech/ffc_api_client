@@ -1,7 +1,7 @@
 Package: ffcAPIClient
 Type: Package
 Title: Functional Flows Calculator API Client
-Version: 0.9.8.0
+Version: 0.9.8.1
 Authors@R: c(
     person("Nick", "Santos", email="nrsantos@ucdavis.edu", role=c("aut", "cre")), 
     person("Ryan", "Peek", email="rapeek@ucdavis.edu", role="aut"),

@@ -107,15 +107,24 @@ class_params$RGW$summer_params$sensitivity <- 1100
 class_params$RGW$summer_params$peak_sensitivity <- 0.1
 
 
-get_stream_class_code_for_comid <- function(comid){
+get_single_stream_record_for_comid <- function(comid){
   stream_class_data <- get_dataset("stream_class_data")
-  return(as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS_CODE))
+  stream_record <- stream_class_data[stream_class_data$COMID == comid, ]
+  if(nrow(stream_record) > 1){
+    return(stream_record[1,])  # return only the first one
+  }else{
+    return(stream_record)
+  }
+}
+
+
+get_stream_class_code_for_comid <- function(comid){
+  return(as.character(get_single_stream_record_for_comid(comid)$CLASS_CODE))
 }
 
 # Gets the stream class ID - the FFC online requires it. Returns "3" if we can't look up a stream class
 get_stream_class_id_for_comid <- function(comid){
-  stream_class_data <- get_dataset("stream_class_data")
-  class_id <- as.character(stream_class_data[stream_class_data$COMID == comid, ]$CLASS)
+  class_id <- as.character(get_single_stream_record_for_comid(comid)$CLASS)
   if (length(class_id) == 0){
     return("3")  # the FFC uses this as the default
   }
