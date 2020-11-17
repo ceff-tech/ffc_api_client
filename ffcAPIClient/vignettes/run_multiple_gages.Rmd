@@ -1,0 +1,282 @@
+---
+title: "Use ffcAPIClient to Run Multiple Gages"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Use ffcAPIClient to Run Multiple Gages"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, eval = FALSE)
+
+```
+
+## Iterating through Multiple Gages with ffcAPIClient
+
+This vignette demonstrates one approach to running multiple gages through the FFC at once. It does require some knowledge of functions and using the [`{purrr}`](https://purrr.tidyverse.org/) package in R. It also assumes the user has already successfully been able to run a single gage (see the vignette on [following the CEFF steps](https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html)).
+
+To work through this tutorial, we'll need a a few packages that aren't part of the **ffcAPIClient**.
+
+### Packages for Iterating over a list of Gages
+
+These packages are needed. If you don't have them installed, use `install.packages("packagename")`. 
+
+
+```{r setupFFC}
+
+# main ffc package
+library(ffcAPIClient)
+
+# packages
+library(dplyr) # for data wrangling
+library(purrr) # for iterating over lists and applying functions
+library(glue) # good for pasting things together
+library(fs) # for working with directories and files
+library(tictoc) # timing stuff
+library(here) # helps with setting home directory/path
+library(stringr) # for working with strings
+
+```
+
+### Loading Custom Functions
+
+The following is a description of the custom functions that are used to iterate over a list of gages. You can read them over and modify as needed, or just load them and use them as-is.
+
+--- 
+
+**Iteration with purrr**
+
+These functions are flexible, you can add any additional specifications to the ffc processor object that you would like (i.e., changing the number of minimum years required, adjust the date threshold, etc.). Currently the default is to save the `alteration`, `ffc_results`, `ffc_percentiles`, and `predicted_percentiles` to individual csv's for each gage. These can then be combined afterwards (see below for second function to do so).
+
+An important part of making this function work is the `possibly()` function that is used to essentially allow the iteration to continue even if a single gage fails (e.g., due to missing data). Future versions of this function may provide better ways of capturing information relating to why a gage didn't run, but most typically it is because there was insufficient data. Note, if you want to change the output location, you can change the paths in the `dir_create` and `write_csv` functions.
+
+```{r iterateFunction}
+
+# these functions written by R. Peek 2020 to facilitate iteration
+
+library(readr)
+library(ffcAPIClient)
+library(purrr)
+library(glue)
+library(fs)
+
+# write a function to pull the data
+ffc_iter <- function(id, startDate, save=TRUE){
+  if(save==TRUE){
+    # create output directory
+    dir_create("output/fc")
+    # start ffc processor
+    ffc <- FFCProcessor$new()
+    # setup
+    ffc$gage_start_date = startDate
+    ffc$warn_years_data = 12
+    ffc$fail_years_data = 10
+    ffc$set_up(gage_id = id, token=ffctoken)
+    ffc$run()
+    # write out
+    write_csv(ffc$alteration, file = glue::glue("output/ffc/{id}_alteration.csv"))
+    write_csv(ffc$ffc_results, file = glue::glue("output/ffc/{id}_ffc_results.csv"))
+    write_csv(ffc$ffc_percentiles, file=glue::glue("output/ffc/{id}_ffc_percentiles.csv"))
+    write_csv(ffc$predicted_percentiles, file=glue::glue("output/ffc/{id}_predicted_percentiles.csv"))
+    #save(ffc, file = glue::glue("output/ffc/{id}_rdata_ffc.rda"))
+  } else {
+    # start ffc processor
+    ffc <- FFCProcessor$new()
+    # setup
+    ffc$gage_start_date = startDate
+    ffc$set_up(gage_id = id, token=ffctoken)
+    ffc$run()
+    return(ffc)
+  }
+}
+
+# wrap in possibly to permit error catching
+# see helpful post here: https://aosmith.rbind.io/2020/08/31/handling-errors/
+ffc_possible <- possibly(.f = ffc_iter, otherwise = NA_character_)
+```
+
+To use this function, you can copy and paste the above, or save it to a script, or [download from here](https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R). Load the function:
+
+```{r loadIterateFunc}
+
+# if saved locally
+source("R/f_iterate_ffc.R")
+
+# if sourcing from the web
+source("https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R")
+
+```
+
+<br>
+
+**Function to Collapse output csvs**
+
+This function helps us read in our data that we saved using the function above. This function assumes things are in `output/ffc`. Similarly, can load from a file saved locally, or from online version.
+
+```{r collapseFFCoutputsFunction}
+
+library(fs)
+library(purrr)
+
+# need function to read in and collapse different ffc outputs
+ffc_collapse <- function(datatype, fdir){
+  datatype = datatype
+  csv_list = fs::dir_ls(path = fdir, regexp = datatype)
+  csv_names = fs::path_file(csv_list) %>% fs::path_ext_remove()
+  gage_ids = str_extract(csv_names, '([0-9])+')
+  # read in all
+  df <- purrr::map(csv_list, ~read_csv(.x)) %>%
+    map2_df(gage_ids, ~mutate(.x,gageid=.y))
+}
+
+```
+
+Load the function:
+
+```{r loadCollapseFunction}
+
+# saved locally
+source("R/f_ffc_collapse.R")
+
+# load from link
+source("https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R")
+
+```
+
+<br>
+
+
+### Get List of USGS Gages to Run
+
+Once we have our functions loaded, we can set up our list of gages. This is an example list which includes a few USGS gages that should *not* return data, because there is an insufficent period of record available to calculate the FF metrics.
+
+```{r gageList}
+
+gage_list <- c("09423350", "09427600", "11427000", "09529700", "11394500", "11264500")
+
+```
+
+
+### Setup Iteration
+
+Here we can setup parameters used in the iteration function. Currently this is essentially only the start date.
+
+```{r}
+# set start date to start WY 1980
+st_date <- "1979-10-01"
+
+# set your ffc token here:
+ffctoken <- "your_token_here"
+```
+
+### Run Iteration Function
+
+Finally we can run these and generate our data (as csvs), which we will then read back into R and collapse into a single file for use in analysis.
+
+First we run the iterate function to pull the data. Note, any gage that returns an `NA` did not have sufficient data for the FFC to calculate metrics.
+
+```{r runIterate}
+tic() # start time
+ffcs <- map(gage_list, ~ffc_possible(.x, startDate = st_date, ffctoken=ffctoken, save=TRUE)) %>%
+  # add names to list
+  set_names(x = ., nm=gage_list)
+toc() # end time
+
+```
+
+After running this, we should see two things. First, the printout should look something like this for each gage run:
+
+```
+INFO [2020-11-17 12:20:48] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:20:48] Excluding water years 1982 for having more than 7 missing days of data
+INFO [2020-11-17 12:20:48] Excluding water years 2021 for having more than 7 missing days of data
+INFO [2020-11-17 12:20:48] Using date format string %m/%d/%Y
+WARN [2020-11-17 12:20:48] Received an insufficient number of predicted metric rows, which may cause failures at a later step. Check that the found COMID printed by the package is correct, and if it's not, specify the COMID manually, which may resolve this issue. You may want to report this error at https://github.com/ceff-tech/ffcapiclient/issues so we can make sure to have complete predicted metric data
+INFO [2020-11-17 12:20:49] Couldn't find stream class for COMID or no COMID provided (Provided value: 10017314). Sending the general parameters to the FFC online, which may result in different results than if a COMID was provided or could be found
+WARN [2020-11-17 12:20:52] Less than 10 years of data...try again
+INFO [2020-11-17 12:20:52] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:20:54] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:20:54] Excluding water years 2021 for having more than 7 missing days of data
+INFO [2020-11-17 12:20:54] Using date format string %m/%d/%Y
+INFO [2020-11-17 12:20:55] COMID 14996611 is of stream class LSR - sending parameters to FFC online for that stream class. This may produce different results than if you run data through the FFC yourself using their default parameters.
+INFO [2020-11-17 12:21:06] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:21:06] Excluding water years 2005 for having more than 7 missing days of data
+INFO [2020-11-17 12:21:06] Excluding water years 2017 for having more than 7 missing days of data
+INFO [2020-11-17 12:21:06] Using date format string %m/%d/%Y
+WARN [2020-11-17 12:21:06] Received an insufficient number of predicted metric rows, which may cause failures at a later step. Check that the found COMID printed by the package is correct, and if it's not, specify the COMID manually, which may resolve this issue. You may want to report this error at https://github.com/ceff-tech/ffcapiclient/issues so we can make sure to have complete predicted metric data
+INFO [2020-11-17 12:21:06] Couldn't find stream class for COMID or no COMID provided (Provided value: 21411963). Sending the general parameters to the FFC online, which may result in different results than if a COMID was provided or could be found
+INFO [2020-11-17 12:21:12] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:21:12] Excluding water years  for having more than 7 missing days of data
+ERROR [2020-11-17 12:21:12] Can't proceed - too few water years (7) remaining after filtering to complete years.
+INFO [2020-11-17 12:21:15] ffcAPIClient Version 0.9.8.1
+INFO [2020-11-17 12:21:15] Excluding water years 2021 for having more than 7 missing days of data
+INFO [2020-11-17 12:21:15] Using date format string %m/%d/%Y
+INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parameters to FFC online for that stream class. This may produce different results than if you run data through the FFC yourself using their default parameters.
+36.471 sec elapsed
+```
+
+We should now have a `output/ffc` directory with *4 csv files* for each gage, listed as `gage_no` and then the data type (`alteration`, `ffc_percentiles`, `ffc_results`, and `predicted_percentiles`). We can now move to the next step of reading these data in and combining them into a single file for each data type.
+
+One thing that may be helpful, is to make a list of the gages that **didn't** return data. These can be double checked later. Here's some code that may help do that, assuming you have a `ffcs` object in you environment.
+
+```{r idMissing}
+
+# identify missing:
+ffcs %>% keep(is.na(.)) %>% length()
+
+# make a list of missing gages for future use
+miss_gages <- ffcs %>% keep(is.na(.)) %>% names()
+# which gages?
+miss_gages
+
+# save out missing to a file
+write_lines(miss_gages, file = "output/usgs_ffcs_gages_alt_missing_data.txt")
+
+```
+
+```
+[1] 2 # two missing data
+
+[1] "09427600" "11394500" # gages missing data
+```
+
+### Collapse FFC Results into Single File
+
+This step is not necessary, but it is helpful to have a single file for each of the data types (i.e., `alteration` or `ffc_results`), containing the metric information for each gage. The following function is one approach to doing this iteratively (imagine if you have 100 gages...reading in one by one would take awhile).
+
+Assuming we have loaded our function, we then need tell the function what data type we want to collapse.
+
+```{r runCollapseFunction}
+
+# source the function
+source("https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R")
+
+# set the data type we want to collapse
+datatype="predicted_percentiles"
+
+# Data Type options:
+## alteration
+## ffc_percentiles
+## ffc_results
+## predicted_percentiles
+
+# set directory where the raw .csv's live
+fdir=glue("{here::here()}/output/ffc/")
+
+# run it!
+df_ffc <- ffc_collapse(datatype, fdir)
+
+# view how many gages
+df_ffc %>% distinct(gageid) %>% count()
+# how many FF metrics per gage?
+df_ffc %>% group_by(gageid) %>% tally()
+
+# save it
+write_csv(df_ffc, file = glue("{here::here()}/output/usgs_alt_{datatype}_run_{Sys.Date()}.csv"))
+
+```
+
+
+
+
