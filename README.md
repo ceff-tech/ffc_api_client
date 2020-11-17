@@ -26,8 +26,8 @@ However, full documentation of the package is included only in the [online docum
 ## Setup
 1. If you don't already have `devtools` installed, run `install.packages('devtools')`
 in your R console, or install the package any way you prefer.
-2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`
-3. Now we need to retrieve your token. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, press F12 on your keyboard to bring up the Inspector, then switch to the Console tab.
+2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`. If you get an error on this installation step, make sure you are using the latest version of the devtools package.
+3. Now we need to retrieve your token. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, make sure you are on your user profile page at https://eflows.ucdavis.edu/profile and then press F12 on your keyboard to bring up the Inspector, then switch to the Console tab.
 4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow Firefox's
 instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
 5. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private - if other people knew the value, they could use it to access your account on eflows.ucdavis.edu!
