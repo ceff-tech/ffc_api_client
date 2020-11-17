@@ -138,6 +138,12 @@ segment on the North Yuba:
 
 ## Change Log
 
+### Version 0.9.8.2
+* [Bugfix] Log messages weren't going to the screen when running CEFF steps with an output folder. They
+          once again go to both the screen and the output file. We now have a known issue where when
+          it prints the FFC percentiles to the console, they don't come out appropriately (due to
+          our logging method) - use the output CSV instead in the meantime.
+
 ### Version 0.9.8.1
 * [Bugfix] Internal stream class data occasionally had multiple records, which would cause bad parameters
           to be sent to the FFC and a failure in the package. Now checks if there's more than one stream

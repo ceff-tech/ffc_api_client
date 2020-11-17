@@ -414,7 +414,7 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
     if(!is.na(self$plot_output_folder)){
       log_file <- paste(self$plot_output_folder, "/ffc_api_client_log.txt", sep="")
       print(paste("Log file saving to", log_file))
-      futile.logger::flog.appender(futile.logger::appender.file(log_file))
+      futile.logger::flog.appender(futile.logger::appender.tee(log_file))
     }
 
     futile.logger::flog.info(paste("ffcAPIClient Version", packageVersion("ffcAPIClient")))
@@ -541,10 +541,11 @@ FFCProcessor <- R6::R6Class("FFCProcessor", list(
 
     self$plot_output_folder <- output_folder
 
+    self$set_up(gage_id, timeseries, comid, token)
+
     futile.logger::flog.info("### Step 1 - Get Functional Flow Results ###")
 
     futile.logger::flog.info("Retrieving results, please wait...")
-    self$set_up(gage_id, timeseries, comid, token)
     self$run()
     futile.logger::flog.info("Results ready.")
     futile.logger::flog.info(paste("Writing FFC results as CSVs to ", output_folder, sep=""))
