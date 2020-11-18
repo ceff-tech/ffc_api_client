@@ -47,9 +47,9 @@ The following is a description of the custom functions that are used to iterate 
 
 **Iteration with purrr**
 
-These functions are flexible, you can add any additional specifications to the ffc processor object that you would like (i.e., changing the number of minimum years required, adjust the date threshold, etc.). Currently the default is to save the `alteration`, `ffc_results`, `ffc_percentiles`, and `predicted_percentiles` to individual csv's for each gage. These can then be combined afterwards (see below for second function to do so).
+These functions are flexible, you can add any additional specifications to the `FFCProcessor` object that you would like (i.e., changing the number of minimum years required, adjust the date threshold, etc.). Currently the default is to save the `alteration`, `ffc_results`, `ffc_percentiles`, and `predicted_percentiles` to individual csv's for each gage. These can then be combined afterwards (see below for second function to do so).
 
-An important part of making this function work is the `possibly()` function that is used to essentially allow the iteration to continue even if a single gage fails (e.g., due to missing data). Future versions of this function may provide better ways of capturing information relating to why a gage didn't run, but most typically it is because there was insufficient data. Note, if you want to change the output location, you can change the paths in the `dir_create` and `write_csv` functions.
+An important part of making this function work is the `purr::possibly()` function that essentially allows the iteration through gages to continue even if a single gage fails (e.g., due to missing data). Future versions of this function may provide better ways of capturing information relating to why a gage didn't run, but most typically it is because there was insufficient data available either from USGS or after ffcAPIClient filtered for quality. Note, if you want to change the output location, you can change the paths in the `dir_create` and `write_csv` functions.
 
 ```{r iterateFunction}
 
@@ -63,30 +63,26 @@ library(fs)
 
 # write a function to pull the data
 ffc_iter <- function(id, startDate, save=TRUE){
+  
+  # start ffc processor
+  ffc <- FFCProcessor$new()
+  # set special parameters for this run of the FFC
+  ffc$gage_start_date = startDate
+  ffc$fail_years_data = 10  # tell it to indicate a failure if we don't have at least 10 water years of data after doing quality checks
+  ffc$warn_years_data = 12  # warn us if it has at least 10, but not more than 12 years of data - quality of results will be lower - default is 15
+  # run the FFCProcessor's setup code, then run the FFC itself
+  ffc$set_up(gage_id = id, token=ffctoken)
+  ffc$run()
+  
   if(save==TRUE){
     # create output directory
     dir_create("output/fc")
-    # start ffc processor
-    ffc <- FFCProcessor$new()
-    # setup
-    ffc$gage_start_date = startDate
-    ffc$warn_years_data = 12
-    ffc$fail_years_data = 10
-    ffc$set_up(gage_id = id, token=ffctoken)
-    ffc$run()
     # write out
     write_csv(ffc$alteration, file = glue::glue("output/ffc/{id}_alteration.csv"))
     write_csv(ffc$ffc_results, file = glue::glue("output/ffc/{id}_ffc_results.csv"))
     write_csv(ffc$ffc_percentiles, file=glue::glue("output/ffc/{id}_ffc_percentiles.csv"))
     write_csv(ffc$predicted_percentiles, file=glue::glue("output/ffc/{id}_predicted_percentiles.csv"))
-    #save(ffc, file = glue::glue("output/ffc/{id}_rdata_ffc.rda"))
   } else {
-    # start ffc processor
-    ffc <- FFCProcessor$new()
-    # setup
-    ffc$gage_start_date = startDate
-    ffc$set_up(gage_id = id, token=ffctoken)
-    ffc$run()
     return(ffc)
   }
 }
@@ -172,9 +168,7 @@ ffctoken <- "your_token_here"
 
 ### Run Iteration Function
 
-Finally we can run these and generate our data (as csvs), which we will then read back into R and collapse into a single file for use in analysis.
-
-First we run the iterate function to pull the data. Note, any gage that returns an `NA` did not have sufficient data for the FFC to calculate metrics.
+Then we can run these and generate our data (as csvs), which we will then read back into R and collapse into a single file for use in analysis. We run the iterate function to pull the data. Note, any gage that returns an `NA` did not have sufficient data for the FFC to calculate metrics.
 
 ```{r runIterate}
 tic() # start time

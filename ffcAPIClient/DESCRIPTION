@@ -1,7 +1,7 @@
 Package: ffcAPIClient
 Type: Package
 Title: Functional Flows Calculator API Client
-Version: 0.9.8.1
+Version: 0.9.8.2
 Authors@R: c(
     person("Nick", "Santos", email="nrsantos@ucdavis.edu", role=c("aut", "cre")), 
     person("Ryan", "Peek", email="rapeek@ucdavis.edu", role="aut"),
@@ -32,5 +32,5 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
