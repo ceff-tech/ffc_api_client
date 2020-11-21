@@ -1,86 +1,66 @@
 ---
-title: "FFC API Client Overview"
+title: "FFC in R: Simple Functional Flows Calculator API Client"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 ```
 
-# Simple Functional Flows Calculator API client
+## Overview
+
 This package is designed to:
-1. Process data through the online functional flows calculator
-2. Transform that data and return plots of the Dimensionless Reference Hydrograph (DRH) as well as boxplots showing
-  the observed versus predicted percentile values for each metric.
-3. Have shortcut functions that handle all of this, while exposing the internals so you can access useful intermediate
-  products, such as the functional flows calculator results as an R dataframe, in case you need to do more
-  complex analysis.
+
+1. Process either user data or existing gage data through the online functional flows calculator ([eflows.ucdavis.edu](eflows.ucdavis.edu)).
+2. Transform that data and generate functional flow metrics, predicted percentiles, alteration assessments, as well as return plots of the Dimensionless Reference Hydrograph (DRH) and boxplots showing the observed versus predicted percentile values for each metric.
+3. Provide functions that follow the [CEFF Steps](https://ceff.ucdavis.edu/): see [**Step One**](#step-one), [**Step Two**](#step-two), and [**Step Three**](#step-three) below.
+4. In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.
   
-It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
-segment COMID or longitude and latitude (it will look up the COMID for you). See Setup and Examples below for more.
+It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of either a stream segment COMID *or* longitude and latitude (it will look up the COMID for you). See [**Setup**](#setup) and [**Examples**](#examples) below for more.
 
 [![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
 
-1. [Documentation](#full-documentation)
-2. [Setup](#setup)
-3. [Usage Examples](#usage-examples)
-4. [Predicted Flow Metrics](#predicted-flow-metrics)
-6. [Change Log](#change-log)
-
+1. [Setup](#setup)
+2. [Usage Examples](#usage-examples)
+3. [Predicted Flow Metrics](#predicted-flow-metrics)
+4. [Change Log](#change-log)
 
 ## Full Documentation
 There are many examples below, including instructions on how to set up and use the core parts of the package.
 However, full documentation of the package is included only in the [online documentation](https://ceff-tech.github.io/ffc_api_client/reference/index.html) or in the [PDF manual](./manuals/ffcAPIClient_latest.pdf).
 
 ## Setup
-1. If you don't already have `devtools` installed, run `install.packages('devtools')`
-in your R console, or install the package any way you prefer.
-2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`. If you get an error on this installation step, make sure you are using the latest version of the devtools package.
-3. Now we need to retrieve your token. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, make sure you are on your user profile page at https://eflows.ucdavis.edu/profile and then press F12 on your keyboard to bring up the Inspector, then switch to the Console tab.
-4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow Firefox's
-instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
-5. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private - if other people knew the value, they could use it to access your account on eflows.ucdavis.edu!
+
+To get this package up and running, you'll want to make sure you have the most recent R version available (download [here](https://cran.r-project.org/)). In addition, you'll need the the {`devtools`} package. Basic installation instructions as follows:
+
+1. **Get {`devtools`} installed**: If you don't already have it, run `install.packages('devtools')` in your R console, or install the package any way you prefer.
+2. **Install the {`ffcAPIClient`} package**:
+    - `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`
+    - If you get an error on this installation step, make sure you are using the latest version of R and of the {`devtools`} package.
+3. **Retrieve your eflows API token**: Now we need to retrieve your token. 
+    a. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, make sure you are on your user profile page at https://eflows.ucdavis.edu/profile and then press `F12` on your keyboard to bring up the Inspector, then switch to the Console tab.
+    b. In the console, type `localStorage.getItem('ff_jwt')`---you may need to type it in yourself instead of pasting (or follow Firefox's instructions to enable pasting---it will tell you how after you try to paste). Hit `Enter` to send the command.
+    c. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private---if other people knew the value, they could use it to access your account on [eflows.ucdavis.edu](eflows.ucdavis.edu).
+    d . One recommended option is to save your token is with the [{`usethis`}](https://usethis.r-lib.org/) package. To do so, install the package and then run `usethis::edit_r_environ()` to edit your `.Renviron`. Add your token as shown below, make sure there is an empty line at the bottom of the file, and save the file.
+    
+    ```
+    EFLOWS_TOKEN='very_long_string_of_letters_and_numbers`
+    ```
+     e. Once you have saved your token in your `.Renviron` file, restart R, and you can access it via: `ffctoken <- set_token(Sys.getenv("EFLOWS", ""))` and use `ffctoken` instead of pasting your full key.
 
 That's it. You can now run data through the online FFC using this package and process the results.
 
 ## Usage Examples
 
-### Following the CEFF Steps
+There are more detailed tutorials available under the **Articles** menu, including:
 
-#### Step One
-```r
-library(ffcAPIClient)
+ - [**Following the CEFF Steps Vignette**](https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html)
+ - [**How to pull FFC data for multiple USGS Gages**](https://ceff-tech.github.io/ffc_api_client/articles/run_multiple_gages.html)
 
-ffc <- FFCProcessor$new()  # make a new object we can use to run the commands
+### Additional Examples
 
-# configure the object and run CEFF step 1 plus outputs
+It's recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data or for timeseries data of your own.
 
-ffc$step_one_functional_flow_results(gage_id=11336000,
-     token=token,
-     output_folder = "C:/Users/myusername/Downloads/test")
-```
-That command will output DOH data + image, observed annual data, observed percentiles, and observed plots to the specified folder. It will output the percentiles to the console as well.
-
-It also makes that data available for further analysis on the object `ffc`, so you can now access the FFC results by year as `ffc$ffc_results`, the processed percentiles as `ffc$ffc_percentiles`, and the underlying DOH data as `ffc$doh_data` if you want to view them again in R or feed them into other code and visualizations.
-
-It is highly recommended that you provide the `output_folder` parameter, as the package will also output its log file there, in addition to plots and CSV results. The log will help track the history of the results in case of future changes.
-
-#### Step Two
-For step 2, we now run simply `ffc$step_two_explore_ecological_flow_criteria()` and it continues where we left off. In fact, *everything* is run in step 1, and we just control what is output with these functions. This outputs the predicted metric percentile data as a CSV and to the console, and plots the predicted values on their own.
-
-Now we can access `ffc$predicted_percentiles` if we want to feed that into other processing or visualizations too.
-
-#### Step Three
-For step 3, same thing. Run `ffc$step_three_assess_alteration()` and get the alteration data frame saved as a CSV and printed to the console. Full comparison plots of predicted vs. observed percentiles are output now to the screen and to the folder specified in step 1 (where everything is saved). 
-
-And now we get one more thing we can access - `ffc$alteration` contains the alteration assessment results. In fact everything is accessible after step 1, but conceptually, this is the data frame that corresponds with this step.
-
-There's also more that's available as part of the `ffc` object, but we'll document that elsewhere.
-
-
-### Other examples
-It's recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data
-or for timeseries data of your own.
 ```r
 # If you have a gage and a token, you can get all results simply by running
 ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, token = "your_token", comid = segment_comid, plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
@@ -144,3 +124,90 @@ segment on the North Yuba:
 2567637 Wet_BFL_Mag_50 8058513 4.369753e+02 6.272972e+02   824.51279 1.083330e+03 1.360226e+03  model
 2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model
 ```
+
+
+
+
+
+## RUNNING A SINGLE GAGE
+
+
+All options:
+
+```{r}
+
+# token = NA, ##
+# start_date = "10/1", ##
+# stream_class = NA,
+# date_format_string = "%m/%d/%Y",
+# date_field = "date",
+# flow_field = "flow",
+# params = NA,
+# comid = NA,
+# timeseries = NA,
+# gage = NA,  ##
+# raw_ffc_results = NA,
+# filter_ffc_results = TRUE,  # indicates whether we want to remove anything that's not a flow metric automatically (Julian day results, some diagnostics)
+# ffc_results = NA,
+# ffc_percentiles = NA,
+# predicted_percentiles = NA,
+# predicted_wyt_percentiles = NA,
+# predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
+# doh_data = NA,
+# doh_plot = NA,
+# plots = NA,
+# plot_output_folder = NA,
+# alteration = NA,
+# fail_years_data = pkg.env$FAIL_YEARS_DATA, # we'll stop processing if we have this many years or fewer after filtering
+# warn_years_data = 15,  # we'll warn people if we have this many years or fewer after filtering
+# timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
+# timeseries_max_missing_days = 7,
+# timeseries_max_consecutive_missing_days = 1,
+# timeseries_fill_gaps = "no",
+# timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
+# gage_start_date = "", # start_date and end_date are passed straight through to readNWISdv - "" means "retrieve all". Override values should be of the form YYYY-MM-DD
+# gage_end_date = "",
+# SERVER_URL = 'https://eflows.ucdavis.edu/api/',
+
+ffc <- FFCProcessor$new()
+ffc$timeseries_enable_filtering <- FALSE
+ffc$fail_years_data <- 0
+ffc$set_up(gage_id=11264500, token = ffctoken)
+ffc$run()
+
+```
+
+
+
+
+```{r}
+
+ffc <- FFCProcessor$new()  # make a new object we can use to run the commands
+ffc$gage_start_date = "1979-10-01" # can change the start date, or use defaults
+
+# setup
+ffc$set_up(gage_id=11264500, token = ffctoken)
+
+# then run
+ffc$run()
+
+# then pull metrics out as dataframes
+ffc$alteration
+ffc$doh_data
+ffc$ffc_percentiles
+ffc$ffc_results
+ffc$predicted_percentiles
+ffc$predicted_wyt_percentiles
+
+
+```
+
+## Passing your own timeseries data
+
+```{r}
+
+# requires a comid and your own timeseries
+
+ffc$step_one_functional_flow_results(timeseries = ts, comid = comid, token = "your_token_value", output_folder = "C:\path\to\where\outputs\should\go")
+```
+
