@@ -57,7 +57,7 @@
       <a href="../articles/ceff-steps.html">Use ffcAPIClient to Follow CEFF Steps</a>
     </li>
     <li>
-      <a href="../articles/index.html">FFC in R: Simple Functional Flows Calculator API Client</a>
+      <a href="../articles/README.html">FFC in R: Simple Functional Flows Calculator API Client</a>
     </li>
     <li>
       <a href="../articles/run_multiple_gages.html">Use ffcAPIClient to Run Multiple Gages</a>
@@ -82,12 +82,30 @@
             
       
       
-      <div class="hidden name"><code>index.Rmd</code></div>
+      <div class="hidden name"><code>README.Rmd</code></div>
 
     </div>
 
     
     
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>This package is designed to:</p>
+<ol style="list-style-type: decimal">
+<li>Process either user data or existing gage data through the online functional flows calculator (<a href="eflows.ucdavis.edu">eflows.ucdavis.edu</a>).</li>
+<li>Transform that data and generate functional flow metrics, predicted percentiles, alteration assessments, as well as return plots of the Dimensionless Reference Hydrograph (DRH) and boxplots showing the observed versus predicted percentile values for each metric.</li>
+<li>Provide functions that follow the <a href="https://ceff.ucdavis.edu/">CEFF Steps</a>: see <a href="#step-one"><strong>Step One</strong></a>, <a href="#step-two"><strong>Step Two</strong></a>, and <a href="#step-three"><strong>Step Three</strong></a> below.</li>
+<li>In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.</li>
+</ol>
+<p>It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See <a href="#setup"><strong>Setup</strong></a> and <a href="#examples"><strong>Examples</strong></a> below for more.</p>
+<p><a href="https://travis-ci.org/ceff-tech/ffc_api_client"><img src="https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master" alt="Code Testing Status"></a></p>
+</div>
+<div id="full-documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#full-documentation" class="anchor"></a>Full Documentation</h2>
+<p>There are many examples below, including instructions on how to set up and use the core parts of the package. Check the documentation for the classes and functions in this site and especially in the “articles” provided at the top. We also publish a <a href="./manuals/ffcAPIClient_latest.pdf">PDF version of this manual</a>.</p>
+</div>
 <div id="setup" class="section level2">
 <h2 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h2>
@@ -97,8 +115,7 @@
 <li>
 <p><strong>Install the {<code>ffcAPIClient</code>} package</strong>:</p>
 <ul>
-<li>
-<code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')</a></code>.</li>
+<li><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')</a></code></li>
 <li>If you get an error on this installation step, make sure you are using the latest version of R and of the {<code>devtools</code>} package.</li>
 </ul>
 </li>
@@ -113,7 +130,7 @@
 <li>
 <p><strong>Save Your Token</strong>: One recommended option is to save your token is with the <a href="https://usethis.r-lib.org/">{<code>usethis</code>}</a> package. To do so, install the package and then run <code><a href="https://usethis.r-lib.org/reference/edit.html">usethis::edit_r_environ()</a></code> to edit your <code>.Renviron</code>. Add your token as shown below, make sure there is an empty line at the bottom of the file, and save the file.</p>
 <pre><code>EFLOWS_TOKEN='very_long_string_of_letters_and_numbers`</code></pre>
-<p>Once you have saved your token in your <code>.Renviron</code> file, restart R, and you can access it via: <code>ffctoken &lt;- set_token(Sys.getenv("EFLOWS_TOKEN", ""))</code> and use <code>ffctoken</code> instead of pasting your full key.</p>
+<p>Once you have saved your token in your <code>.Renviron</code> file, restart R, and you can access it via: <code>ffctoken &lt;- set_token(Sys.getenv("EFLOWS", ""))</code> and use <code>ffctoken</code> instead of pasting your full key.</p>
 </li>
 </ol>
 <p><br></p>
@@ -125,8 +142,8 @@
 <a href="#usage-examples" class="anchor"></a>Usage Examples</h2>
 <p>There are more detailed tutorials available under the <strong>Articles</strong> menu, including:</p>
 <ul>
-<li><a href="articles/ceff-steps.html"><strong>Following the CEFF Steps Vignette</strong></a></li>
-<li><a href="articles/run_multiple_gages.html"><strong>How to pull FFC data for multiple USGS Gages</strong></a></li>
+<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html"><strong>Following the CEFF Steps Vignette</strong></a></li>
+<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/run_multiple_gages.html"><strong>How to pull FFC data for multiple USGS Gages</strong></a></li>
 </ul>
 <p>It’s recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data or for timeseries data of your own. The general steps to run anything require your token, and initializing a processor to run data through.</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ffcAPIClient</span>)
@@ -137,7 +154,7 @@
 <h3 class="hasAnchor">
 <a href="#ffc-for-a-single-usgs-gage" class="anchor"></a>FFC for a Single USGS Gage</h3>
 <p>To calculate functional flow metrics (FFM) for a single gage, we need to provide the gage and the token. We can also provide the COMID and plot_output_folder (where all the results and plots go), but these are optional. If you don’t specify an output folder, the results end up in your R environment and you can save them later.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># set token if in .Rprofile as described in instructions above</span>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># set token if in .Rprofile:</span>
 <span class="no">ffctoken</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/set_token.html">set_token</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"EFLOWS"</span>, <span class="st">""</span>))
 
 <span class="co"># or just add manually:</span>
@@ -240,9 +257,9 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model</code></pre>
 </div>
 </div>
-<div id="additional-ffcprocessor-input-options" class="section level2">
+<div id="additional-ffc-options" class="section level2">
 <h2 class="hasAnchor">
-<a href="#additional-ffcprocessor-input-options" class="anchor"></a>Additional FFCProcessor Input Options</h2>
+<a href="#additional-ffc-options" class="anchor"></a>Additional FFC Options</h2>
 <p>There are many options that are available for the user to specify within the <strong><code>FFCProcessor</code></strong> object. These should be called prior to the <code>setup</code> and <code>run</code> functions, and some may be overwritten by parameters to <code>$setup</code>. Here are a few options to be aware of:</p>
 <div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># set new processor</span>
 <span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
@@ -280,17 +297,265 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 <span class="no">ffc</span>$<span class="fu">set_up</span>(<span class="kw">gage_id</span><span class="kw">=</span><span class="fl">11264500</span>, <span class="kw">token</span> <span class="kw">=</span> <span class="no">ffctoken</span>)
 <span class="no">ffc</span>$<span class="fu">run</span>()</pre></body></html></div>
 </div>
-<div id="available-ffcprocessor-output-data-frames-and-plots" class="section level2">
+<div id="known-issues" class="section level2">
 <h2 class="hasAnchor">
-<a href="#available-ffcprocessor-output-data-frames-and-plots" class="anchor"></a>Available FFCProcessor Output Data Frames and Plots</h2>
-<p>When using the CEFF steps code, many output data frames, such as predicted percentiles, observed percentiles, and alteration assessment data are automatically saved to your output folder. By default, we don’t trigger that code when you run <code>$set_up</code> or <code>$run</code>, but the data is stored on your FFCProcessor object. Using an example where <code>ffc</code> is your FFCProcessor, after running <code>ffc$run</code> you will have the following data frames available:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">ffc</span>$<span class="no">alteration</span>  <span class="co"># alteration assessment data</span>
-<span class="no">ffc</span>$<span class="no">predicted_percentiles</span>  <span class="co"># predicted percentile data</span>
-<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>  <span class="co"># percentiles for observed data run through the FFC</span></pre></body></html></div>
-<p>You can feed this data into any additional processing code you like without plotting or saving it out to files and it will run faster than using the CEFF steps code, though it will give you less verbose output on what it’s doing and how to use it.</p>
-<p>You can also then manually feed these data into other package functions like plotting, or to your own code that controls saving it. For example, to manually trigger the comparison plots that are output by CEFF steps code after running <code>ffc$run</code> yourself, you can call:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="kw pkg">ffcAPIClient</span><span class="kw ns">::</span><span class="fu">plot_comparison_boxes</span>(<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>, <span class="no">ffc</span>$<span class="no">predicted_percentiles</span>, <span class="kw">output_folder</span> <span class="kw">=</span> <span class="st">"C:/the/full/path/to/save/plots/to"</span>, <span class="kw">gage_id</span> <span class="kw">=</span> <span class="fl">1111111</span>)</pre></body></html></div>
-<p>If you aren’t plotting a gage, you can leave the <code>gage_id</code> parameter off - it’s only used to look up information to include on the plot.</p>
+<a href="#known-issues" class="anchor"></a>Known Issues</h2>
+<ul>
+<li>In some cases, the package fails to install using <code>devtools</code>. Upgrade your copy of devtools and the installation should proceed without error.</li>
+<li>When providing a timeseries, if the <code>date</code> field is of type <code>date</code> rather than dates as formatted text, the filtering code will trigger an error. In the future, we will enable it to process these values correctly, but the workaround is to do any filtering on data gaps yourself and disable filtering by setting <code>ffc$timeseries_enable_filtering &lt;- TRUE</code> on your <code>FFCProcessor</code> object.</li>
+</ul>
+</div>
+<div id="change-log" class="section level2 unlisted unnumbered">
+<h2 class="hasAnchor">
+<a href="#change-log" class="anchor"></a>Change Log</h2>
+<div id="version-0-9-8-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-8-2" class="anchor"></a>Version 0.9.8.2</h3>
+<ul>
+<li>[Bugfix] Log messages weren’t going to the screen when running CEFF steps with an output folder. They once again go to both the screen and the output file. We now have a known issue where when it prints the FFC percentiles to the console, they don’t come out appropriately (due to our logging method) - use the output CSV instead in the meantime.</li>
+</ul>
+</div>
+<div id="version-0-9-8-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-8-1" class="anchor"></a>Version 0.9.8.1</h3>
+<ul>
+<li>[Bugfix] Internal stream class data occasionally had multiple records, which would cause bad parameters to be sent to the FFC and a failure in the package. Now checks if there’s more than one stream class record and uses the first one.</li>
+</ul>
+</div>
+<div id="version-0-9-8-0" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-8-0" class="anchor"></a>Version 0.9.8.0</h3>
+<ul>
+<li>[Enhancement] The package now checks to make sure it received a valid COMID from web services, which helps when the web service is down. It prints a warning if the lookup failed.</li>
+<li>[Enhancement] The package now checks to make sure it obtained at least 24 predicted metric records. If it didn’t but received some, then it prints a warning. If it received no records, it prints an error about the COMID</li>
+<li>[Enhancement] Added a new <code>$get_comid_online</code> (default TRUE) flag to FFCProcessor objects. The web service that we use to look up COMIDs for gages has been spotty recently, and we returned the option to do a lookup locally with spatial data. It will still download a large amount of spatial data for NHD segments the first time it runs with the flag set to FALSE, but then future lookups will be much faster. It uses the nhdR package, which is not included as a package requirement, and instead is installed only if you set <code>ffc$get_comid_online = FALSE</code>.</li>
+</ul>
+</div>
+<div id="version-0-9-7-5" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-5" class="anchor"></a>Version 0.9.7.5</h3>
+<ul>
+<li>[Update] Included updated data for peak flow metric predictions into package data. To support this, we are temporarily changing the FFCProcessor object to use offline metrics instead of data from the TNC API. If you wish to use the API again, set <code>ffc$predicted_percentiles_online &lt;- TRUE</code>. We will revert it to using online data in the future once the API is updated</li>
+</ul>
+</div>
+<div id="version-0-9-7-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-4" class="anchor"></a>Version 0.9.7.4</h3>
+<ul>
+<li>[Enhancement] New code that fills NA values in the 10th percentile column of predicted metrics from the TNC API if the 25th percentile column is 0. A warning will be raised if NA values are found in the 10th percentile column. Can be turned off by setting <code>ffc$predicted_percentiles_fill_na_p10</code> to FALSE.</li>
+</ul>
+</div>
+<div id="version-0-9-7-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-3" class="anchor"></a>Version 0.9.7.3</h3>
+<ul>
+<li>[Bugfix] Previously, providing a timeseries with a date field that was not named “date” (case sensitive) would fail when building the data frame to send to the FFC. This has been fixed, and any date field name should be usable, so long as it is provided as a parameter, or set on the <code>ffc</code> object before running <code>ffc$set_up</code>.</li>
+</ul>
+</div>
+<div id="version-0-9-7-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-2" class="anchor"></a>Version 0.9.7.2</h3>
+<ul>
+<li>[Update] Fixes for new versions of the eflows API launched recently. Everyone using this package will need to upgrade to this version or newer to keep using the package.</li>
+</ul>
+</div>
+<div id="version-0-9-7-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-1" class="anchor"></a>Version 0.9.7.1</h3>
+<ul>
+<li>Added function <code>clean_account</code> to remove all current runs from the online FFC. Helps with broken accounts after recent FFC update. To use, just call <code><a href="../reference/clean_account.html">clean_account(token)</a></code> after setting your token value into the variable named <code>token</code>
+</li>
+</ul>
+</div>
+<div id="version-0-9-7-0" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-7-0" class="anchor"></a>Version 0.9.7.0</h3>
+<ul>
+<li>[Change] Data sent to the FFC is now filtered according to CEFF Tech Team determined rules - water years are dropped if they have more than 7 missing days or more than 2 consecutive missing days (by default). See the documentation for the function <code>filter_timeseries</code> for more info. It applies to both automatically retrieved gage data and user-provided timeseries. It can be disabled by setting timeseries_enable_filtering to FALSe on the FFCProcessor object, but you’re much better off just disabling it by filling gaps in your data yourself if you need to keep all water years.</li>
+<li>[Enhancement] ffcAPIClient now logs both to the console and to a log file in the output folder, including the version of the package and any log messages (some R warnings and errors may not show up in the file yet)</li>
+<li>[Change] The package now stops running if you have fewer than 10 years of data <em>after</em> the filters implemented in this version have run. It warns you, but still runs if you have fewer than 15 years of data. These apply whether the data source is gage data or a provided timeseries. To change this behavior, change the values of <code>fail_years_data</code> and <code>warn_years_data</code> on the FFCProcessor object</li>
+<li>[Enhancement] You can now pass minimum and maximum dates for gage data retrieval. Set the values of <code>gage_start_date</code> and <code>gage_end_date</code> on the FFCProcessor object.</li>
+</ul>
+</div>
+<div id="version-0-9-6-9" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-9" class="anchor"></a>Version 0.9.6.9</h3>
+<ul>
+<li>[Bugfix] Fixed issue preventing export of R6 Classes - FFCProcessor and USGSGage should now be available for use as the documentation describes</li>
+</ul>
+</div>
+<div id="version-0-9-6-8" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-8" class="anchor"></a>Version 0.9.6.8</h3>
+<ul>
+<li>[Enhancement] Code available for three steps of CEFF process - working on documentation for it still</li>
+</ul>
+</div>
+<div id="version-0-9-6-7" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-7" class="anchor"></a>Version 0.9.6.7</h3>
+<ul>
+<li>[Bugfix] Adjusted to change in FFM API from flows.codefornature.org</li>
+<li>[Enhancement] Code available to support first step of CEFF process</li>
+</ul>
+</div>
+<div id="version-0-9-6-6" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-6" class="anchor"></a>Version 0.9.6.6</h3>
+<ul>
+<li>[Enhancement] New function <code>force_consistent_naming</code> sets option to convert peak magnitude metrics to use same name format as other magnitude metrics. <code>Peak_2</code> becomes <code>Peak_Mag_2</code>, etc. Defaults to off to remain aligned with CEFF, but if you need metric names to follow a pattern, that will help. See documentation for usage.</li>
+<li>[Change] Predicted flow metrics now use a character instead of a factor in the <code>metric</code> column.</li>
+</ul>
+</div>
+<div id="version-0-9-6-5" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-5" class="anchor"></a>Version 0.9.6.5</h3>
+<ul>
+<li>[Enhancement] ffc_results dataframe now filters out non-metrics (things starting with __ or ending with _Julian)</li>
+</ul>
+</div>
+<div id="version-0-9-6-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-4" class="anchor"></a>Version 0.9.6.4</h3>
+<ul>
+<li>[Bugfix] Handled a condition where the predicted flow metric API returns duplicate values for some metrics</li>
+</ul>
+</div>
+<div id="version-0-9-6-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-3" class="anchor"></a>Version 0.9.6.3</h3>
+<ul>
+<li>[Bugfix] Fixed an error where predicted Spring Duration metrics came through as SP_Du</li>
+</ul>
+</div>
+<div id="version-0-9-6-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-2" class="anchor"></a>Version 0.9.6.2</h3>
+<ul>
+<li>[Bugfix] Fixed error preventing <code>evaluate_alteration</code> from running with warnings about <code>date_format_string</code>.</li>
+</ul>
+</div>
+<div id="version-0-9-6-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-1" class="anchor"></a>Version 0.9.6.1</h3>
+<ul>
+<li>[Enhancement] Updated plotting to facet each metric with a free Y axis so that all boxplots can be clearly seen. Other minor enhancements to plotting, like titles and X axis labels as well.</li>
+</ul>
+</div>
+<div id="version-0-9-6-0" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-6-0" class="anchor"></a>Version 0.9.6.0</h3>
+<ul>
+<li>[Enhancement] <code>evaluate_alteration</code> family of functions now also returns <code>predicted_wyt_percentiles</code> in addition to the <code>predicted_percentiles</code>. The WYT form includes a <code>wyt</code> column that includes the water year type of the prediction</li>
+<li>[Change] Using TNC’s online API to pull predicted flow metrics instead of internal data by default</li>
+<li>[Change] Under the hood, the code behaves differently - most processing is now being handled in the FFCProcessor class, but more will be moved there</li>
+</ul>
+</div>
+<div id="version-0-9-5-8" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-8" class="anchor"></a>Version 0.9.5.8</h3>
+<ul>
+<li>[Change] Updated the rules used to determine alteration to match new rules for CEFF Appendix F - specifically, we now <em>always</em> check that &gt;=50% of observations are within the i80r before declaring something unaltered.</li>
+</ul>
+</div>
+<div id="version-0-9-5-7" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-7" class="anchor"></a>Version 0.9.5.7</h3>
+<ul>
+<li>[Enhancement] <code>evaluate_alteration</code> now supports parameter to control plotting (similar to <code>evaluate_gage_alteration</code>) and documentation has been added for the function.</li>
+</ul>
+</div>
+<div id="version-0-9-5-6" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-6" class="anchor"></a>Version 0.9.5.6</h3>
+<ul>
+<li>[Enhancement] Added the ability to pull predicted metrics from TNC’s predicted metrics API instead of from internal data. To use it, set <code>online=TRUE</code> when calling <code>get_predicted_flow_metrics</code>. It includes one small difference - in the source field, values marked as <code>obs</code> in the offline data show up as <code>inferred</code>.</li>
+</ul>
+</div>
+<div id="version-0-9-5-5" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-5" class="anchor"></a>Version 0.9.5.5</h3>
+<ul>
+<li>[Change] No longer look up gage COMIDs by default due to error-prone nature of lookup near stream junctions. Use <code>force_comid_lookup</code> parameter to <code>evaluate_gage_alteration</code> to enable previous lookup behavior.</li>
+<li>[Enhancement] Added an automatic lookup that corrects bad data from comid lookups and returns the correct COMID. Only used for Jones Bar gage right now, but structure is there for if others are found.</li>
+</ul>
+</div>
+<div id="version-0-9-5-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-4" class="anchor"></a>Version 0.9.5.4</h3>
+<ul>
+<li>[Breaking Change] Where found, column names have been fully lowercased for consistency, including Metric -&gt; metric and COMID -&gt; comid</li>
+<li>[Breaking Change] Parameter <code>com_id</code> to <code>get_predicted_flow_metrics</code> was renamed <code>comid</code>
+</li>
+<li>[Enhancement] observed percentiles and predictions both include a <code>result_type</code> field, with observed FFC results containing the value “observed” and prediction percentiles fields containing the value “predicted” to allow for merging of the data frames in some contexts</li>
+<li>[Enhancement] <code>evaluate_gage_alteration</code> now attaches a field <code>gage_id</code> to <code>predicted_percentiles</code>, <code>observed_percentiles</code>, and <code>alteration</code> data frames.</li>
+<li>[Enhancement] observed percentiles now include a comid field to allow for merging and accessing the comid in other contexts</li>
+<li>[Enhancement] <code>evaluate_alteration</code> and <code>evaluate_gage_alteration</code> now includes a fifth key <code>alteration</code> with the assessed flow alteration scores in a data frame</li>
+</ul>
+</div>
+<div id="version-0-9-5-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-3" class="anchor"></a>Version 0.9.5.3</h3>
+<ul>
+<li>[Breaking Change] Results from <code>evaluate_alteration</code> and <code>evaluate_gage_alteration</code> now use the list key <code>ffc_percentiles</code> instead of simply <code>percentiles</code> to be clear that the percentiles are from the observed FFC results.</li>
+<li>[Change] Changed quantile processing type to the default of type 7 so that observed FFC data are processed into percentiles the same way that the predicted flow metrics were calculated to minimize resulting error.</li>
+<li>[Enhancement] <code>evaluate_alteration</code> and <code>evaluate_gage_alteration</code> now includes a fourth key <code>predicted_percentiles</code> with the predicted flow metric percentile values so they don’t need to be looked up separately.</li>
+</ul>
+</div>
+<div id="version-0-9-5-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-2" class="anchor"></a>Version 0.9.5.2</h3>
+<ul>
+<li>[Enhancement] Added <code>annual</code> parameter to <code>assess_alteration</code> that runs a year over year analysis.</li>
+</ul>
+</div>
+<div id="version-0-9-5-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5-1" class="anchor"></a>Version 0.9.5.1</h3>
+<ul>
+<li>[Enhancement] New parameter <code>plot</code> (boolean) to <code>evaluate_gage_alteration</code> controls whether the function produces plots or not</li>
+</ul>
+</div>
+<div id="version-0-9-5" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-5" class="anchor"></a>Version 0.9.5</h3>
+<ul>
+<li>[Enhancement] New <code>assess_alteration</code> function returns a data frame with alteration results - documentation forthcoming.</li>
+<li>[Change] Warning when can’t determine stream segment’s hydrogeomorphic type has been downgraded to a print statement.</li>
+</ul>
+</div>
+<div id="version-0-9-4-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-4-2" class="anchor"></a>Version 0.9.4.2</h3>
+<ul>
+<li>[Breaking Change] The client now detects and sends the appropriate parameters to the FFC online for the stream class that it detects based on the COMID. If you are using low-level functions such as <code>get_ffc_results_for_df</code>, then you must provide an argument <code>comid</code> - check the documentation for which functions need it. Further,<code>process-data</code> now requires that the stream parameters be provided to it. I recommend moving to something like <code>get_ffc_results_for_df</code> as process_data may soon be moved to be internal only.</li>
+</ul>
+</div>
+<div id="version-0-9-4-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-4-1" class="anchor"></a>Version 0.9.4.1</h3>
+<ul>
+<li>[Enhancement] New code to support sending the correct stream class parameters to the FFC - includes the ability to identify stream classes by COMID, but not yet send the parameters</li>
+<li>[Change] Data loading code made more generic, and potentially faster - multiple calls to get predicted flow metrics should not result in reloading the dataset.</li>
+</ul>
+</div>
+<div id="version-0-9-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-4" class="anchor"></a>Version 0.9.4</h3>
+<ul>
+<li>[Breaking Change] List item <code>$ffc_results_df</code> returned from <code>evaluate_alteration</code> functions changed to <code>$ffc_results</code> for consistency with FFCProcessor object and allowing for more flexibility in the future.</li>
+<li>[Enhancement] Basic alteration assessment capabilities included. Require more testing before use</li>
+<li>[Documentation] Reworking documentation to make best workflows clearer</li>
+</ul>
+</div>
+<div id="version-0-9-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#version-0-9-3" class="anchor"></a>Version 0.9.3</h3>
+<ul>
+<li>[Enhancement] Can now provide a time format string to <code>evaluate_alteration</code> - it will use that to read the values in the time field and reformat them to send to the FFC as needed.</li>
+<li>[Bugfix] FFC results no longer fail to transform if one flow metric is entirely NULL</li>
+</ul>
+</div>
 </div>
   </div>
 

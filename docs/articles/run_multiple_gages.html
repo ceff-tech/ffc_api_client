@@ -57,6 +57,9 @@
       <a href="../articles/ceff-steps.html">Use ffcAPIClient to Follow CEFF Steps</a>
     </li>
     <li>
+      <a href="../articles/index.html">FFC in R: Simple Functional Flows Calculator API Client</a>
+    </li>
+    <li>
       <a href="../articles/run_multiple_gages.html">Use ffcAPIClient to Run Multiple Gages</a>
     </li>
   </ul>
@@ -121,9 +124,14 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">glue</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">fs</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">here</span>)
 
 <span class="co"># write a function to pull the data</span>
-<span class="no">ffc_iter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">id</span>, <span class="no">startDate</span>, <span class="no">save</span><span class="kw">=</span><span class="fl">TRUE</span>){
+<span class="no">ffc_iter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">id</span>, <span class="no">startDate</span>, <span class="no">ffctoken</span><span class="kw">=</span><span class="no">ffctoken</span>, <span class="no">dirToSave</span><span class="kw">=</span><span class="st">"output/ffc"</span>, <span class="no">save</span><span class="kw">=</span><span class="fl">TRUE</span>){
+
+  <span class="co"># set save dir</span>
+  <span class="no">outDir</span> <span class="kw">&lt;-</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here()}/{dirToSave}"</span>)
+  <span class="fu"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}"</span>))
 
   <span class="co"># start ffc processor</span>
   <span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
@@ -136,13 +144,12 @@
   <span class="no">ffc</span>$<span class="fu">run</span>()
 
   <span class="kw">if</span>(<span class="no">save</span><span class="kw">==</span><span class="fl">TRUE</span>){
-    <span class="co"># create output directory</span>
-    <span class="fu"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="st">"output/fc"</span>)
+    <span class="fu"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}"</span>))
     <span class="co"># write out</span>
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">alteration</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"output/ffc/{id}_alteration.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_results</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"output/ffc/{id}_ffc_results.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"output/ffc/{id}_ffc_percentiles.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">predicted_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"output/ffc/{id}_predicted_percentiles.csv"</span>))
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">alteration</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_alteration.csv"</span>))
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_results</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_ffc_results.csv"</span>))
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_ffc_percentiles.csv"</span>))
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">predicted_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_predicted_percentiles.csv"</span>))
   } <span class="kw">else</span> {
     <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="no">ffc</span>)
   }
@@ -202,7 +209,7 @@
 <a href="#run-iteration-function" class="anchor"></a>Run Iteration Function</h3>
 <p>Then we can run these and generate our data (as csvs), which we will then read back into R and collapse into a single file for use in analysis. We run the iterate function to pull the data. Note, any gage that returns an <code>NA</code> did not have sufficient data for the FFC to calculate metrics.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu">tic</span>() <span class="co"># start time</span>
-<span class="no">ffcs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">gage_list</span>, ~<span class="fu">ffc_possible</span>(<span class="no">.x</span>, <span class="kw">startDate</span> <span class="kw">=</span> <span class="no">st_date</span>, <span class="kw">ffctoken</span><span class="kw">=</span><span class="no">ffctoken</span>, <span class="kw">save</span><span class="kw">=</span><span class="fl">TRUE</span>)) <span class="kw">%&gt;%</span>
+<span class="no">ffcs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">gage_list</span>, ~<span class="fu">ffc_possible</span>(<span class="no">.x</span>, <span class="kw">startDate</span> <span class="kw">=</span> <span class="no">st_date</span>, <span class="kw">ffctoken</span><span class="kw">=</span><span class="no">ffctoken</span>, <span class="kw">dirToSave</span><span class="kw">=</span><span class="st">"output/ffc_run"</span>, <span class="kw">save</span><span class="kw">=</span><span class="fl">TRUE</span>)) <span class="kw">%&gt;%</span>
   <span class="co"># add names to list</span>
   <span class="fu"><a href="https://purrr.tidyverse.org/reference/set_names.html">set_names</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.</span>, <span class="kw">nm</span><span class="kw">=</span><span class="no">gage_list</span>)
 <span class="fu">toc</span>() <span class="co"># end time</span></pre></body></html></div>
@@ -267,7 +274,7 @@ INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parame
 <span class="co">## predicted_percentiles</span>
 
 <span class="co"># set directory where the raw .csv's live</span>
-<span class="no">fdir</span><span class="kw">=</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here::here()}/output/ffc/"</span>)
+<span class="no">fdir</span><span class="kw">=</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here::here()}/output/ffc_run/"</span>)
 
 <span class="co"># run it!</span>
 <span class="no">df_ffc</span> <span class="kw">&lt;-</span> <span class="fu">ffc_collapse</span>(<span class="no">datatype</span>, <span class="no">fdir</span>)

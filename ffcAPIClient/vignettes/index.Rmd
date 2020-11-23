@@ -1,0 +1,249 @@
+---
+title: "FFC in R: Simple Functional Flows Calculator API Client"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+        collapsed: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+## Setup
+
+To get this package up and running, you'll want to make sure you have the most recent R version available (download [here](https://cran.r-project.org/)). In addition, you'll need the the {`devtools`} package. Basic installation instructions as follows:
+
+1. **Get {`devtools`} installed**: If you don't already have it, run `install.packages('devtools')` in your R console, or install the package any way you prefer.
+2. **Install the {`ffcAPIClient`} package**:
+    - `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`.
+    - If you get an error on this installation step, make sure you are using the latest version of R and of the {`devtools`} package.
+3. **Retrieve your eflows API token**: Now we need to retrieve your token. 
+    a. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, make sure you are on your user profile page at https://eflows.ucdavis.edu/profile and then press `F12` on your keyboard to bring up the Inspector, then switch to the Console tab.
+    b. In the console, type `localStorage.getItem('ff_jwt')`---you may need to type it in yourself instead of pasting (or follow Firefox's instructions to enable pasting---it will tell you how after you try to paste). Hit `Enter` to send the command.
+    c. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private---if other people knew the value, they could use it to access your account on [eflows.ucdavis.edu](eflows.ucdavis.edu).
+4. **Save Your Token**: One recommended option is to save your token is with the [{`usethis`}](https://usethis.r-lib.org/) package. To do so, install the package and then run `usethis::edit_r_environ()` to edit your `.Renviron`. Add your token as shown below, make sure there is an empty line at the bottom of the file, and save the file.
+    
+    ```
+    EFLOWS_TOKEN='very_long_string_of_letters_and_numbers`
+    ```
+    Once you have saved your token in your `.Renviron` file, restart R, and you can access it via: `ffctoken <- set_token(Sys.getenv("EFLOWS_TOKEN", ""))` and use `ffctoken` instead of pasting your full key.
+
+<br>
+
+That's it. You can now run data through the online FFC using this package and process the results.
+
+---
+
+## Usage Examples
+
+There are more detailed tutorials available under the **Articles** menu, including:
+
+ - [**Following the CEFF Steps Vignette**](articles/ceff-steps.html)
+ - [**How to pull FFC data for multiple USGS Gages**](articles/run_multiple_gages.html)
+
+It's recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data or for timeseries data of your own. The general steps to run anything require your token, and initializing a processor to run data through.
+
+```{r basicSetup}
+library(ffcAPIClient)
+
+# start ffc processor
+ffc <- FFCProcessor$new()
+
+```
+
+### FFC for a Single USGS Gage
+
+To calculate functional flow metrics (FFM) for a single gage, we need to provide the gage and the token. We can also provide the COMID and plot_output_folder (where all the results and plots go), but these are optional. If you don't specify an output folder, the results end up in your R environment and you can save them later.
+
+```{r}
+
+# set token if in .Rprofile as described in instructions above
+ffctoken <- set_token(Sys.getenv("EFLOWS", ""))
+
+# or just add manually:
+ffctoken <- "MYVERYLONGTOKEN_NUMBER_HERE"
+
+# start ffc processor
+ffc <- FFCProcessor$new()
+ffc$set_up(gage_id = 11427000,
+           token = ffctoken, 
+           # OPTIONAL
+           comid = segment_comid,
+           plot_output_folder = "~/Documents/NFA_Gage_Alteration")
+```
+
+After running the `ffc$set_up()`, we should get back some information about the `ffcAPIClient` version, as well as message stating how many water years will be excluded because of more than 7 days of missing data.
+
+```
+INFO [2020-11-21 12:00:00] ffcAPIClient Version 0.9.8.2
+INFO [2020-11-21 12:00:00] Excluding water years 2021 for having more than 7 missing days of data
+```
+
+Finally, we run the calculator, which will return all our data in the **`ffc`** object, see below.
+
+```{r ffcRun}
+ffc$run()
+```
+
+```
+INFO [2020-11-21 12:00:00] Using date format string %m/%d/%Y
+INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending parameters to FFC online for that stream class. This may produce different results than if you run data through the FFC yourself using their default parameters.
+```
+
+The **`ffc`** object contains all the data we may be interested in including:
+
+* `ffc_results` includes the raw data from the functional flows calculator for each flow metric by day of water year. 
+* `ffc_percentiles` includes the calculated 10th, 25th, 50th, 75th, and 90th percentiles for each metric.
+* `alteration` data frame includes the assessed alteration of each metric using CEFF Appendix F Rules.
+* `predicted_percentiles` includes the same percentiles as predicted for each metric for assessing the observed ffc
+    results against predicted unaltered flow.
+* `doh_data` contains the raw dimensionless hydrograph data with columns for percentiles and rows for days of water year.
+
+See the [documentation](#documentation) for more information on these results. 
+
+ We can save each of these individually however we choose using something like `write.csv(ffc$ffc_results, file="my_output_folder/ffc_results.csv)`. However, to save everything all at once, see below to learn how to [Save All Results into a Single Folder](#save-all-the-ffc-results-into-a-single-folder). 
+
+### Save Results In a Single Folder
+
+If we want to save all the above results to a folder directly, we can use the **`evaluate_gage_alteration()`** function. This will get all the results and save them to a single directory you specify. It requires the same arguments as above. However, the `plot_output_folder` remains optional, and when provided, plots and data will be saved in that location. Plots will show in your R environment (the `Plots` tab in RStudio) regardless.
+
+Providing the COMID is preferred, though there are look up options available. See the function documentation for details regarding how to optionally re-enable the lookup.
+
+```{r evalAlt}
+
+# If you have a gage and a token, you can get all results simply by running
+ffcAPIClient::evaluate_gage_alteration(gage_id = 11427000, 
+                                       token = "your_token", 
+                                       comid = segment_comid,
+                                       plot_output_folder = "C:/Users/youruser/Documents/NFA_Gage_Alteration")
+```
+
+
+### FFC with Your Own Flow Data
+
+If you have your own flow data, as long as it is a data frame with flow and date fields, we can use the same functions as described above. However, we need to specify the dataframe containing:
+
+ - `flow` column with daily flow data
+ - `date` column, ideally formatted as "YYYY-MM-DD"
+
+To run this data, we can use the following, note, the date format default is for "YYYY-MM-DD" but you can specify an alternate format (type `?strptime` in your R console to see the Help file with date specifications). **Note**, `COMID` is required or a `latitude/longitude` must be provided.
+
+```{r ownDF}
+
+ffcAPIClient::evaluate_alteration(
+  timeseries_df = your_df, 
+  token = "your_token", 
+  plot_output_folder = "C:/Users/youruser/Documents/Timeseries_Alteration",
+  comid=yoursegmentcomid) # REQUIRED OR specify lat/lon
+# additional arguments:
+  # longitude = ,
+  # latitude = ,
+  # plot_results = TRUE, # default is TRUE
+  # plot_output_folder = , # where to save things
+  # date_format_string = "") # to specify a custom date format, default is YYYY-MM-DD)
+
+```
+
+This function, and `evaluate_gage_alteration()`, plot results immediately and optionally save the plots to the output folder. 
+
+### Getting Predicted Flow Metrics from a COMID
+
+This package compares the percentiles generated from the observed data and the percentiles predicted by modeling. 
+As part of this functionality, the code includes the full results of the modeling output as a data frame accessible in `ffcAPIClient::flow_metrics`. 
+More practically, if you have a variable `com_id` that stores an NHD stream segment identifier (COMID), then you can also use `ffcAPIClient::get_predicted_flow_metrics(com_id)` to retrieve a data frame with only the results for that segment. 
+For example, for the Goodyear's Bar reference gage segment on the North Yuba:
+
+```{r refGage}
+ffcAPIClient::get_predicted_flow_metrics("8058513")
+```
+
+```
+                Metric   COMID          p10          p25         p50          p75          p90 source
+38433        DS_Dur_WS 8058513 8.467500e+01 1.146312e+02   145.00000 1.765000e+02 2.015200e+02  model
+178679       DS_Mag_50 8058513 3.550966e+01 5.372067e+01    83.01238 1.227657e+02 1.446242e+02  model
+318925       DS_Mag_90 8058513 7.209266e+01 1.018497e+02   156.52111 2.332115e+02 3.339129e+02  model
+459171          DS_Tim 8058513 2.788200e+02 2.880000e+02   300.90000 3.115000e+02 3.241325e+02  model
+583991          FA_Dur 8058513 2.000000e+00 3.000000e+00     4.00000 6.000000e+00 8.000000e+00    obs
+670137          FA_Mag 8058513 1.129055e+02 1.711441e+02   270.44481 4.731658e+02 8.309241e+02  model
+810383          FA_Tim 8058513 7.830000e+00 1.444375e+01    23.46667 3.002500e+01 4.729750e+01  model
+950629         Peak_10 8058513 8.031502e+03 1.316898e+04 19158.34402 2.434368e+04 2.613562e+04  model
+1090875        Peak_5 8058513 5.456749e+03 8.858951e+03 13062.81469 1.348278e+04 1.642180e+04  model
+1231121        Peak_2 8058513 2.903039e+03 4.493501e+03  5484.65786 6.384782e+03 1.405851e+04  model
+1355941    Peak_Dur_10 8058513 1.000000e+00 1.000000e+00     1.00000 2.000000e+00 4.000000e+00    obs
+1426661    Peak_Dur_5 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 6.000000e+00    obs
+1497381    Peak_Dur_2 8058513 1.000000e+00 1.000000e+00     4.00000 1.000000e+01 2.900000e+01    obs
+1568101    Peak_Fre_10 8058513 1.000000e+00 1.000000e+00     1.00000 1.000000e+00 2.000000e+00    obs
+1638821    Peak_Fre_5 8058513 1.000000e+00 1.000000e+00     1.00000 2.000000e+00 3.000000e+00    obs
+1709541    Peak_Fre_2 8058513 1.000000e+00 1.000000e+00     2.00000 3.000000e+00 5.000000e+00    obs
+1795687         SP_Dur 8058513 4.600000e+01 5.500000e+01    67.86250 8.962500e+01 1.210167e+02  model
+1935933         SP_Mag 8058513 1.338260e+03 1.826367e+03  2632.40321 4.145245e+03 6.601865e+03  model
+2060753         SP_ROC 8058513 3.845705e-02 4.863343e-02     0.06250 8.132020e-02 1.141117e-01    obs
+2146899         SP_Tim 8058513 1.805000e+02 2.149063e+02   232.00000 2.414292e+02 2.515050e+02  model
+2287145    Wet_BFL_Dur 8058513 6.648750e+01 9.409375e+01   137.38750 1.738125e+02 1.970433e+02  model
+2427391 Wet_BFL_Mag_10 8058513 1.370541e+02 2.052893e+02   333.09236 4.704166e+02 5.683843e+02  model
+2567637 Wet_BFL_Mag_50 8058513 4.369753e+02 6.272972e+02   824.51279 1.083330e+03 1.360226e+03  model
+2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model
+```
+
+## Additional FFCProcessor Input Options 
+
+There are many options that are available for the user to specify within the **`FFCProcessor`** object. These should be called prior to the `setup` and `run` functions, and some may be overwritten by parameters to `$setup`. Here are a few options to be aware of:
+
+```{r}
+
+# set new processor
+ffc <- FFCProcessor$new()
+
+# then specify options:
+ffc$date_field = "date" # change to whatever column name contains date
+
+## ADDITIONAL OPTIONS: ##
+# start_date = "10/1", # defaults to Water Year
+# date_format_string = "%m/%d/%Y", # specify the date format
+# date_field = "date",
+# flow_field = "flow",
+# comid = NA,
+# filter_ffc_results = TRUE,  # indicates whether we want to remove anything that's not a flow metric automatically (Julian day results, some diagnostics)
+# predicted_percentiles_online = TRUE,  # should we get predicted flow metrics from the online API, or with our offline data?
+# plots = NA,
+# plot_output_folder = NA,
+# alteration = NA,
+# fail_years_data = pkg.env$FAIL_YEARS_DATA, # stops processing if we have this many years or fewer after filtering, default is 10
+# warn_years_data = 15,  # we'll warn people if we have this many years or fewer after filtering
+# timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
+# timeseries_max_missing_days = 7,
+# timeseries_max_consecutive_missing_days = 1,
+# timeseries_fill_gaps = "no",
+# timeseries_enable_filtering = pkg.env$FILTER_TIMESERIES, # should we run the timeseries filtering? Stays TRUE internally, but the flag is here for advanced users
+# gage_start_date = "", # start_date and end_date are passed straight through to readNWISdv - "" means "retrieve all". Override values should be of the form YYYY-MM-DD
+# gage_end_date = "",
+# SERVER_URL = 'https://eflows.ucdavis.edu/api/',
+
+# for example, set minimum years required to 2 and start water year to 1980
+ffc <- FFCProcessor$new()
+ffc$timeseries_enable_filtering <- TRUE
+ffc$fail_years_data <- 2
+ffc$gage_start_date <- "1979-10-01"
+ffc$set_up(gage_id=11264500, token = ffctoken)
+ffc$run()
+```
+
+## Available FFCProcessor Output Data Frames and Plots
+When using the CEFF steps code, many output data frames, such as predicted percentiles, observed percentiles, and alteration assessment data are automatically saved to your output folder. By default, we don't trigger that code when you run `$set_up` or `$run`, but the data is stored on your FFCProcessor object. Using an example where `ffc` is your FFCProcessor, after running `ffc$run` you will have the following data frames available:
+```{r}
+ffc$alteration  # alteration assessment data
+ffc$predicted_percentiles  # predicted percentile data
+ffc$ffc_percentiles  # percentiles for observed data run through the FFC
+```
+You can feed this data into any additional processing code you like without plotting or saving it out to files and it will run faster than using the CEFF steps code, though it will give you less verbose output on what it's doing and how to use it.
+
+You can also then manually feed these data into other package functions like plotting, or to your own code that controls saving it. For example, to manually trigger the comparison plots that are output by CEFF steps code after running `ffc$run` yourself, you can call:
+
+```{r}
+ffcAPIClient::plot_comparison_boxes(ffc$ffc_percentiles, ffc$predicted_percentiles, output_folder = "C:/the/full/path/to/save/plots/to", gage_id = 1111111)
+```
+
+If you aren't plotting a gage, you can leave the `gage_id` parameter off - it's only used to look up information to include on the plot.
+

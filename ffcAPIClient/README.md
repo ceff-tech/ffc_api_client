@@ -1,37 +1,35 @@
-# Simple Functional Flows Calculator API client
+
+## Overview
+
 This package is designed to:
-1. Process data through the online functional flows calculator
-2. Transform that data and return plots of the Dimensionless Reference Hydrograph (DRH) as well as boxplots showing
-  the observed versus predicted percentile values for each metric.
-3. Have shortcut functions that handle all of this, while exposing the internals so you can access useful intermediate
-  products, such as the functional flows calculator results as an R dataframe, in case you need to do more
-  complex analysis.
+
+1. Process either user data or existing gage data through the online functional flows calculator ([eflows.ucdavis.edu](eflows.ucdavis.edu)).
+2. Transform that data and generate functional flow metrics, predicted percentiles, alteration assessments, as well as return plots of the Dimensionless Reference Hydrograph (DRH) and boxplots showing the observed versus predicted percentile values for each metric.
+3. Provide functions that follow the [CEFF Steps](https://ceff.ucdavis.edu/): see [**Step One**](articles/ceff-steps.html#step-one), [**Step Two**](articles/ceff-steps.html#step-two), and [**Step Three**](articles/ceff-steps.html#step-three) below.
+4. In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.
   
-It is meant to be used with simply a gage ID, or with a timeseries dataframe of flows along with either a stream
-segment COMID or longitude and latitude (it will look up the COMID for you). See Setup and Examples below for more.
+It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See [**Setup**](articles/index.html#setup) and [**Examples**](articles/index.html#examples) in our getting started guide for more.
+
+## Articles
+This documentation site has links to function and class documentation at the top under the `Reference` section and then tutorials and narrative examples in the `Articles` section.
+If you're just getting started, you may be interested in the following:
+
+1. [Getting Started Guide](articles/index.html)
+2. [Following CEFF Steps](articles/ceff-steps.html)
+3. [Batch Processing of Data](articles/run_multiple_gages.html)
 
 [![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
 
-1. [Documentation and Examples](#full-documentation)
-2. [Setup](#setup)
-3. [Change Log](#change-log)
+## Full Documentation
+There are many examples below, including instructions on how to set up and use the core parts of the package.
+Check the documentation for the classes and functions in this site and especially in the "articles" provided at the top.
+We also publish a [PDF version of this manual](./manuals/ffcAPIClient_latest.pdf).
 
+## Known Issues
+* In some cases, the package fails to install using `devtools`. Upgrade your copy of devtools and the installation should proceed without error.
+* When providing a timeseries, if the `date` field is of type `date` rather than dates as formatted text, the filtering code will trigger an error. In the future, we will enable it to process these values correctly, but the workaround is to do any filtering on data gaps yourself and disable filtering by setting `ffc$timeseries_enable_filtering <- TRUE` on your `FFCProcessor` object.
 
-## Full Documentation and Exmaples
-We have moved all documentation and examples to our [documentation website](https://ceff-tech.github.io/ffc_api_client/reference/index.html). A [PDF manual](./manuals/ffcAPIClient_latest.pdf)  is also available.
-
-## Setup
-1. If you don't already have `devtools` installed, run `install.packages('devtools')`
-in your R console, or install the package any way you prefer.
-2. Install this package with `devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')`. If you get an error on this installation step, make sure you are using the latest version of the devtools package.
-3. Now we need to retrieve your token. In Firefox or Chrome, log into https://eflows.ucdavis.edu. Once logged in, make sure you are on your user profile page at https://eflows.ucdavis.edu/profile and then press F12 on your keyboard to bring up the Inspector, then switch to the Console tab.
-4. In the console, type `localStorage.getItem('ff_jwt')` - you may need to type it in yourself instead of pasting (or follow Firefox's
-instructions to enable pasting - it will tell you how after you try to paste). Hit Enter to send the command. 
-5. Your browser will place text on the line below the command you typed - this is your "token". Save this value and copy it to your clipboard and we'll use it below. This value should stay private - if other people knew the value, they could use it to access your account on eflows.ucdavis.edu!
-
-That's it. You can now run data through the online FFC using this package and process the results.
-
-## Change Log
+## Change Log {.unlisted .unnumbered}
 
 ### Version 0.9.8.2
 * [Bugfix] Log messages weren't going to the screen when running CEFF steps with an output folder. They
@@ -210,4 +208,3 @@ alteration scores in a data frame
 * [Enhancement] Can now provide a time format string to `evaluate_alteration` - it will use that to read the values
   in the time field and reformat them to send to the FFC as needed.
 * [Bugfix] FFC results no longer fail to transform if one flow metric is entirely NULL
-
