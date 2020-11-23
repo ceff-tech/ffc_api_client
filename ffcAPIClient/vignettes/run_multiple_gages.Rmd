@@ -60,9 +60,14 @@ library(ffcAPIClient)
 library(purrr)
 library(glue)
 library(fs)
+library(here)
 
 # write a function to pull the data
-ffc_iter <- function(id, startDate, save=TRUE){
+ffc_iter <- function(id, startDate, ffctoken=ffctoken, dirToSave="output/ffc", save=TRUE){
+  
+  # set save dir
+  outDir <- glue::glue("{here()}/{dirToSave}")
+  dir_create(glue("{outDir}"))
   
   # start ffc processor
   ffc <- FFCProcessor$new()
@@ -75,13 +80,12 @@ ffc_iter <- function(id, startDate, save=TRUE){
   ffc$run()
   
   if(save==TRUE){
-    # create output directory
-    dir_create("output/fc")
+    dir_create(glue("{outDir}"))
     # write out
-    write_csv(ffc$alteration, file = glue::glue("output/ffc/{id}_alteration.csv"))
-    write_csv(ffc$ffc_results, file = glue::glue("output/ffc/{id}_ffc_results.csv"))
-    write_csv(ffc$ffc_percentiles, file=glue::glue("output/ffc/{id}_ffc_percentiles.csv"))
-    write_csv(ffc$predicted_percentiles, file=glue::glue("output/ffc/{id}_predicted_percentiles.csv"))
+    write_csv(ffc$alteration, file = glue::glue("{outDir}/{id}_alteration.csv"))
+    write_csv(ffc$ffc_results, file = glue::glue("{outDir}/{id}_ffc_results.csv"))
+    write_csv(ffc$ffc_percentiles, file=glue::glue("{outDir}/{id}_ffc_percentiles.csv"))
+    write_csv(ffc$predicted_percentiles, file=glue::glue("{outDir}/{id}_predicted_percentiles.csv"))
   } else {
     return(ffc)
   }
@@ -172,7 +176,7 @@ Then we can run these and generate our data (as csvs), which we will then read b
 
 ```{r runIterate}
 tic() # start time
-ffcs <- map(gage_list, ~ffc_possible(.x, startDate = st_date, ffctoken=ffctoken, save=TRUE)) %>%
+ffcs <- map(gage_list, ~ffc_possible(.x, startDate = st_date, ffctoken=ffctoken, dirToSave="output/ffc_run", save=TRUE)) %>%
   # add names to list
   set_names(x = ., nm=gage_list)
 toc() # end time
@@ -256,7 +260,7 @@ datatype="predicted_percentiles"
 ## predicted_percentiles
 
 # set directory where the raw .csv's live
-fdir=glue("{here::here()}/output/ffc/")
+fdir=glue("{here::here()}/output/ffc_run/")
 
 # run it!
 df_ffc <- ffc_collapse(datatype, fdir)
