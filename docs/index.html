@@ -60,10 +60,10 @@
       <a href="articles/ceff-steps.html">Use ffcAPIClient to Follow CEFF Steps</a>
     </li>
     <li>
-      <a href="articles/index.html">FFC in R: Simple Functional Flows Calculator API Client</a>
+      <a href="articles/getting_started.html">Getting Started</a>
     </li>
     <li>
-      <a href="articles/run_multiple_gages.html">Use ffcAPIClient to Run Multiple Gages</a>
+      <a href="articles/run_multiple_gages.html">Run Multiple Gages</a>
     </li>
   </ul>
 </li>
@@ -91,14 +91,14 @@
 <li>Provide functions that follow the <a href="https://ceff.ucdavis.edu/">CEFF Steps</a>: see <a href="articles/ceff-steps.html#step-one"><strong>Step One</strong></a>, <a href="articles/ceff-steps.html#step-two"><strong>Step Two</strong></a>, and <a href="articles/ceff-steps.html#step-three"><strong>Step Three</strong></a> below.</li>
 <li>In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.</li>
 </ol>
-<p>It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See <a href="articles/index.html#setup"><strong>Setup</strong></a> and <a href="articles/index.html#examples"><strong>Examples</strong></a> in our getting started guide for more.</p>
+<p>It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See <a href="articles/getting_started.html#setup"><strong>Setup</strong></a> and <a href="articles/getting_started.html#examples"><strong>Examples</strong></a> in our getting started guide for more.</p>
 </div>
 <div id="articles" class="section level2">
 <h2 class="hasAnchor">
 <a href="#articles" class="anchor"></a>Articles</h2>
 <p>This documentation site has links to function and class documentation at the top under the <code>Reference</code> section and then tutorials and narrative examples in the <code>Articles</code> section. If you’re just getting started, you may be interested in the following:</p>
 <ol>
-<li><a href="articles/index.html">Getting Started Guide</a></li>
+<li><a href="articles/getting_started.html">Getting Started Guide</a></li>
 <li><a href="articles/ceff-steps.html">Following CEFF Steps</a></li>
 <li><a href="articles/run_multiple_gages.html">Batch Processing of Data</a></li>
 </ol>
@@ -117,9 +117,9 @@
 <li>When providing a timeseries, if the <code>date</code> field is of type <code>date</code> rather than dates as formatted text, the filtering code will trigger an error. In the future, we will enable it to process these values correctly, but the workaround is to do any filtering on data gaps yourself and disable filtering by setting <code>ffc$timeseries_enable_filtering &lt;- TRUE</code> on your <code>FFCProcessor</code> object.</li>
 </ul>
 </div>
-<div id="change-log-unlisted-unnumbered" class="section level2">
+<div id="change-log" class="section level2">
 <h2 class="hasAnchor">
-<a href="#change-log-unlisted-unnumbered" class="anchor"></a>Change Log {.unlisted .unnumbered}</h2>
+<a href="#change-log" class="anchor"></a>Change Log</h2>
 <div id="version-0982" class="section level3">
 <h3 class="hasAnchor">
 <a href="#version-0982" class="anchor"></a>Version 0.9.8.2</h3>
