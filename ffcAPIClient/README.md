@@ -14,9 +14,9 @@ It is meant to be used with either a gage ID, or with a timeseries dataframe wit
 This documentation site has links to function and class documentation at the top under the `Reference` section and then tutorials and narrative examples in the `Articles` section.
 If you're just getting started, you may be interested in the following:
 
-1. [Getting Started Guide]("articles/index.html")
-2. [Following CEFF Steps]("articles/ceff-steps.html")
-3. [Batch Processing of Data]("articles/run_multiple_gages.html")
+1. [Getting Started Guide](articles/index.html)
+2. [Following CEFF Steps](articles/ceff-steps.html)
+3. [Batch Processing of Data](articles/run_multiple_gages.html)
 
 [![Code Testing Status](https://travis-ci.org/ceff-tech/ffc_api_client.svg?branch=master)](https://travis-ci.org/ceff-tech/ffc_api_client)
 
