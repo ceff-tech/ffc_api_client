@@ -8,13 +8,13 @@ This package is designed to:
 3. Provide functions that follow the [CEFF Steps](https://ceff.ucdavis.edu/): see [**Step One**](articles/ceff-steps.html#step-one), [**Step Two**](articles/ceff-steps.html#step-two), and [**Step Three**](articles/ceff-steps.html#step-three) below.
 4. In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.
   
-It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See [**Setup**](articles/index.html#setup) and [**Examples**](articles/index.html#examples) in our getting started guide for more.
+It is meant to be used with either a gage ID, or with a timeseries dataframe with a column of flow values and a column of date values and a user-supplied COMID value for the stream segment or latitude and longitude. See [**Setup**](articles/getting_started.html#setup) and [**Examples**](articles/getting_started.html#examples) in our getting started guide for more.
 
 ## Articles
 This documentation site has links to function and class documentation at the top under the `Reference` section and then tutorials and narrative examples in the `Articles` section.
 If you're just getting started, you may be interested in the following:
 
-1. [Getting Started Guide](articles/index.html)
+1. [Getting Started Guide](articles/getting_started.html)
 2. [Following CEFF Steps](articles/ceff-steps.html)
 3. [Batch Processing of Data](articles/run_multiple_gages.html)
 
@@ -29,7 +29,7 @@ We also publish a [PDF version of this manual](./manuals/ffcAPIClient_latest.pdf
 * In some cases, the package fails to install using `devtools`. Upgrade your copy of devtools and the installation should proceed without error.
 * When providing a timeseries, if the `date` field is of type `date` rather than dates as formatted text, the filtering code will trigger an error. In the future, we will enable it to process these values correctly, but the workaround is to do any filtering on data gaps yourself and disable filtering by setting `ffc$timeseries_enable_filtering <- TRUE` on your `FFCProcessor` object.
 
-## Change Log {.unlisted .unnumbered}
+## Change Log
 
 ### Version 0.9.8.2
 * [Bugfix] Log messages weren't going to the screen when running CEFF steps with an output folder. They
