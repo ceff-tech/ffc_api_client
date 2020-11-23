@@ -1,5 +1,5 @@
 ---
-title: "FFC in R: Simple Functional Flows Calculator API Client"
+title: "Getting Started"
 output: 
   html_document:
     toc: true
@@ -40,8 +40,8 @@ That's it. You can now run data through the online FFC using this package and pr
 
 There are more detailed tutorials available under the **Articles** menu, including:
 
- - [**Following the CEFF Steps Vignette**](articles/ceff-steps.html)
- - [**How to pull FFC data for multiple USGS Gages**](articles/run_multiple_gages.html)
+ - [**Following the CEFF Steps Vignette**](https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html)
+ - [**How to pull FFC data for multiple USGS Gages**](https://ceff-tech.github.io/ffc_api_client/articles/run_multiple_gages.html)
 
 It's recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data or for timeseries data of your own. The general steps to run anything require your token, and initializing a processor to run data through.
 
