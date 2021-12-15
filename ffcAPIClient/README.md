@@ -1,6 +1,8 @@
 
 ## Overview
 
+__*Dec 15 2021: We are aware the FFC is currently down because the corresponding API used by this R package is offline. We are working to restore the R package. In the mean time, please take a look at the [python code](https://github.com/leogoesger/func-flow) and [documentation](https://eflow.gitbook.io/ffc-readme/) if you need to generate Functional Flow Metrics.*__
+
 This package is designed to:
 
 1. Process either user data or existing gage data through the online functional flows calculator ([eflows.ucdavis.edu](eflows.ucdavis.edu)).
