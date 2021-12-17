@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.8.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -88,131 +84,139 @@
 
     
     
-<div id="iterating-through-multiple-gages-with-ffcapiclient" class="section level2">
-<h2 class="hasAnchor">
-<a href="#iterating-through-multiple-gages-with-ffcapiclient" class="anchor"></a>Iterating through Multiple Gages with ffcAPIClient</h2>
-<p>This vignette demonstrates one approach to running multiple gages through the FFC at once. It does require some knowledge of functions and using the <a href="https://purrr.tidyverse.org/"><code>{purrr}</code></a> package in R. It also assumes the user has already successfully been able to run a single gage (see the vignette on <a href="https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html">following the CEFF steps</a>).</p>
+<div class="section level2">
+<h2 id="iterating-through-multiple-gages-with-ffcapiclient">Iterating through Multiple Gages with ffcAPIClient<a class="anchor" aria-label="anchor" href="#iterating-through-multiple-gages-with-ffcapiclient"></a>
+</h2>
+<p>This vignette demonstrates one approach to running multiple gages through the FFC at once. It does require some knowledge of functions and using the <a href="https://purrr.tidyverse.org/" class="external-link"><code>{purrr}</code></a> package in R. It also assumes the user has already successfully been able to run a single gage (see the vignette on <a href="https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html" class="external-link">following the CEFF steps</a>).</p>
 <p>To work through this tutorial, we’ll need a a few packages that aren’t part of the <strong>ffcAPIClient</strong>.</p>
-<div id="packages-for-iterating-over-a-list-of-gages" class="section level3">
-<h3 class="hasAnchor">
-<a href="#packages-for-iterating-over-a-list-of-gages" class="anchor"></a>Packages for Iterating over a list of Gages</h3>
-<p>These packages are needed. If you don’t have them installed, use <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("packagename")</a></code>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># main ffc package</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ffcAPIClient</span>)
+<div class="section level3">
+<h3 id="packages-for-iterating-over-a-list-of-gages">Packages for Iterating over a list of Gages<a class="anchor" aria-label="anchor" href="#packages-for-iterating-over-a-list-of-gages"></a>
+</h3>
+<p>These packages are needed. If you don’t have them installed, use <code>install.packages("packagename")</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># main ffc package</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ffcAPIClient</span><span class="op">)</span>
 
 <span class="co"># packages</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>) <span class="co"># for data wrangling</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>) <span class="co"># for iterating over lists and applying functions</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">glue</span>) <span class="co"># good for pasting things together</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">fs</span>) <span class="co"># for working with directories and files</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tictoc</span>) <span class="co"># timing stuff</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">here</span>) <span class="co"># helps with setting home directory/path</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">stringr</span>) <span class="co"># for working with strings</span></pre></body></html></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span> <span class="co"># for data wrangling</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org" class="external-link">purrr</a></span><span class="op">)</span> <span class="co"># for iterating over lists and applying functions</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue" class="external-link">glue</a></span><span class="op">)</span> <span class="co"># good for pasting things together</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span> <span class="co"># for working with directories and files</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/collectivemedia/tictoc" class="external-link">tictoc</a></span><span class="op">)</span> <span class="co"># timing stuff</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span> <span class="co"># helps with setting home directory/path</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span> <span class="co"># for working with strings</span></code></pre></div>
 </div>
-<div id="loading-custom-functions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#loading-custom-functions" class="anchor"></a>Loading Custom Functions</h3>
+<div class="section level3">
+<h3 id="loading-custom-functions">Loading Custom Functions<a class="anchor" aria-label="anchor" href="#loading-custom-functions"></a>
+</h3>
 <p>The following is a description of the custom functions that are used to iterate over a list of gages. You can read them over and modify as needed, or just load them and use them as-is.</p>
 <hr>
 <p><strong>Iteration with purrr</strong></p>
 <p>These functions are flexible, you can add any additional specifications to the <code>FFCProcessor</code> object that you would like (i.e., changing the number of minimum years required, adjust the date threshold, etc.). Currently the default is to save the <code>alteration</code>, <code>ffc_results</code>, <code>ffc_percentiles</code>, and <code>predicted_percentiles</code> to individual csv’s for each gage. These can then be combined afterwards (see below for second function to do so).</p>
 <p>An important part of making this function work is the <code>purr::possibly()</code> function that essentially allows the iteration through gages to continue even if a single gage fails (e.g., due to missing data). Future versions of this function may provide better ways of capturing information relating to why a gage didn’t run, but most typically it is because there was insufficient data available either from USGS or after ffcAPIClient filtered for quality. Note, if you want to change the output location, you can change the paths in the <code>dir_create</code> and <code>write_csv</code> functions.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># these functions written by R. Peek 2020 to facilitate iteration</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># these functions written by R. Peek 2020 to facilitate iteration</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">readr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ffcAPIClient</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">glue</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">fs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">here</span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ffcAPIClient</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org" class="external-link">purrr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue" class="external-link">glue</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span>
 
 <span class="co"># write a function to pull the data</span>
-<span class="no">ffc_iter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">id</span>, <span class="no">startDate</span>, <span class="no">ffctoken</span><span class="kw">=</span><span class="no">ffctoken</span>, <span class="no">dirToSave</span><span class="kw">=</span><span class="st">"output/ffc"</span>, <span class="no">save</span><span class="kw">=</span><span class="fl">TRUE</span>){
-
+<span class="va">ffc_iter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span>, <span class="va">startDate</span>, <span class="va">ffctoken</span><span class="op">=</span><span class="va">ffctoken</span>, <span class="va">dirToSave</span><span class="op">=</span><span class="st">"output/ffc"</span>, <span class="va">save</span><span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">{</span>
+  
   <span class="co"># set save dir</span>
-  <span class="no">outDir</span> <span class="kw">&lt;-</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here()}/{dirToSave}"</span>)
-  <span class="fu"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}"</span>))
-
+  <span class="va">outDir</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{here()}/{dirToSave}"</span><span class="op">)</span>
+  <span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}"</span><span class="op">)</span><span class="op">)</span>
+  
   <span class="co"># start ffc processor</span>
-  <span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
+  <span class="va">ffc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/FFCProcessor.html">FFCProcessor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span>
   <span class="co"># set special parameters for this run of the FFC</span>
-  <span class="no">ffc</span>$<span class="no">gage_start_date</span> <span class="kw">=</span> <span class="no">startDate</span>
-  <span class="no">ffc</span>$<span class="no">fail_years_data</span> <span class="kw">=</span> <span class="fl">10</span>  <span class="co"># tell it to indicate a failure if we don't have at least 10 water years of data after doing quality checks</span>
-  <span class="no">ffc</span>$<span class="no">warn_years_data</span> <span class="kw">=</span> <span class="fl">12</span>  <span class="co"># warn us if it has at least 10, but not more than 12 years of data - quality of results will be lower - default is 15</span>
+  <span class="va">ffc</span><span class="op">$</span><span class="va">gage_start_date</span> <span class="op">=</span> <span class="va">startDate</span>
+  <span class="va">ffc</span><span class="op">$</span><span class="va">fail_years_data</span> <span class="op">=</span> <span class="fl">10</span>  <span class="co"># tell it to indicate a failure if we don't have at least 10 water years of data after doing quality checks</span>
+  <span class="va">ffc</span><span class="op">$</span><span class="va">warn_years_data</span> <span class="op">=</span> <span class="fl">12</span>  <span class="co"># warn us if it has at least 10, but not more than 12 years of data - quality of results will be lower - default is 15</span>
   <span class="co"># run the FFCProcessor's setup code, then run the FFC itself</span>
-  <span class="no">ffc</span>$<span class="fu">set_up</span>(<span class="kw">gage_id</span> <span class="kw">=</span> <span class="no">id</span>, <span class="kw">token</span><span class="kw">=</span><span class="no">ffctoken</span>)
-  <span class="no">ffc</span>$<span class="fu">run</span>()
-
-  <span class="kw">if</span>(<span class="no">save</span><span class="kw">==</span><span class="fl">TRUE</span>){
-    <span class="fu"><a href="http://fs.r-lib.org/reference/create.html">dir_create</a></span>(<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}"</span>))
+  <span class="va">ffc</span><span class="op">$</span><span class="fu">set_up</span><span class="op">(</span>gage_id <span class="op">=</span> <span class="va">id</span>, token<span class="op">=</span><span class="va">ffctoken</span><span class="op">)</span>
+  <span class="va">ffc</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="op">)</span>
+  
+  <span class="kw">if</span><span class="op">(</span><span class="va">save</span><span class="op">==</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">{</span>
+    <span class="fu"><a href="https://fs.r-lib.org/reference/create.html" class="external-link">dir_create</a></span><span class="op">(</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}"</span><span class="op">)</span><span class="op">)</span>
     <span class="co"># write out</span>
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">alteration</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_alteration.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_results</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_ffc_results.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_ffc_percentiles.csv"</span>))
-    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">ffc</span>$<span class="no">predicted_percentiles</span>, <span class="kw">file</span><span class="kw">=</span><span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{outDir}/{id}_predicted_percentiles.csv"</span>))
-  } <span class="kw">else</span> {
-    <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="no">ffc</span>)
-  }
-}
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ffc</span><span class="op">$</span><span class="va">alteration</span>, file <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}/{id}_alteration.csv"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ffc</span><span class="op">$</span><span class="va">ffc_results</span>, file <span class="op">=</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}/{id}_ffc_results.csv"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ffc</span><span class="op">$</span><span class="va">ffc_percentiles</span>, file<span class="op">=</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}/{id}_ffc_percentiles.csv"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ffc</span><span class="op">$</span><span class="va">predicted_percentiles</span>, file<span class="op">=</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{outDir}/{id}_predicted_percentiles.csv"</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">ffc</span><span class="op">)</span>
+  <span class="op">}</span>
+<span class="op">}</span>
 
 <span class="co"># wrap in possibly to permit error catching</span>
 <span class="co"># see helpful post here: https://aosmith.rbind.io/2020/08/31/handling-errors/</span>
-<span class="no">ffc_possible</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/safely.html">possibly</a></span>(<span class="kw">.f</span> <span class="kw">=</span> <span class="no">ffc_iter</span>, <span class="kw">otherwise</span> <span class="kw">=</span> <span class="fl">NA_character_</span>)</pre></body></html></div>
-<p>To use this function, you can copy and paste the above, or save it to a script, or <a href="https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R">download from here</a>. Load the function:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># if saved locally</span>
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"R/f_iterate_ffc.R"</span>)
+<span class="va">ffc_possible</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/safely.html" class="external-link">possibly</a></span><span class="op">(</span>.f <span class="op">=</span> <span class="va">ffc_iter</span>, otherwise <span class="op">=</span> <span class="cn">NA_character_</span><span class="op">)</span></code></pre></div>
+<p>To use this function, you can copy and paste the above, or save it to a script, or <a href="https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R" class="external-link">download from here</a>. Load the function:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># if saved locally</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"R/f_iterate_ffc.R"</span><span class="op">)</span>
 
 <span class="co"># if sourcing from the web</span>
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R"</span>)</pre></body></html></div>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_iterate_ffc.R"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 <p><strong>Function to Collapse output csvs</strong></p>
 <p>This function helps us read in our data that we saved using the function above. This function assumes things are in <code>output/ffc</code>. Similarly, can load from a file saved locally, or from online version.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">fs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fs.r-lib.org" class="external-link">fs</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org" class="external-link">purrr</a></span><span class="op">)</span>
 
 <span class="co"># need function to read in and collapse different ffc outputs</span>
-<span class="no">ffc_collapse</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">datatype</span>, <span class="no">fdir</span>){
-  <span class="no">datatype</span> <span class="kw">=</span> <span class="no">datatype</span>
-  <span class="no">csv_list</span> <span class="kw">=</span> <span class="kw pkg">fs</span><span class="kw ns">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/dir_ls.html">dir_ls</a></span>(<span class="kw">path</span> <span class="kw">=</span> <span class="no">fdir</span>, <span class="kw">regexp</span> <span class="kw">=</span> <span class="no">datatype</span>)
-  <span class="no">csv_names</span> <span class="kw">=</span> <span class="kw pkg">fs</span><span class="kw ns">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/path_file.html">path_file</a></span>(<span class="no">csv_list</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">fs</span><span class="kw ns">::</span><span class="fu"><a href="http://fs.r-lib.org/reference/path_file.html">path_ext_remove</a></span>()
-  <span class="no">gage_ids</span> <span class="kw">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html">str_extract</a></span>(<span class="no">csv_names</span>, <span class="st">'([0-9])+'</span>)
+<span class="va">ffc_collapse</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">datatype</span>, <span class="va">fdir</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">datatype</span> <span class="op">=</span> <span class="va">datatype</span>
+  <span class="va">csv_list</span> <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_ls.html" class="external-link">dir_ls</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">fdir</span>, regexp <span class="op">=</span> <span class="va">datatype</span><span class="op">)</span>
+  <span class="va">csv_names</span> <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_file</a></span><span class="op">(</span><span class="va">csv_list</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path_file.html" class="external-link">path_ext_remove</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="va">gage_ids</span> <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">csv_names</span>, <span class="st">'([0-9])+'</span><span class="op">)</span>
   <span class="co"># read in all</span>
-  <span class="no">df</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">csv_list</span>, ~<span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="no">.x</span>)) <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2_df</a></span>(<span class="no">gage_ids</span>, ~<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">.x</span>,<span class="kw">gageid</span><span class="kw">=</span><span class="no">.y</span>))
-}</pre></body></html></div>
+  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">csv_list</span>, <span class="op">~</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html" class="external-link">map2_df</a></span><span class="op">(</span><span class="va">gage_ids</span>, <span class="op">~</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">.x</span>,gageid<span class="op">=</span><span class="va">.y</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
 <p>Load the function:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co"># saved locally</span>
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"R/f_ffc_collapse.R"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># saved locally</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"R/f_ffc_collapse.R"</span><span class="op">)</span>
 
 <span class="co"># load from link</span>
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R"</span>)</pre></body></html></div>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R"</span><span class="op">)</span></code></pre></div>
 <p><br></p>
 </div>
-<div id="get-list-of-usgs-gages-to-run" class="section level3">
-<h3 class="hasAnchor">
-<a href="#get-list-of-usgs-gages-to-run" class="anchor"></a>Get List of USGS Gages to Run</h3>
+<div class="section level3">
+<h3 id="get-list-of-usgs-gages-to-run">Get List of USGS Gages to Run<a class="anchor" aria-label="anchor" href="#get-list-of-usgs-gages-to-run"></a>
+</h3>
 <p>Once we have our functions loaded, we can set up our list of gages. This is an example list which includes a few USGS gages that should <em>not</em> return data, because there is an insufficent period of record available to calculate the FF metrics.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">gage_list</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"09423350"</span>, <span class="st">"09427600"</span>, <span class="st">"11427000"</span>, <span class="st">"09529700"</span>, <span class="st">"11394500"</span>, <span class="st">"11264500"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gage_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"09423350"</span>, <span class="st">"09427600"</span>, <span class="st">"11427000"</span>, <span class="st">"09529700"</span>, <span class="st">"11394500"</span>, <span class="st">"11264500"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="setup-iteration" class="section level3">
-<h3 class="hasAnchor">
-<a href="#setup-iteration" class="anchor"></a>Setup Iteration</h3>
+<div class="section level3">
+<h3 id="setup-iteration">Setup Iteration<a class="anchor" aria-label="anchor" href="#setup-iteration"></a>
+</h3>
 <p>Here we can setup parameters used in the iteration function. Currently this is essentially only the start date.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># set start date to start WY 1980</span>
-<span class="no">st_date</span> <span class="kw">&lt;-</span> <span class="st">"1979-10-01"</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># set start date to start WY 1980</span>
+<span class="va">st_date</span> <span class="op">&lt;-</span> <span class="st">"1979-10-01"</span>
 
 <span class="co"># set your ffc token here:</span>
-<span class="no">ffctoken</span> <span class="kw">&lt;-</span> <span class="st">"your_token_here"</span></pre></body></html></div>
+<span class="va">ffctoken</span> <span class="op">&lt;-</span> <span class="st">"your_token_here"</span></code></pre></div>
 </div>
-<div id="run-iteration-function" class="section level3">
-<h3 class="hasAnchor">
-<a href="#run-iteration-function" class="anchor"></a>Run Iteration Function</h3>
+<div class="section level3">
+<h3 id="run-iteration-function">Run Iteration Function<a class="anchor" aria-label="anchor" href="#run-iteration-function"></a>
+</h3>
 <p>Then we can run these and generate our data (as csvs), which we will then read back into R and collapse into a single file for use in analysis. We run the iterate function to pull the data. Note, any gage that returns an <code>NA</code> did not have sufficient data for the FFC to calculate metrics.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu">tic</span>() <span class="co"># start time</span>
-<span class="no">ffcs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(<span class="no">gage_list</span>, ~<span class="fu">ffc_possible</span>(<span class="no">.x</span>, <span class="kw">startDate</span> <span class="kw">=</span> <span class="no">st_date</span>, <span class="kw">ffctoken</span><span class="kw">=</span><span class="no">ffctoken</span>, <span class="kw">dirToSave</span><span class="kw">=</span><span class="st">"output/ffc_run"</span>, <span class="kw">save</span><span class="kw">=</span><span class="fl">TRUE</span>)) <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># start time</span>
+<span class="va">ffcs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">gage_list</span>, <span class="op">~</span><span class="fu">ffc_possible</span><span class="op">(</span><span class="va">.x</span>, startDate <span class="op">=</span> <span class="va">st_date</span>, ffctoken<span class="op">=</span><span class="va">ffctoken</span>, dirToSave<span class="op">=</span><span class="st">"output/ffc_run"</span>, save<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="co"># add names to list</span>
-  <span class="fu"><a href="https://purrr.tidyverse.org/reference/set_names.html">set_names</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.</span>, <span class="kw">nm</span><span class="kw">=</span><span class="no">gage_list</span>)
-<span class="fu">toc</span>() <span class="co"># end time</span></pre></body></html></div>
+  <span class="fu"><a href="https://purrr.tidyverse.org/reference/set_names.html" class="external-link">set_names</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.</span>, nm<span class="op">=</span><span class="va">gage_list</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># end time</span></code></pre></div>
 <p>After running this, we should see two things. First, the printout should look something like this for each gage run:</p>
 <pre><code>INFO [2020-11-17 12:20:48] ffcAPIClient Version 0.9.8.1
 INFO [2020-11-17 12:20:48] Excluding water years 1982 for having more than 7 missing days of data
@@ -242,30 +246,32 @@ INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parame
 36.471 sec elapsed</code></pre>
 <p>We should now have a <code>output/ffc</code> directory with <em>4 csv files</em> for each gage, listed as <code>gage_no</code> and then the data type (<code>alteration</code>, <code>ffc_percentiles</code>, <code>ffc_results</code>, and <code>predicted_percentiles</code>). We can now move to the next step of reading these data in and combining them into a single file for each data type.</p>
 <p>One thing that may be helpful, is to make a list of the gages that <strong>didn’t</strong> return data. These can be double checked later. Here’s some code that may help do that, assuming you have a <code>ffcs</code> object in you environment.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="co"># identify missing:</span>
-<span class="no">ffcs</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html">keep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">.</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>()
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># identify missing:</span>
+<span class="va">ffcs</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># make a list of missing gages for future use</span>
-<span class="no">miss_gages</span> <span class="kw">&lt;-</span> <span class="no">ffcs</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html">keep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">.</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>()
+<span class="va">miss_gages</span> <span class="op">&lt;-</span> <span class="va">ffcs</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/keep.html" class="external-link">keep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># which gages?</span>
-<span class="no">miss_gages</span>
+<span class="va">miss_gages</span>
 
 <span class="co"># save out missing to a file</span>
-<span class="fu"><a href="https://readr.tidyverse.org/reference/read_lines.html">write_lines</a></span>(<span class="no">miss_gages</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="st">"output/usgs_ffcs_gages_alt_missing_data.txt"</span>)</pre></body></html></div>
+<span class="fu"><a href="https://readr.tidyverse.org/reference/read_lines.html" class="external-link">write_lines</a></span><span class="op">(</span><span class="va">miss_gages</span>, file <span class="op">=</span> <span class="st">"output/usgs_ffcs_gages_alt_missing_data.txt"</span><span class="op">)</span></code></pre></div>
 <pre><code>[1] 2 # two missing data
 
 [1] "09427600" "11394500" # gages missing data</code></pre>
 </div>
-<div id="collapse-ffc-results-into-single-file" class="section level3">
-<h3 class="hasAnchor">
-<a href="#collapse-ffc-results-into-single-file" class="anchor"></a>Collapse FFC Results into Single File</h3>
+<div class="section level3">
+<h3 id="collapse-ffc-results-into-single-file">Collapse FFC Results into Single File<a class="anchor" aria-label="anchor" href="#collapse-ffc-results-into-single-file"></a>
+</h3>
 <p>This step is not necessary, but it is helpful to have a single file for each of the data types (i.e., <code>alteration</code> or <code>ffc_results</code>), containing the metric information for each gage. The following function is one approach to doing this iteratively (imagine if you have 100 gages…reading in one by one would take awhile).</p>
 <p>Assuming we have loaded our function, we then need tell the function what data type we want to collapse.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># source the function</span>
-<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R"</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># source the function</span>
+<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/ryanpeek/ffm_comparison/main/R/f_ffc_collapse.R"</span><span class="op">)</span>
 
 <span class="co"># set the data type we want to collapse</span>
-<span class="no">datatype</span><span class="kw">=</span><span class="st">"predicted_percentiles"</span>
+<span class="va">datatype</span><span class="op">=</span><span class="st">"predicted_percentiles"</span>
 
 <span class="co"># Data Type options:</span>
 <span class="co">## alteration</span>
@@ -274,18 +280,18 @@ INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parame
 <span class="co">## predicted_percentiles</span>
 
 <span class="co"># set directory where the raw .csv's live</span>
-<span class="no">fdir</span><span class="kw">=</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here::here()}/output/ffc_run/"</span>)
+<span class="va">fdir</span><span class="op">=</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{here::here()}/output/ffc_run/"</span><span class="op">)</span>
 
 <span class="co"># run it!</span>
-<span class="no">df_ffc</span> <span class="kw">&lt;-</span> <span class="fu">ffc_collapse</span>(<span class="no">datatype</span>, <span class="no">fdir</span>)
+<span class="va">df_ffc</span> <span class="op">&lt;-</span> <span class="fu">ffc_collapse</span><span class="op">(</span><span class="va">datatype</span>, <span class="va">fdir</span><span class="op">)</span>
 
 <span class="co"># view how many gages</span>
-<span class="no">df_ffc</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct</a></span>(<span class="no">gageid</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>()
+<span class="va">df_ffc</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">gageid</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># how many FF metrics per gage?</span>
-<span class="no">df_ffc</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">gageid</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">tally</a></span>()
+<span class="va">df_ffc</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">gageid</span><span class="op">)</span> <span class="op"><a href="https://purrr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># save it</span>
-<span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span>(<span class="no">df_ffc</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"{here::here()}/output/usgs_alt_{datatype}_run_{Sys.Date()}.csv"</span>))</pre></body></html></div>
+<span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">df_ffc</span>, file <span class="op">=</span> <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{here::here()}/output/usgs_alt_{datatype}_run_{Sys.Date()}.csv"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
@@ -301,11 +307,13 @@ INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parame
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://nicksantos.com">Nick Santos</a>, <a href="https://ryanpeek.github.io/">Ryan Peek</a>, <a href="https://watershed.ucdavis.edu/people/alyssa-obester">Alyssa Obester</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://nicksantos.com" class="external-link">Nick Santos</a>, <a href="https://ryanpeek.github.io/" class="external-link">Ryan Peek</a>, <a href="https://watershed.ucdavis.edu/people/alyssa-obester" class="external-link">Alyssa Obester</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -313,6 +321,8 @@ INFO [2020-11-17 12:21:15] COMID 21609533 is of stream class SM - sending parame
 
   
 
+
+  
 
   </body>
 </html>
