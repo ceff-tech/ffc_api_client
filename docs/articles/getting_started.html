@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ffcAPIClient</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.8.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -88,30 +84,30 @@
 
     
     
-<div id="setup" class="section level2">
-<h2 class="hasAnchor">
-<a href="#setup" class="anchor"></a>Setup</h2>
-<p>To get this package up and running, you’ll want to make sure you have the most recent R version available (download <a href="https://cran.r-project.org/">here</a>). In addition, you’ll need the the {<code>devtools</code>} package. Basic installation instructions as follows:</p>
+<div class="section level2">
+<h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h2>
+<p>To get this package up and running, you’ll want to make sure you have the most recent R version available (download <a href="https://cran.r-project.org/" class="external-link">here</a>). In addition, you’ll need the the {<code>devtools</code>} package. Basic installation instructions as follows:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Get {<code>devtools</code>} installed</strong>: If you don’t already have it, run <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages('devtools')</a></code> in your R console, or install the package any way you prefer.</p></li>
+<li><p><strong>Get {<code>devtools</code>} installed</strong>: If you don’t already have it, run <code>install.packages('devtools')</code> in your R console, or install the package any way you prefer.</p></li>
 <li>
 <p><strong>Install the {<code>ffcAPIClient</code>} package</strong>:</p>
 <ul>
 <li>
-<code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')</a></code>.</li>
+<code>devtools::install_github('ceff-tech/ffc_api_client/ffcAPIClient')</code>.</li>
 <li>If you get an error on this installation step, make sure you are using the latest version of R and of the {<code>devtools</code>} package.</li>
 </ul>
 </li>
 <li>
 <p><strong>Retrieve your eflows API token</strong>: Now we need to retrieve your token.</p>
 <ol style="list-style-type: lower-alpha">
-<li>In Firefox or Chrome, log into <a href="https://eflows.ucdavis.edu" class="uri">https://eflows.ucdavis.edu</a>. Once logged in, make sure you are on your user profile page at <a href="https://eflows.ucdavis.edu/profile" class="uri">https://eflows.ucdavis.edu/profile</a> and then press <code>F12</code> on your keyboard to bring up the Inspector, then switch to the Console tab.</li>
+<li>In Firefox or Chrome, log into <a href="https://eflows.ucdavis.edu" class="external-link uri">https://eflows.ucdavis.edu</a>. Once logged in, make sure you are on your user profile page at <a href="https://eflows.ucdavis.edu/profile" class="external-link uri">https://eflows.ucdavis.edu/profile</a> and then press <code>F12</code> on your keyboard to bring up the Inspector, then switch to the Console tab.</li>
 <li>In the console, type <code>localStorage.getItem('ff_jwt')</code>—you may need to type it in yourself instead of pasting (or follow Firefox’s instructions to enable pasting—it will tell you how after you try to paste). Hit <code>Enter</code> to send the command.</li>
 <li>Your browser will place text on the line below the command you typed - this is your “token”. Save this value and copy it to your clipboard and we’ll use it below. This value should stay private—if other people knew the value, they could use it to access your account on <a href="eflows.ucdavis.edu">eflows.ucdavis.edu</a>.</li>
 </ol>
 </li>
 <li>
-<p><strong>Save Your Token</strong>: One recommended option is to save your token is with the <a href="https://usethis.r-lib.org/">{<code>usethis</code>}</a> package. To do so, install the package and then run <code><a href="https://usethis.r-lib.org/reference/edit.html">usethis::edit_r_environ()</a></code> to edit your <code>.Renviron</code>. Add your token as shown below, make sure there is an empty line at the bottom of the file, and save the file.</p>
+<p><strong>Save Your Token</strong>: One recommended option is to save your token is with the <a href="https://usethis.r-lib.org/" class="external-link">{<code>usethis</code>}</a> package. To do so, install the package and then run <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code> to edit your <code>.Renviron</code>. Add your token as shown below, make sure there is an empty line at the bottom of the file, and save the file.</p>
 <pre><code>EFLOWS_TOKEN='very_long_string_of_letters_and_numbers`</code></pre>
 <p>Once you have saved your token in your <code>.Renviron</code> file, restart R, and you can access it via: <code>ffctoken &lt;- set_token(Sys.getenv("EFLOWS_TOKEN", ""))</code> and use <code>ffctoken</code> instead of pasting your full key.</p>
 </li>
@@ -120,41 +116,44 @@
 <p>That’s it. You can now run data through the online FFC using this package and process the results.</p>
 <hr>
 </div>
-<div id="usage-examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage-examples" class="anchor"></a>Usage Examples</h2>
+<div class="section level2">
+<h2 id="usage-examples">Usage Examples<a class="anchor" aria-label="anchor" href="#usage-examples"></a>
+</h2>
 <p>There are more detailed tutorials available under the <strong>Articles</strong> menu, including:</p>
 <ul>
-<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html"><strong>Following the CEFF Steps Vignette</strong></a></li>
-<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/run_multiple_gages.html"><strong>How to pull FFC data for multiple USGS Gages</strong></a></li>
+<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/ceff-steps.html" class="external-link"><strong>Following the CEFF Steps Vignette</strong></a></li>
+<li><a href="https://ceff-tech.github.io/ffc_api_client/articles/run_multiple_gages.html" class="external-link"><strong>How to pull FFC data for multiple USGS Gages</strong></a></li>
 </ul>
 <p>It’s recommended you run the steps above on your own, but the package includes other ways to run similar workflows for gage data or for timeseries data of your own. The general steps to run anything require your token, and initializing a processor to run data through.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ffcAPIClient</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ffcAPIClient</span><span class="op">)</span>
 
 <span class="co"># start ffc processor</span>
-<span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()</pre></body></html></div>
-<div id="ffc-for-a-single-usgs-gage" class="section level3">
-<h3 class="hasAnchor">
-<a href="#ffc-for-a-single-usgs-gage" class="anchor"></a>FFC for a Single USGS Gage</h3>
+<span class="va">ffc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/FFCProcessor.html">FFCProcessor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="ffc-for-a-single-usgs-gage">FFC for a Single USGS Gage<a class="anchor" aria-label="anchor" href="#ffc-for-a-single-usgs-gage"></a>
+</h3>
 <p>To calculate functional flow metrics (FFM) for a single gage, we need to provide the gage and the token. We can also provide the COMID and plot_output_folder (where all the results and plots go), but these are optional. If you don’t specify an output folder, the results end up in your R environment and you can save them later.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="co"># set token if in .Rprofile as described in instructions above</span>
-<span class="no">ffctoken</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/set_token.html">set_token</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"EFLOWS"</span>, <span class="st">""</span>))
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># set token if in .Rprofile as described in instructions above</span>
+<span class="va">ffctoken</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_token.html">set_token</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"EFLOWS"</span>, <span class="st">""</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># or just add manually:</span>
-<span class="no">ffctoken</span> <span class="kw">&lt;-</span> <span class="st">"MYVERYLONGTOKEN_NUMBER_HERE"</span>
+<span class="va">ffctoken</span> <span class="op">&lt;-</span> <span class="st">"MYVERYLONGTOKEN_NUMBER_HERE"</span>
 
 <span class="co"># start ffc processor</span>
-<span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
-<span class="no">ffc</span>$<span class="fu">set_up</span>(<span class="kw">gage_id</span> <span class="kw">=</span> <span class="fl">11427000</span>,
-           <span class="kw">token</span> <span class="kw">=</span> <span class="no">ffctoken</span>,
+<span class="va">ffc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/FFCProcessor.html">FFCProcessor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span>
+<span class="va">ffc</span><span class="op">$</span><span class="fu">set_up</span><span class="op">(</span>gage_id <span class="op">=</span> <span class="fl">11427000</span>,
+           token <span class="op">=</span> <span class="va">ffctoken</span>, 
            <span class="co"># OPTIONAL</span>
-           <span class="kw">comid</span> <span class="kw">=</span> <span class="no">segment_comid</span>,
-           <span class="kw">plot_output_folder</span> <span class="kw">=</span> <span class="st">"~/Documents/NFA_Gage_Alteration"</span>)</pre></body></html></div>
+           comid <span class="op">=</span> <span class="va">segment_comid</span>,
+           plot_output_folder <span class="op">=</span> <span class="st">"~/Documents/NFA_Gage_Alteration"</span><span class="op">)</span></code></pre></div>
 <p>After running the <code>ffc$set_up()</code>, we should get back some information about the <code>ffcAPIClient</code> version, as well as message stating how many water years will be excluded because of more than 7 days of missing data.</p>
 <pre><code>INFO [2020-11-21 12:00:00] ffcAPIClient Version 0.9.8.2
 INFO [2020-11-21 12:00:00] Excluding water years 2021 for having more than 7 missing days of data</code></pre>
 <p>Finally, we run the calculator, which will return all our data in the <strong><code>ffc</code></strong> object, see below.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">ffc</span>$<span class="fu">run</span>()</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ffc</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>INFO [2020-11-21 12:00:00] Using date format string %m/%d/%Y
 INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending parameters to FFC online for that stream class. This may produce different results than if you run data through the FFC yourself using their default parameters.</code></pre>
 <p>The <strong><code>ffc</code></strong> object contains all the data we may be interested in including:</p>
@@ -173,20 +172,21 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 <p>See the <a href="#documentation">documentation</a> for more information on these results.</p>
 <p>We can save each of these individually however we choose using something like <code>write.csv(ffc$ffc_results, file="my_output_folder/ffc_results.csv)</code>. However, to save everything all at once, see below to learn how to <a href="#save-all-the-ffc-results-into-a-single-folder">Save All Results into a Single Folder</a>.</p>
 </div>
-<div id="save-results-in-a-single-folder" class="section level3">
-<h3 class="hasAnchor">
-<a href="#save-results-in-a-single-folder" class="anchor"></a>Save Results In a Single Folder</h3>
+<div class="section level3">
+<h3 id="save-results-in-a-single-folder">Save Results In a Single Folder<a class="anchor" aria-label="anchor" href="#save-results-in-a-single-folder"></a>
+</h3>
 <p>If we want to save all the above results to a folder directly, we can use the <strong><code><a href="../reference/evaluate_gage_alteration.html">evaluate_gage_alteration()</a></code></strong> function. This will get all the results and save them to a single directory you specify. It requires the same arguments as above. However, the <code>plot_output_folder</code> remains optional, and when provided, plots and data will be saved in that location. Plots will show in your R environment (the <code>Plots</code> tab in RStudio) regardless.</p>
 <p>Providing the COMID is preferred, though there are look up options available. See the function documentation for details regarding how to optionally re-enable the lookup.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># If you have a gage and a token, you can get all results simply by running</span>
-<span class="kw pkg">ffcAPIClient</span><span class="kw ns">::</span><span class="fu"><a href="../reference/evaluate_gage_alteration.html">evaluate_gage_alteration</a></span>(<span class="kw">gage_id</span> <span class="kw">=</span> <span class="fl">11427000</span>,
-                                       <span class="kw">token</span> <span class="kw">=</span> <span class="st">"your_token"</span>,
-                                       <span class="kw">comid</span> <span class="kw">=</span> <span class="no">segment_comid</span>,
-                                       <span class="kw">plot_output_folder</span> <span class="kw">=</span> <span class="st">"C:/Users/youruser/Documents/NFA_Gage_Alteration"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># If you have a gage and a token, you can get all results simply by running</span>
+<span class="fu">ffcAPIClient</span><span class="fu">::</span><span class="fu"><a href="../reference/evaluate_gage_alteration.html">evaluate_gage_alteration</a></span><span class="op">(</span>gage_id <span class="op">=</span> <span class="fl">11427000</span>, 
+                                       token <span class="op">=</span> <span class="st">"your_token"</span>, 
+                                       comid <span class="op">=</span> <span class="va">segment_comid</span>,
+                                       plot_output_folder <span class="op">=</span> <span class="st">"C:/Users/youruser/Documents/NFA_Gage_Alteration"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="ffc-with-your-own-flow-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#ffc-with-your-own-flow-data" class="anchor"></a>FFC with Your Own Flow Data</h3>
+<div class="section level3">
+<h3 id="ffc-with-your-own-flow-data">FFC with Your Own Flow Data<a class="anchor" aria-label="anchor" href="#ffc-with-your-own-flow-data"></a>
+</h3>
 <p>If you have your own flow data, as long as it is a data frame with flow and date fields, we can use the same functions as described above. However, we need to specify the dataframe containing:</p>
 <ul>
 <li>
@@ -194,25 +194,27 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 <li>
 <code>date</code> column, ideally formatted as “YYYY-MM-DD”</li>
 </ul>
-<p>To run this data, we can use the following, note, the date format default is for “YYYY-MM-DD” but you can specify an alternate format (type <code><a href="https://rdrr.io/r/base/strptime.html">?strptime</a></code> in your R console to see the Help file with date specifications). <strong>Note</strong>, <code>COMID</code> is required or a <code>latitude/longitude</code> must be provided.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="kw pkg">ffcAPIClient</span><span class="kw ns">::</span><span class="fu"><a href="../reference/evaluate_alteration.html">evaluate_alteration</a></span>(
-  <span class="kw">timeseries_df</span> <span class="kw">=</span> <span class="no">your_df</span>,
-  <span class="kw">token</span> <span class="kw">=</span> <span class="st">"your_token"</span>,
-  <span class="kw">plot_output_folder</span> <span class="kw">=</span> <span class="st">"C:/Users/youruser/Documents/Timeseries_Alteration"</span>,
-  <span class="kw">comid</span><span class="kw">=</span><span class="no">yoursegmentcomid</span>) <span class="co"># REQUIRED OR specify lat/lon</span>
+<p>To run this data, we can use the following, note, the date format default is for “YYYY-MM-DD” but you can specify an alternate format (type <code><a href="https://rdrr.io/r/base/strptime.html" class="external-link">?strptime</a></code> in your R console to see the Help file with date specifications). <strong>Note</strong>, <code>COMID</code> is required or a <code>latitude/longitude</code> must be provided.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ffcAPIClient</span><span class="fu">::</span><span class="fu"><a href="../reference/evaluate_alteration.html">evaluate_alteration</a></span><span class="op">(</span>
+  timeseries_df <span class="op">=</span> <span class="va">your_df</span>, 
+  token <span class="op">=</span> <span class="st">"your_token"</span>, 
+  plot_output_folder <span class="op">=</span> <span class="st">"C:/Users/youruser/Documents/Timeseries_Alteration"</span>,
+  comid<span class="op">=</span><span class="va">yoursegmentcomid</span><span class="op">)</span> <span class="co"># REQUIRED OR specify lat/lon</span>
 <span class="co"># additional arguments:</span>
   <span class="co"># longitude = ,</span>
   <span class="co"># latitude = ,</span>
   <span class="co"># plot_results = TRUE, # default is TRUE</span>
   <span class="co"># plot_output_folder = , # where to save things</span>
-  <span class="co"># date_format_string = "") # to specify a custom date format, default is YYYY-MM-DD)</span></pre></body></html></div>
+  <span class="co"># date_format_string = "") # to specify a custom date format, default is YYYY-MM-DD)</span></code></pre></div>
 <p>This function, and <code><a href="../reference/evaluate_gage_alteration.html">evaluate_gage_alteration()</a></code>, plot results immediately and optionally save the plots to the output folder.</p>
 </div>
-<div id="getting-predicted-flow-metrics-from-a-comid" class="section level3">
-<h3 class="hasAnchor">
-<a href="#getting-predicted-flow-metrics-from-a-comid" class="anchor"></a>Getting Predicted Flow Metrics from a COMID</h3>
-<p>This package compares the percentiles generated from the observed data and the percentiles predicted by modeling. As part of this functionality, the code includes the full results of the modeling output as a data frame accessible in <code><a href="../reference/flow_metrics.html">ffcAPIClient::flow_metrics</a></code>. More practically, if you have a variable <code>com_id</code> that stores an NHD stream segment identifier (COMID), then you can also use <code><a href="../reference/get_predicted_flow_metrics.html">ffcAPIClient::get_predicted_flow_metrics(com_id)</a></code> to retrieve a data frame with only the results for that segment. For example, for the Goodyear’s Bar reference gage segment on the North Yuba:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="kw pkg">ffcAPIClient</span><span class="kw ns">::</span><span class="fu"><a href="../reference/get_predicted_flow_metrics.html">get_predicted_flow_metrics</a></span>(<span class="st">"8058513"</span>)</pre></body></html></div>
+<div class="section level3">
+<h3 id="getting-predicted-flow-metrics-from-a-comid">Getting Predicted Flow Metrics from a COMID<a class="anchor" aria-label="anchor" href="#getting-predicted-flow-metrics-from-a-comid"></a>
+</h3>
+<p>This package compares the percentiles generated from the observed data and the percentiles predicted by modeling. As part of this functionality, the code includes the full results of the modeling output as a data frame accessible in <code><a href="../reference/flow_metrics.html">ffcAPIClient::flow_metrics</a></code>. More practically, if you have a variable <code>com_id</code> that stores an NHD stream segment identifier (COMID), then you can also use <code>ffcAPIClient::get_predicted_flow_metrics(com_id)</code> to retrieve a data frame with only the results for that segment. For example, for the Goodyear’s Bar reference gage segment on the North Yuba:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ffcAPIClient</span><span class="fu">::</span><span class="fu"><a href="../reference/get_predicted_flow_metrics.html">get_predicted_flow_metrics</a></span><span class="op">(</span><span class="st">"8058513"</span><span class="op">)</span></code></pre></div>
 <pre><code>                Metric   COMID          p10          p25         p50          p75          p90 source
 38433        DS_Dur_WS 8058513 8.467500e+01 1.146312e+02   145.00000 1.765000e+02 2.015200e+02  model
 178679       DS_Mag_50 8058513 3.550966e+01 5.372067e+01    83.01238 1.227657e+02 1.446242e+02  model
@@ -240,15 +242,16 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 2707883        Wet_Tim 8058513 4.638500e+01 5.857500e+01    72.42500 9.511667e+01 1.187900e+02  model</code></pre>
 </div>
 </div>
-<div id="additional-ffcprocessor-input-options" class="section level2">
-<h2 class="hasAnchor">
-<a href="#additional-ffcprocessor-input-options" class="anchor"></a>Additional FFCProcessor Input Options</h2>
+<div class="section level2">
+<h2 id="additional-ffcprocessor-input-options">Additional FFCProcessor Input Options<a class="anchor" aria-label="anchor" href="#additional-ffcprocessor-input-options"></a>
+</h2>
 <p>There are many options that are available for the user to specify within the <strong><code>FFCProcessor</code></strong> object. These should be called prior to the <code>setup</code> and <code>run</code> functions, and some may be overwritten by parameters to <code>$setup</code>. Here are a few options to be aware of:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># set new processor</span>
-<span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># set new processor</span>
+<span class="va">ffc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/FFCProcessor.html">FFCProcessor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span>
 
 <span class="co"># then specify options:</span>
-<span class="no">ffc</span>$<span class="no">date_field</span> <span class="kw">=</span> <span class="st">"date"</span> <span class="co"># change to whatever column name contains date</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">date_field</span> <span class="op">=</span> <span class="st">"date"</span> <span class="co"># change to whatever column name contains date</span>
 
 <span class="co">## ADDITIONAL OPTIONS: ##</span>
 <span class="co"># start_date = "10/1", # defaults to Water Year</span>
@@ -273,23 +276,25 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 <span class="co"># SERVER_URL = 'https://eflows.ucdavis.edu/api/',</span>
 
 <span class="co"># for example, set minimum years required to 2 and start water year to 1980</span>
-<span class="no">ffc</span> <span class="kw">&lt;-</span> <span class="no">FFCProcessor</span>$<span class="fu">new</span>()
-<span class="no">ffc</span>$<span class="no">timeseries_enable_filtering</span> <span class="kw">&lt;-</span> <span class="fl">TRUE</span>
-<span class="no">ffc</span>$<span class="no">fail_years_data</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
-<span class="no">ffc</span>$<span class="no">gage_start_date</span> <span class="kw">&lt;-</span> <span class="st">"1979-10-01"</span>
-<span class="no">ffc</span>$<span class="fu">set_up</span>(<span class="kw">gage_id</span><span class="kw">=</span><span class="fl">11264500</span>, <span class="kw">token</span> <span class="kw">=</span> <span class="no">ffctoken</span>)
-<span class="no">ffc</span>$<span class="fu">run</span>()</pre></body></html></div>
+<span class="va">ffc</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/FFCProcessor.html">FFCProcessor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="op">)</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">timeseries_enable_filtering</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">fail_years_data</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">gage_start_date</span> <span class="op">&lt;-</span> <span class="st">"1979-10-01"</span>
+<span class="va">ffc</span><span class="op">$</span><span class="fu">set_up</span><span class="op">(</span>gage_id<span class="op">=</span><span class="fl">11264500</span>, token <span class="op">=</span> <span class="va">ffctoken</span><span class="op">)</span>
+<span class="va">ffc</span><span class="op">$</span><span class="fu">run</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="available-ffcprocessor-output-data-frames-and-plots" class="section level2">
-<h2 class="hasAnchor">
-<a href="#available-ffcprocessor-output-data-frames-and-plots" class="anchor"></a>Available FFCProcessor Output Data Frames and Plots</h2>
+<div class="section level2">
+<h2 id="available-ffcprocessor-output-data-frames-and-plots">Available FFCProcessor Output Data Frames and Plots<a class="anchor" aria-label="anchor" href="#available-ffcprocessor-output-data-frames-and-plots"></a>
+</h2>
 <p>When using the CEFF steps code, many output data frames, such as predicted percentiles, observed percentiles, and alteration assessment data are automatically saved to your output folder. By default, we don’t trigger that code when you run <code>$set_up</code> or <code>$run</code>, but the data is stored on your FFCProcessor object. Using an example where <code>ffc</code> is your FFCProcessor, after running <code>ffc$run</code> you will have the following data frames available:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">ffc</span>$<span class="no">alteration</span>  <span class="co"># alteration assessment data</span>
-<span class="no">ffc</span>$<span class="no">predicted_percentiles</span>  <span class="co"># predicted percentile data</span>
-<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>  <span class="co"># percentiles for observed data run through the FFC</span></pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ffc</span><span class="op">$</span><span class="va">alteration</span>  <span class="co"># alteration assessment data</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">predicted_percentiles</span>  <span class="co"># predicted percentile data</span>
+<span class="va">ffc</span><span class="op">$</span><span class="va">ffc_percentiles</span>  <span class="co"># percentiles for observed data run through the FFC</span></code></pre></div>
 <p>You can feed this data into any additional processing code you like without plotting or saving it out to files and it will run faster than using the CEFF steps code, though it will give you less verbose output on what it’s doing and how to use it.</p>
 <p>You can also then manually feed these data into other package functions like plotting, or to your own code that controls saving it. For example, to manually trigger the comparison plots that are output by CEFF steps code after running <code>ffc$run</code> yourself, you can call:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="kw pkg">ffcAPIClient</span><span class="kw ns">::</span><span class="fu">plot_comparison_boxes</span>(<span class="no">ffc</span>$<span class="no">ffc_percentiles</span>, <span class="no">ffc</span>$<span class="no">predicted_percentiles</span>, <span class="kw">output_folder</span> <span class="kw">=</span> <span class="st">"C:/the/full/path/to/save/plots/to"</span>, <span class="kw">gage_id</span> <span class="kw">=</span> <span class="fl">1111111</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ffcAPIClient</span><span class="fu">::</span><span class="fu">plot_comparison_boxes</span><span class="op">(</span><span class="va">ffc</span><span class="op">$</span><span class="va">ffc_percentiles</span>, <span class="va">ffc</span><span class="op">$</span><span class="va">predicted_percentiles</span>, output_folder <span class="op">=</span> <span class="st">"C:/the/full/path/to/save/plots/to"</span>, gage_id <span class="op">=</span> <span class="fl">1111111</span><span class="op">)</span></code></pre></div>
 <p>If you aren’t plotting a gage, you can leave the <code>gage_id</code> parameter off - it’s only used to look up information to include on the plot.</p>
 </div>
   </div>
@@ -305,11 +310,13 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://nicksantos.com">Nick Santos</a>, <a href="https://ryanpeek.github.io/">Ryan Peek</a>, <a href="https://watershed.ucdavis.edu/people/alyssa-obester">Alyssa Obester</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://nicksantos.com" class="external-link">Nick Santos</a>, <a href="https://ryanpeek.github.io/" class="external-link">Ryan Peek</a>, <a href="https://watershed.ucdavis.edu/people/alyssa-obester" class="external-link">Alyssa Obester</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -317,6 +324,8 @@ INFO [2020-11-21 12:00:00] COMID 14996611 is of stream class LSR - sending param
 
   
 
+
+  
 
   </body>
 </html>
