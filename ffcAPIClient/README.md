@@ -5,7 +5,7 @@ __*Dec 15 2021: We are aware the FFC is currently down because the corresponding
 
 This package is designed to:
 
-1. Process either user data or existing gage data through the online functional flows calculator ([eflows.ucdavis.edu](eflows.ucdavis.edu)).
+1. Process either user data or existing gage data through the online functional flows calculator ([documentation](https://eflow.gitbook.io/ffc-readme/)).
 2. Transform that data and generate functional flow metrics, predicted percentiles, alteration assessments, as well as return plots of the Dimensionless Reference Hydrograph (DRH) and boxplots showing the observed versus predicted percentile values for each metric.
 3. Provide functions that follow the [CEFF Steps](https://ceff.ucdavis.edu/): see [**Step One**](articles/ceff-steps.html#step-one), [**Step Two**](articles/ceff-steps.html#step-two), and [**Step Three**](articles/ceff-steps.html#step-three) below.
 4. In addition, there are shortcut functions that provide direct access to useful intermediate products, such as the functional flow metric results or alteration assessment data as R dataframes.
