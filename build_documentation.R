@@ -6,4 +6,4 @@ devtools::document()
 devtools::build_manual(path = "../manuals")
 file.copy(paste("../manuals/ffcAPIClient_", current_version, ".pdf", sep=""), "../manuals/ffcAPIClient_latest.pdf", overwrite = TRUE)
 
-devtools::build_site(examples = FALSE, preview = FALSE)
+devtools::build_site(path = "ffcAPIClient/", examples = FALSE, preview = FALSE)
