@@ -71,7 +71,9 @@ get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
   if(wyt != "any"){
     metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
     metrics_filtered <- metrics_filtered[!names(metrics_filtered) %in% c("wyt")]  # now drop the wyt column, but only when we are filtering!
-    deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm")]), ]  # deduplicate on unique comid/metric combo
+    # edit to return only model or inferred but NOT observed
+    deduplicated <- metrics_filtered[metrics_filtered$source %in% c("model","inferred"),]
+    #deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm")]), ]  # deduplicate on unique comid/metric combo
   } else {
     metrics_filtered <- metrics_full
     deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm", "wyt")]), ]
