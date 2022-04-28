@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -97,22 +97,46 @@
 <span class="va">ffc</span><span class="op">$</span><span class="fu">step_one_functional_flow_results</span><span class="op">(</span>gage_id<span class="op">=</span><span class="fl">11336000</span>,
      token<span class="op">=</span><span class="va">token</span>,
      output_folder <span class="op">=</span> <span class="st">"C:/Users/myusername/Downloads/test"</span><span class="op">)</span></code></pre></div>
-<p>That command will output DOH data + image, observed annual data, observed percentiles, and observed plots to the specified folder. It will output the percentiles to the console as well.</p>
-<p>It also makes that data available for further analysis on the object <code>ffc</code>, so you can now access the FFC results by year as <code>ffc$ffc_results</code>, the processed percentiles as <code>ffc$ffc_percentiles</code>, and the underlying DOH data as <code>ffc$doh_data</code> if you want to view them again in R or feed them into other code and visualizations.</p>
-<p>It is highly recommended that you provide the <code>output_folder</code> parameter, as the package will also output its log file there, in addition to plots and CSV results. The log will help track the history of the results in case of future changes.</p>
+<p>That command will output DOH data + image, observed annual data,
+observed percentiles, and observed plots to the specified folder. It
+will output the percentiles to the console as well.</p>
+<p>It also makes that data available for further analysis on the object
+<code>ffc</code>, so you can now access the FFC results by year as
+<code>ffc$ffc_results</code>, the processed percentiles as
+<code>ffc$ffc_percentiles</code>, and the underlying DOH data as
+<code>ffc$doh_data</code> if you want to view them again in R or feed
+them into other code and visualizations.</p>
+<p>It is highly recommended that you provide the
+<code>output_folder</code> parameter, as the package will also output
+its log file there, in addition to plots and CSV results. The log will
+help track the history of the results in case of future changes.</p>
 </div>
 <div class="section level2">
 <h2 id="step-two">Step Two<a class="anchor" aria-label="anchor" href="#step-two"></a>
 </h2>
-<p>For step 2, we now run simply <code>ffc$step_two_explore_ecological_flow_criteria()</code> and it continues where we left off. In fact, <em>everything</em> is run in step 1, and we just control what is output with these functions. This outputs the predicted metric percentile data as a CSV and to the console, and plots the predicted values on their own.</p>
-<p>Now we can access <code>ffc$predicted_percentiles</code> if we want to feed that into other processing or visualizations too.</p>
+<p>For step 2, we now run simply
+<code>ffc$step_two_explore_ecological_flow_criteria()</code> and it
+continues where we left off. In fact, <em>everything</em> is run in step
+1, and we just control what is output with these functions. This outputs
+the predicted metric percentile data as a CSV and to the console, and
+plots the predicted values on their own.</p>
+<p>Now we can access <code>ffc$predicted_percentiles</code> if we want
+to feed that into other processing or visualizations too.</p>
 </div>
 <div class="section level2">
 <h2 id="step-three">Step Three<a class="anchor" aria-label="anchor" href="#step-three"></a>
 </h2>
-<p>For step 3, same thing. Run <code>ffc$step_three_assess_alteration()</code> and get the alteration data frame saved as a CSV and printed to the console. Full comparison plots of predicted vs. observed percentiles are output now to the screen and to the folder specified in step 1 (where everything is saved).</p>
-<p>And now we get one more thing we can access - <code>ffc$alteration</code> contains the alteration assessment results. In fact everything is accessible after step 1, but conceptually, this is the data frame that corresponds with this step.</p>
-<p>There’s also more that’s available as part of the <code>ffc</code> object, but we’ll document that elsewhere.</p>
+<p>For step 3, same thing. Run
+<code>ffc$step_three_assess_alteration()</code> and get the alteration
+data frame saved as a CSV and printed to the console. Full comparison
+plots of predicted vs. observed percentiles are output now to the screen
+and to the folder specified in step 1 (where everything is saved).</p>
+<p>And now we get one more thing we can access -
+<code>ffc$alteration</code> contains the alteration assessment results.
+In fact everything is accessible after step 1, but conceptually, this is
+the data frame that corresponds with this step.</p>
+<p>There’s also more that’s available as part of the <code>ffc</code>
+object, but we’ll document that elsewhere.</p>
 </div>
   </div>
 
@@ -133,7 +157,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
