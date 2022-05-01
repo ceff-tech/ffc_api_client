@@ -31,6 +31,9 @@ We also publish a [PDF version of this manual](./manuals/ffcAPIClient_latest.pdf
 
 ## Change Log
 
+### Version 0.9.8.3
+* [Bugfix] `get_predicted_flow_metrics()` no longer returns observed metrics, specifically returns only modeled or inferred.
+
 ### Version 0.9.8.2
 * [Bugfix] Log messages weren't going to the screen when running CEFF steps with an output folder. They
           once again go to both the screen and the output file. We now have a known issue where when
