@@ -1,10 +1,10 @@
 ---
 title: "Getting Started"
-output: 
-  html_document:
-    toc: true
-    toc_float:
-        collapsed: true
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

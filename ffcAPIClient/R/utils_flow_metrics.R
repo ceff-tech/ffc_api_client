@@ -71,12 +71,12 @@ get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
   if(wyt != "any"){
     metrics_filtered <- metrics_full[metrics_full$wyt == wyt,]
     metrics_filtered <- metrics_filtered[!names(metrics_filtered) %in% c("wyt")]  # now drop the wyt column, but only when we are filtering!
-    # edit to return only model or inferred but NOT observed
+    # # deduplicate to return only model or inferred but NOT observed
     deduplicated <- metrics_filtered[metrics_filtered$source %in% c("model","inferred"),]
-    #deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm")]), ]  # deduplicate on unique comid/metric combo
   } else {
     metrics_filtered <- metrics_full
-    deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm", "wyt")]), ]
+    deduplicated <- metrics_filtered[metrics_filtered$source %in% c("model","inferred"),]
+    #deduplicated <- metrics_filtered[!duplicated(metrics_filtered[,c("ffm", "wyt")]), ]
   }
   deduplicated["result_type"] <- "predicted"  # add a field indicating this is a prediction for later when DFs are merged
   deduplicated <- deduplicated[!names(deduplicated) %in% c("gage_id", "observed_years", "alteration")]  # Drop extra columns from the API
@@ -100,7 +100,7 @@ get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
 #' the p25 field is 0. Otherwise, it leaves them as they are. Raises a warning if it finds any NA values in the p10 field regardless
 #' of whether it fills them.
 #'
-#' This function can be used with any other data frame that containes field p10 and p25 as well, though I'm not sure the conditions
+#' This function can be used with any other data frame that contains field p10 and p25 as well, though I'm not sure the conditions
 #' you'd need to!
 #'
 #' @export
@@ -124,7 +124,7 @@ fill_na_10th_percentile <- function(df, fill_na_p10){
 #'
 #' This function returns the COMID associated with a specific USGS gage.
 #' It can be used to associate gage data with flow metric predictions a
-#' stream segment identified with the \code{com_id} input variable.
+#' stream segment identified with the \code{comid} input variable.
 #'
 #' @param longitude numeric. Longitude or X.
 #' @param latitude numeric. Longitude or Y.
