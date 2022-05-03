@@ -62,7 +62,7 @@ get_predicted_flow_metrics_offline <- function(comid){
   flow_metrics <- flow_metrics[flow_metrics$comid == comid, ]
   # filter non-predicted (observed) only if duplicate in the same wy/metric type?
   # could grep and warn if obs present:
-  if(sum(grepl(x = tst2$source, pattern = "obs"))!=0){
+  if(sum(grepl(x = flow_metrics$source, pattern = "obs"))!=0){
     print("Warning: there are 'observed' values in these data, these should not be used with inferred and modeled predictions")}
   return(flow_metrics)
 }
