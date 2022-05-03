@@ -8,6 +8,6 @@ authors:
   given-names: "Ryan"
   orcid: "https://orcid.org/0000-0002-9577-6885"
 title: "FFC API Client"
-version: 0.9.8.2
+version: 0.9.8.3
 date-released: 2020-11-03
 url: "https://github.com/ceff-tech/ffc_api_client"

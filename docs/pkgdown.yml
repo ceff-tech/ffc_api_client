@@ -2,8 +2,8 @@ pandoc: 2.17.1.1
 pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
-  getting_started: getting_started.html
   ceff-steps: ceff-steps.html
+  getting_started: getting_started.html
   run_multiple_gages: run_multiple_gages.html
-last_built: 2022-04-28T06:53Z
+last_built: 2022-05-03T05:19Z
 

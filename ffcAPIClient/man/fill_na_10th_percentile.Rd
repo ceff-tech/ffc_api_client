@@ -14,6 +14,6 @@ the p25 field is 0. Otherwise, it leaves them as they are. Raises a warning if i
 of whether it fills them.
 }
 \details{
-This function can be used with any other data frame that containes field p10 and p25 as well, though I'm not sure the conditions
+This function can be used with any other data frame that contains field p10 and p25 as well, though I'm not sure the conditions
 you'd need to!
 }
