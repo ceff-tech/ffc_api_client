@@ -60,10 +60,14 @@ get_predicted_flow_metrics_offline <- function(comid){
   flow_metrics["result_type"] <- "predicted"
   flow_metrics$metric <- as.character(flow_metrics$metric)
   flow_metrics <- flow_metrics[flow_metrics$comid == comid, ]
-  # filter non-predicted (observed) only if duplicate in the same wy/metric type?
+  # filter out non-predicted (observed) metrics
+  flow_metrics <- flow_metrics[flow_metrics$source %in% c("model","inferred"),]
   # could grep and warn if obs present:
   if(sum(grepl(x = flow_metrics$source, pattern = "obs"))!=0){
     print("Warning: there are 'observed' values in these data, these should not be used with inferred and modeled predictions")}
+  else(
+    print("NOTE! Frequency and Peak Magnitude metrics are only calculated across 'all' water types.")
+  )
   return(flow_metrics)
 }
 
@@ -87,7 +91,7 @@ get_predicted_flow_metrics_online <- function(comid, wyt, fill_na_p10){
   deduplicated <- deduplicated[!names(deduplicated) %in% c("gage_id", "observed_years", "alteration")]  # Drop extra columns from the API
 
   if(nrow(deduplicated) < nrow(metrics_filtered)){
-    warning("Flow metric data from API contained duplicated records for some flow metrics that we automatically removed. This is a data quality issue in the predicted data - it can occasionally produce incorrect results - check the values of the predicted flow metrics at https://flows.codefornature.org")
+    warning("Frequency and Peak Magnitude metrics are only calculated across 'all' water types. If you need predicted results for these metrics use wyt = 'all'")
   }
 
   deduplicated <- fill_na_10th_percentile(deduplicated, fill_na_p10)
