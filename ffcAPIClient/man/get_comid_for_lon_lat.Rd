@@ -22,5 +22,5 @@ is installed only if you set \code{ffc$get_comid_online = FALSE}.}
 \description{
 This function returns the COMID associated with a specific USGS gage.
 It can be used to associate gage data with flow metric predictions a
-stream segment identified with the \code{com_id} input variable.
+stream segment identified with the \code{comid} input variable.
 }
